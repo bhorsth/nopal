@@ -1,0 +1,87 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacers-dp16);
+}
+
+.pageTitle {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--colors-grey900);
+}
+
+.pageDescription {
+    margin: 0;
+    color: var(--colors-grey700);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.cardBody {
+    padding: var(--spacers-dp16);
+}
+
+.settingsCard {
+    margin-top: 0;
+}
+
+.sectionTitle {
+    margin: 0 0 var(--spacers-dp12) 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--colors-grey900);
+}
+
+.subsectionTitle {
+    margin: var(--spacers-dp24) 0 var(--spacers-dp12) 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--colors-grey900);
+}
+
+.settingsFields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacers-dp16);
+    max-width: 480px;
+}
+
+.settingsLoader {
+    display: flex;
+    justify-content: center;
+    padding: var(--spacers-dp16);
+}
+
+.helpText {
+    margin: var(--spacers-dp12) 0 0 0;
+    color: var(--colors-grey700);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.buttonRow {
+    display: flex;
+    align-items: center;
+    gap: var(--spacers-dp8);
+    flex-wrap: wrap;
+}
+
+.monospacePre {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    max-height: 320px;
+    overflow: auto;
+    padding: var(--spacers-dp12);
+    background: var(--colors-grey100);
+    border: 1px solid var(--colors-grey300);
+    border-radius: 4px;
+}
+
+.tableWrap {
+    overflow: auto;
+    border: 1px solid var(--colors-grey300);
+    border-radius: 4px;
+    background: var(--colors-white);
+}

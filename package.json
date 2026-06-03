@@ -1,0 +1,30 @@
+{
+  "name": "EMS-Data-Import",
+  "version": "1.0.0",
+  "description": "",
+  "license": "BSD-3-Clause",
+  "private": true,
+  "scripts": {
+    "build": "d2-app-scripts build",
+    "start": "d2-app-scripts start",
+    "test": "d2-app-scripts test",
+    "deploy": "d2-app-scripts deploy",
+    "parse": "node cli.js",
+    "check:dhis2": "node scripts/check-dhis2-config.mjs"
+  },
+  "devDependencies": {
+    "@dhis2/cli-app-scripts": "^12.6.0",
+    "@dhis2/data-engine": "^3.17.0",
+    "dotenv": "^17.2.3"
+  },
+  "dependencies": {
+    "@dhis2/app-runtime": "^3.14.2",
+    "@dhis2/d2-i18n": "^1.2.0",
+    "@dhis2/ui": "^10.15.1",
+    "classnames": "^2.5.1",
+    "react-router-dom": "6"
+  },
+  "resolutions": {
+    "@dhis2/app-runtime": "3.17.0"
+  }
+}

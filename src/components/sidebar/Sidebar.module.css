@@ -1,0 +1,73 @@
+.navItems {
+    padding-block-start: var(--spacers-dp24);
+    padding-block-end: 52px;
+}
+
+.asideWrapper {
+    --animation-duration: 0.3s;
+    transition: ease inline-size var(--animation-duration);
+    position: relative;
+    overflow-x: hidden;
+}
+
+.asideWrapper.collapsed {
+    inline-size: 52px;
+}
+
+.asideWrapper nav {
+    min-inline-size: 240px;
+    transition: opacity ease var(--animation-duration), visibility ease 0.5s;
+}
+
+.collapsed nav {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.iconWrapper {
+    display: flex;
+    align-items: center;
+}
+
+.iconWrapper svg {
+    transition: var(--animation-duration);
+}
+
+.collapsed .iconWrapper svg {
+    transform: rotate(180deg);
+}
+
+.collapseButton {
+    transition: ease var(--animation-duration);
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    cursor: pointer;
+    inline-size: 36px;
+    block-size: 36px;
+    margin: var(--spacers-dp8);
+    background-color: color-mix(in srgb, var(--sidenav-dark-bg-hover), white 10%);
+    color: var(--colors-grey050);
+    border-radius: 4px;
+    border: none;
+}
+
+@media (max-width: 768px) {
+    .asideWrapper {
+        max-inline-size: calc(100vw - 14px) !important;
+        block-size: max-content;
+    }
+
+    .asideWrapper.collapsed {
+        inline-size: 100%;
+        max-block-size: 52px;
+    }
+
+    .iconWrapper svg {
+        transform: rotate(90deg);
+    }
+
+    .collapsed .iconWrapper svg {
+        transform: rotate(-90deg);
+    }
+}

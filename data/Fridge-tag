@@ -1,0 +1,1568 @@
+{
+  "deviceType": "Q-tag Fridge-tag 2",
+  "softwareVersion": "0.5",
+  "firmwareVersion": "4.0p1o",
+  "sensorType": 1,
+  "configuration": {
+    "serialNumber": "160400343951",
+    "pcbVersion": "BG0245101004",
+    "customerId": "62000007",
+    "lotNumber": "1792_20_08",
+    "timeZoneOffsetHours": null,
+    "measurementDelaySeconds": 10,
+    "movingAverageSamples": 1,
+    "userAlarmConfigFlag": null,
+    "userClockConfigFlag": 1,
+    "alarmIndicationMode": null,
+    "temperatureUnit": "C",
+    "alarmSettings": {
+      "0": {
+        "temperatureLimit": -0.5,
+        "timeLimit": null
+      },
+      "1": {
+        "temperatureLimit": 8,
+        "timeLimit": null
+      }
+    },
+    "internalSensor": {
+      "timeout": 1,
+      "offset": null
+    },
+    "reportHistoryLengthDays": 60,
+    "detailedReportType": 19,
+    "useExternalDevicesFlag": null,
+    "lastTestResult": 1,
+    "lastTestTimestamp": null
+  },
+  "alarmSettingsGlobal": null,
+  "historyRecords": [
+    {
+      "date": "2025-06-11",
+      "minTemperature": 20.2,
+      "timestampMinTemperature": null,
+      "maxTemperature": 22.5,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 21.7,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "10:33",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-06-10",
+      "minTemperature": 18.5,
+      "timestampMinTemperature": null,
+      "maxTemperature": 29.8,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 22,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "23:27",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-06-09",
+      "minTemperature": 20.7,
+      "timestampMinTemperature": null,
+      "maxTemperature": 27.9,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 22,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "23:49",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": 16,
+      "checkedTimestamps": {
+        "timestampPm": "18",
+        "timestampAm": null
+      }
+    },
+    {
+      "date": "2025-06-08",
+      "minTemperature": 16.7,
+      "timestampMinTemperature": null,
+      "maxTemperature": 23,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 20.1,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-06-07",
+      "minTemperature": 16.9,
+      "timestampMinTemperature": null,
+      "maxTemperature": 18.8,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 17.3,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-06-06",
+      "minTemperature": 16.6,
+      "timestampMinTemperature": null,
+      "maxTemperature": 19.8,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 17.5,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-06-05",
+      "minTemperature": 16.6,
+      "timestampMinTemperature": null,
+      "maxTemperature": 21,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 18,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "23:19",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-06-04",
+      "minTemperature": 14.7,
+      "timestampMinTemperature": null,
+      "maxTemperature": 19.1,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 15.1,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "23:44",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-06-03",
+      "minTemperature": 14.4,
+      "timestampMinTemperature": null,
+      "maxTemperature": 15,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 14.6,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-06-02",
+      "minTemperature": 14.3,
+      "timestampMinTemperature": null,
+      "maxTemperature": 16.9,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 15.2,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-06-01",
+      "minTemperature": 14.8,
+      "timestampMinTemperature": null,
+      "maxTemperature": 24.5,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 20.3,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-31",
+      "minTemperature": 23.5,
+      "timestampMinTemperature": null,
+      "maxTemperature": 30.2,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 25.6,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-30",
+      "minTemperature": 22.7,
+      "timestampMinTemperature": null,
+      "maxTemperature": 26.1,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 24.6,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-29",
+      "minTemperature": 3.8,
+      "timestampMinTemperature": null,
+      "maxTemperature": 25.1,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 9.1,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "06:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-28",
+      "minTemperature": 4.1,
+      "timestampMinTemperature": null,
+      "maxTemperature": 7,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 4.9,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-27",
+      "minTemperature": 5,
+      "timestampMinTemperature": null,
+      "maxTemperature": 25.5,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 11.1,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "09:03",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-26",
+      "minTemperature": 5.1,
+      "timestampMinTemperature": null,
+      "maxTemperature": 24.8,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 12.4,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "11:47",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-25",
+      "minTemperature": 4.6,
+      "timestampMinTemperature": null,
+      "maxTemperature": 21.6,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 9.4,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "10:07",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-24",
+      "minTemperature": 5.1,
+      "timestampMinTemperature": null,
+      "maxTemperature": 7.5,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 6.1,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-23",
+      "minTemperature": 4.4,
+      "timestampMinTemperature": null,
+      "maxTemperature": 6.7,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 5.7,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-22",
+      "minTemperature": 4.5,
+      "timestampMinTemperature": null,
+      "maxTemperature": 7.2,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 5.4,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-21",
+      "minTemperature": 3.7,
+      "timestampMinTemperature": null,
+      "maxTemperature": 8.9,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 5,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "01:10",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-20",
+      "minTemperature": 3.6,
+      "timestampMinTemperature": null,
+      "maxTemperature": 7.6,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 4.4,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-19",
+      "minTemperature": 3.8,
+      "timestampMinTemperature": null,
+      "maxTemperature": 6,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 4.4,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-18",
+      "minTemperature": 3.5,
+      "timestampMinTemperature": null,
+      "maxTemperature": 21,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 7.6,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "07:09",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-17",
+      "minTemperature": 4,
+      "timestampMinTemperature": null,
+      "maxTemperature": 24.6,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 12.8,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "13:05",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-16",
+      "minTemperature": 4.1,
+      "timestampMinTemperature": null,
+      "maxTemperature": 6.5,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 5.1,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-15",
+      "minTemperature": 4.4,
+      "timestampMinTemperature": null,
+      "maxTemperature": 6.3,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 5.2,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-14",
+      "minTemperature": 3.7,
+      "timestampMinTemperature": null,
+      "maxTemperature": 6.2,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 4.9,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-13",
+      "minTemperature": 3.8,
+      "timestampMinTemperature": null,
+      "maxTemperature": 7,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 4.8,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-12",
+      "minTemperature": 2.9,
+      "timestampMinTemperature": null,
+      "maxTemperature": 4.2,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 3.5,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-11",
+      "minTemperature": 3.4,
+      "timestampMinTemperature": null,
+      "maxTemperature": 24.5,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 12.3,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "12:07",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-10",
+      "minTemperature": -1.9,
+      "timestampMinTemperature": null,
+      "maxTemperature": 24,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 11.2,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "09:31",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "13:06",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-09",
+      "minTemperature": -3.3,
+      "timestampMinTemperature": null,
+      "maxTemperature": 23,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 4.9,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "14:52",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "07:03",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-08",
+      "minTemperature": -3.2,
+      "timestampMinTemperature": null,
+      "maxTemperature": 20.1,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 0.6,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "18:09",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "03:37",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-07",
+      "minTemperature": -2.6,
+      "timestampMinTemperature": null,
+      "maxTemperature": 26.4,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 14.7,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "06:02",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "15:51",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-06",
+      "minTemperature": -2.6,
+      "timestampMinTemperature": null,
+      "maxTemperature": 24,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 11.8,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "08:03",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "14:03",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-05",
+      "minTemperature": -3.1,
+      "timestampMinTemperature": null,
+      "maxTemperature": 22.3,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 2.3,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "16:17",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "05:29",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-04",
+      "minTemperature": -3.1,
+      "timestampMinTemperature": null,
+      "maxTemperature": 27.5,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 19.2,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "03:28",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "20:06",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-03",
+      "minTemperature": 15.4,
+      "timestampMinTemperature": null,
+      "maxTemperature": 26.3,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 18.5,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "22:15",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": 24,
+      "checkedTimestamps": {
+        "timestampPm": "13",
+        "timestampAm": "07"
+      }
+    },
+    {
+      "date": "2025-05-02",
+      "minTemperature": 14.6,
+      "timestampMinTemperature": null,
+      "maxTemperature": 16.8,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 15.5,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-05-01",
+      "minTemperature": 6.5,
+      "timestampMinTemperature": null,
+      "maxTemperature": 16.6,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 11.6,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "14:07",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-30",
+      "minTemperature": 6.6,
+      "timestampMinTemperature": null,
+      "maxTemperature": 8.3,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 7.2,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "01:01",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-29",
+      "minTemperature": 6.6,
+      "timestampMinTemperature": null,
+      "maxTemperature": 8.2,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 7.2,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:16",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-28",
+      "minTemperature": 6.8,
+      "timestampMinTemperature": null,
+      "maxTemperature": 8.2,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 7.3,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:18",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-27",
+      "minTemperature": 6.4,
+      "timestampMinTemperature": null,
+      "maxTemperature": 10.3,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 8,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "10:59",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-26",
+      "minTemperature": 6.5,
+      "timestampMinTemperature": null,
+      "maxTemperature": 7.6,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 7.2,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-25",
+      "minTemperature": 6.1,
+      "timestampMinTemperature": null,
+      "maxTemperature": 8.1,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 6.9,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:14",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-24",
+      "minTemperature": 6.1,
+      "timestampMinTemperature": null,
+      "maxTemperature": 7.8,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 6.9,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-23",
+      "minTemperature": 6.1,
+      "timestampMinTemperature": null,
+      "maxTemperature": 15.6,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 7.3,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "01:34",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-22",
+      "minTemperature": 6.2,
+      "timestampMinTemperature": null,
+      "maxTemperature": 7.8,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 6.9,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-21",
+      "minTemperature": 4.4,
+      "timestampMinTemperature": null,
+      "maxTemperature": 12,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 6.3,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "00:19",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-20",
+      "minTemperature": 2,
+      "timestampMinTemperature": null,
+      "maxTemperature": 13.4,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 10.8,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "16:51",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-19",
+      "minTemperature": 13.4,
+      "timestampMinTemperature": null,
+      "maxTemperature": 14.1,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 13.5,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-18",
+      "minTemperature": 14.1,
+      "timestampMinTemperature": null,
+      "maxTemperature": 14.4,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 14.3,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-17",
+      "minTemperature": 14.2,
+      "timestampMinTemperature": null,
+      "maxTemperature": 14.4,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 14.2,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-16",
+      "minTemperature": 14.1,
+      "timestampMinTemperature": null,
+      "maxTemperature": 14.3,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 14.1,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-15",
+      "minTemperature": 14.3,
+      "timestampMinTemperature": null,
+      "maxTemperature": 14.6,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 14.4,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-14",
+      "minTemperature": 14.6,
+      "timestampMinTemperature": null,
+      "maxTemperature": 15.5,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 14.9,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "24:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    },
+    {
+      "date": "2025-04-13",
+      "minTemperature": 5.1,
+      "timestampMinTemperature": null,
+      "maxTemperature": 18.1,
+      "timestampMaxTemperature": null,
+      "averageTemperature": 7.4,
+      "alarms": {
+        "0": {
+          "accumulatedTime": "00:00",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        },
+        "1": {
+          "accumulatedTime": "04:25",
+          "alarmTimestamp": null,
+          "alarmCount": null
+        }
+      },
+      "internalSensorTimeout": {
+        "accumulatedSensorTimeout": null
+      },
+      "eventCount": null,
+      "checkedTimestamps": null
+    }
+  ],
+  "activationTimestamp": "2025-04-11 21",
+  "reportCreationTimestamp": "2025-06-11 10",
+  "certificate": {
+    "version": "1.0",
+    "lotNumber": "1792_20_08",
+    "issuerName": "Berlinger & Co. AG",
+    "validFromTimestamp": "2020-08-21 07",
+    "ownerName": "Berlinger & Co. AG",
+    "publicKey": "d73cd26b379bd0a250d98498e15c739ab53594e9768b247a0713637cba30e474b4fcc1aae45f30ec7cc878c102cf9648d775670d2f93b48726a0f21d3ca71074",
+    "signatureCertificate": null,
+    "signature": null
+  },
+  "internalSensorInfo": {
+    "timeout": 1,
+    "offset": null
+  },
+  "reportHistoryLength": 60,
+  "detailedReportTypeInfo": 19,
+  "useExternalDevices": null,
+  "lastTestResultInfo": 1,
+  "lastTestTimestampInfo": null
+}

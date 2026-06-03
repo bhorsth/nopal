@@ -1,0 +1,123 @@
+html {
+    --sidenav-dark-bg: #151b23;
+    --sidenav-dark-bg-hover: color-mix(in srgb, var(--sidenav-dark-bg), white 10%);
+    --sidenav-dark-bg-selected: color-mix(in srgb, var(--sidenav-dark-bg), white 5%);
+}
+
+.sidenavWrap {
+    width: 100%;
+    height: 100%;
+    background: var(--sidenav-dark-bg);
+    overflow-y: auto;
+    color: var(--colors-grey300);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidenavWrap ul {
+    list-style: none;
+    margin: 0;
+    padding-inline: 0;
+}
+
+.sidenavItems {
+    overflow-y: auto;
+    scrollbar-color: var(--colors-grey700) var(--sidenav-dark-bg);
+    scrollbar-width: thin;
+    padding-block-start: var(--spacers-dp8);
+}
+
+.sidenavParent button {
+    border: none;
+    background: var(--sidenav-dark-bg);
+    color: var(--colors-grey300);
+    font-size: 16px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 32px;
+    padding: 8px 8px 8px 12px;
+    cursor: pointer;
+}
+
+.sidenavParent button:hover {
+    text-decoration: underline;
+    background: var(--sidenav-dark-bg-hover);
+}
+
+.sidenavParent button:focus {
+    outline: 2px solid white;
+    background: var(--sidenav-dark-bg-hover);
+    outline-offset: -2px;
+}
+
+.sidenavParent button:focus:not(:focus-visible) {
+    outline: none;
+    background: var(--sidenav-dark-bg);
+}
+
+.sidenavParentChevron {
+    margin-left: auto;
+    width: 16px;
+    height: 16px;
+    transition: transform 0.1s linear;
+}
+
+.parentIsOpen .sidenavParentChevron {
+    transform: rotate(180deg);
+}
+
+.sidenavLink a {
+    display: flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 8px 8px 8px 12px;
+    background: var(--sidenav-dark-bg);
+    text-decoration: none;
+    color: var(--colors-grey300);
+    font-size: 16px;
+}
+
+.sidenavLink:hover,
+.sidenavLink a:hover {
+    text-decoration: underline;
+    background: var(--sidenav-dark-bg-hover);
+}
+
+.sidenavLink a:focus {
+    outline: 2px solid white;
+    background: var(--sidenav-dark-bg-hover);
+    outline-offset: -2px;
+}
+
+.sidenavLink a:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.sidenavLinkDisabled,
+.sidenavLinkDisabled a {
+    cursor: not-allowed;
+    color: var(--colors-grey500);
+}
+
+.sidenavLinkDisabled:hover,
+.sidenavLinkDisabled:hover > a {
+    background: var(--sidenav-dark-bg);
+}
+
+.sidenavLink a.active,
+.sidenavLink :global(.active) {
+    color: var(--colors-grey300);
+    background: var(--sidenav-dark-bg-selected);
+    box-shadow: inset 6px 0px 0px 0px var(--colors-teal400);
+}
+
+.sidenavParent .sidenavLink a {
+    padding-left: var(--spacers-dp32);
+}
+
+.sidenavFooter {
+    margin-top: auto;
+    padding-bottom: 52px;
+}

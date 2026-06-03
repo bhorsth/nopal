@@ -1,0 +1,9 @@
+# DHIS2 Platform
+node_modules
+.d2
+src/locales
+build
+dhis2.env
+.env
+.agents
+skills-lock.json

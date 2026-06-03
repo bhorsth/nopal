@@ -1,0 +1,313 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"POT-Creation-Date: 2026-05-22T08:05:50.306Z\n"
+"PO-Revision-Date: 2026-05-22T08:05:50.308Z\n"
+
+msgid "No serial found in parsed data. Parse a file first."
+msgstr "No serial found in parsed data. Parse a file first."
+
+msgid "DHIS2 lookup failed: {{message}}"
+msgstr "DHIS2 lookup failed: {{message}}"
+
+msgid "DHIS2 get events failed: {{message}}"
+msgstr "DHIS2 get events failed: {{message}}"
+
+msgid ""
+"Please lookup the device in DHIS2 first to get tracked entity and "
+"enrollment."
+msgstr ""
+"Please lookup the device in DHIS2 first to get tracked entity and "
+"enrollment."
+
+msgid ""
+"Missing tracked entity, enrollment, or org unit. Please lookup the device "
+"again."
+msgstr ""
+"Missing tracked entity, enrollment, or org unit. Please lookup the device "
+"again."
+
+msgid "All history records already exist in DHIS2. No new events to create."
+msgstr "All history records already exist in DHIS2. No new events to create."
+
+msgid "No valid history records with dates found to create events."
+msgstr "No valid history records with dates found to create events."
+
+msgid "DHIS2 create/update events failed: {{message}}"
+msgstr "DHIS2 create/update events failed: {{message}}"
+
+msgid "DHIS2 Actions"
+msgstr "DHIS2 Actions"
+
+msgid "Looking up..."
+msgstr "Looking up..."
+
+msgid "Find Device in DHIS2"
+msgstr "Find Device in DHIS2"
+
+msgid "Loading events..."
+msgstr "Loading events..."
+
+msgid "Show existing data"
+msgstr "Show existing data"
+
+msgid "Creating/updating..."
+msgstr "Creating/updating..."
+
+msgid "Update data"
+msgstr "Update data"
+
+msgid "No tracked entities found"
+msgstr "No tracked entities found"
+
+msgid "Serial"
+msgstr "Serial"
+
+msgid "Tracked Entities Found"
+msgstr "Tracked Entities Found"
+
+msgid "Appliance Manufacturer"
+msgstr "Appliance Manufacturer"
+
+msgid "Appliance Manufacturer Serial Number"
+msgstr "Appliance Manufacturer Serial Number"
+
+msgid "Appliance Model"
+msgstr "Appliance Model"
+
+msgid "No events found"
+msgstr "No events found"
+
+msgid "Events found"
+msgstr "Events found"
+
+msgid "showing 60 most recent"
+msgstr "showing 60 most recent"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Average storage temperature"
+msgstr "Average storage temperature"
+
+msgid "Min. temp"
+msgstr "Min. temp"
+
+msgid "Max. temp"
+msgstr "Max. temp"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Created"
+msgstr "Created"
+
+msgid "Updated"
+msgstr "Updated"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Run a DHIS2 action to see results here."
+msgstr "Run a DHIS2 action to see results here."
+
+msgid "Please select a file to upload."
+msgstr "Please select a file to upload."
+
+msgid "Parsing…"
+msgstr "Parsing…"
+
+msgid "Successful!"
+msgstr "Successful!"
+
+msgid "An error occurred during parsing."
+msgstr "An error occurred during parsing."
+
+msgid "Selected file"
+msgstr "Selected file"
+
+msgid "No file selected. Please try again."
+msgstr "No file selected. Please try again."
+
+msgid "Import Data Logger File"
+msgstr "Import Data Logger File"
+
+msgid "Choose file"
+msgstr "Choose file"
+
+msgid "Choose a Fridge-tag export file (.txt)"
+msgstr "Choose a Fridge-tag export file (.txt)"
+
+msgid "Parse again"
+msgstr "Parse again"
+
+msgid "Download JSON"
+msgstr "Download JSON"
+
+msgid "View Parsed Data"
+msgstr "View Parsed Data"
+
+msgid "Data Logger Temperature History Preview"
+msgstr "Data Logger Temperature History Preview"
+
+msgid "Identification number"
+msgstr "Identification number"
+
+msgid "Date and time of report creation"
+msgstr "Date and time of report creation"
+
+msgid "Activation date"
+msgstr "Activation date"
+
+msgid "Lower alarm limit"
+msgstr "Lower alarm limit"
+
+msgid "Below -0.5°C for 1h"
+msgstr "Below -0.5°C for 1h"
+
+msgid "Upper alarm limit"
+msgstr "Upper alarm limit"
+
+msgid "Above +8.0°C for 10h"
+msgstr "Above +8.0°C for 10h"
+
+msgid "No."
+msgstr "No."
+
+msgid "Events"
+msgstr "Events"
+
+msgid "Average"
+msgstr "Average"
+
+msgid "Signature /"
+msgstr "Signature /"
+
+msgid "notes"
+msgstr "notes"
+
+msgid "Cumulative"
+msgstr "Cumulative"
+
+msgid "daily time"
+msgstr "daily time"
+
+msgid "Alarm trigger time"
+msgstr "Alarm trigger time"
+
+msgid "No history records available"
+msgstr "No history records available"
+
+msgid "Data Import"
+msgstr "Data Import"
+
+msgid "Settings"
+msgstr "Settings"
+
+msgid "Toggle navigation"
+msgstr "Toggle navigation"
+
+msgid ""
+"Import Berlinger Fridge-tag temperature logs and sync daily records to "
+"DHIS2."
+msgstr ""
+"Import Berlinger Fridge-tag temperature logs and sync daily records to "
+"DHIS2."
+
+msgid "DHIS2 base URL"
+msgstr "DHIS2 base URL"
+
+msgid "DHIS2 username"
+msgstr "DHIS2 username"
+
+msgid "DHIS2 password"
+msgstr "DHIS2 password"
+
+msgid "Program ID"
+msgstr "Program ID"
+
+msgid "Program stage ID"
+msgstr "Program stage ID"
+
+msgid "Organisation unit ID"
+msgstr "Organisation unit ID"
+
+msgid "Tracked entity type ID"
+msgstr "Tracked entity type ID"
+
+msgid "Set"
+msgstr "Set"
+
+msgid ""
+"Configuration used by the app at build time and tracker metadata for "
+"imports."
+msgstr ""
+"Configuration used by the app at build time and tracker metadata for "
+"imports."
+
+msgid "Missing configuration"
+msgstr "Missing configuration"
+
+msgid "The following environment variables are not set: {{vars}}"
+msgstr "The following environment variables are not set: {{vars}}"
+
+msgid ""
+"Add them to a .env or dhis2.env file in the project root, then restart yarn "
+"start."
+msgstr ""
+"Add them to a .env or dhis2.env file in the project root, then restart yarn "
+"start."
+
+msgid "Configuration complete"
+msgstr "Configuration complete"
+
+msgid "All required DHIS2 environment variables are present in this build."
+msgstr "All required DHIS2 environment variables are present in this build."
+
+msgid "DHIS2 environment"
+msgstr "DHIS2 environment"
+
+msgid "Tracker metadata"
+msgstr "Tracker metadata"
+
+msgid "These IDs are used when looking up devices and creating events."
+msgstr "These IDs are used when looking up devices and creating events."
+
+msgid "Program"
+msgstr "Program"
+
+msgid "Program stage"
+msgstr "Program stage"
+
+msgid "Serial attribute"
+msgstr "Serial attribute"
+
+msgid "Developer options"
+msgstr "Developer options"
+
+msgid "Parser debug logging"
+msgstr "Parser debug logging"
+
+msgid "Enabled"
+msgstr "Enabled"
+
+msgid "Disabled"
+msgstr "Disabled"
+
+msgctxt "DEBUG=true yarn start."
+msgid "To enable verbose parser logs, restart the dev server with REACT_APP_PARSER"
+msgstr ""
+"To enable verbose parser logs, restart the dev server with "
+"REACT_APP_PARSER_DEBUG=true yarn start."
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "Temperature-Data-Import"
+
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr ""

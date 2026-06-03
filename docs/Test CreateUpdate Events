@@ -1,0 +1,332 @@
+From Browser Console:
+
+FileUploader.jsx?t=1765894278631:238  POST http://localhost:8080/api/42/tracker?async=false 409 (Conflict)
+fetchData @ chunk-YBK4VJTG.js?v=173f3383:10002
+fetch @ chunk-YBK4VJTG.js?v=173f3383:10522
+executeResourceQuery @ chunk-YBK4VJTG.js?v=173f3383:10528
+mutate @ chunk-YBK4VJTG.js?v=173f3383:9830
+handleCreateUpdateEvents @ FileUploader.jsx?t=1765894278631:238
+callCallback2 @ chunk-NHCL4VAN.js?v=173f3383:3674
+invokeGuardedCallbackDev @ chunk-NHCL4VAN.js?v=173f3383:3699
+invokeGuardedCallback @ chunk-NHCL4VAN.js?v=173f3383:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-NHCL4VAN.js?v=173f3383:3736
+executeDispatch @ chunk-NHCL4VAN.js?v=173f3383:7014
+processDispatchQueueItemsInOrder @ chunk-NHCL4VAN.js?v=173f3383:7034
+processDispatchQueue @ chunk-NHCL4VAN.js?v=173f3383:7043
+dispatchEventsForPlugins @ chunk-NHCL4VAN.js?v=173f3383:7051
+(anonymous) @ chunk-NHCL4VAN.js?v=173f3383:7174
+batchedUpdates$1 @ chunk-NHCL4VAN.js?v=173f3383:18913
+batchedUpdates @ chunk-NHCL4VAN.js?v=173f3383:3579
+dispatchEventForPluginEventSystem @ chunk-NHCL4VAN.js?v=173f3383:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-NHCL4VAN.js?v=173f3383:5478
+dispatchEvent @ chunk-NHCL4VAN.js?v=173f3383:5472
+dispatchDiscreteEvent @ chunk-NHCL4VAN.js?v=173f3383:5449
+FileUploader.jsx?t=1765894278631:241 DHIS2 create/update events failed FetchError: Forbidden
+    at parseStatus (chunk-YBK4VJTG.js?v=173f3383:9979:11)
+    at async handleCreateUpdateEvents (FileUploader.jsx?t=1765894278631:238:22)
+handleCreateUpdateEvents @ FileUploader.jsx?t=1765894278631:241
+await in handleCreateUpdateEvents
+callCallback2 @ chunk-NHCL4VAN.js?v=173f3383:3674
+invokeGuardedCallbackDev @ chunk-NHCL4VAN.js?v=173f3383:3699
+invokeGuardedCallback @ chunk-NHCL4VAN.js?v=173f3383:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-NHCL4VAN.js?v=173f3383:3736
+executeDispatch @ chunk-NHCL4VAN.js?v=173f3383:7014
+processDispatchQueueItemsInOrder @ chunk-NHCL4VAN.js?v=173f3383:7034
+processDispatchQueue @ chunk-NHCL4VAN.js?v=173f3383:7043
+dispatchEventsForPlugins @ chunk-NHCL4VAN.js?v=173f3383:7051
+(anonymous) @ chunk-NHCL4VAN.js?v=173f3383:7174
+batchedUpdates$1 @ chunk-NHCL4VAN.js?v=173f3383:18913
+batchedUpdates @ chunk-NHCL4VAN.js?v=173f3383:3579
+dispatchEventForPluginEventSystem @ chunk-NHCL4VAN.js?v=173f3383:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-NHCL4VAN.js?v=173f3383:5478
+dispatchEvent @ chunk-NHCL4VAN.js?v=173f3383:5472
+dispatchDiscreteEvent @ chunk-NHCL4VAN.js?v=173f3383:5449
+FileUploader.jsx?t=1765894639395:250  POST http://localhost:8080/api/42/tracker?async=false 409 (Conflict)
+fetchData @ chunk-YBK4VJTG.js?v=173f3383:10002
+fetch @ chunk-YBK4VJTG.js?v=173f3383:10522
+executeResourceQuery @ chunk-YBK4VJTG.js?v=173f3383:10528
+mutate @ chunk-YBK4VJTG.js?v=173f3383:9830
+handleCreateUpdateEvents @ FileUploader.jsx?t=1765894639395:250
+callCallback2 @ chunk-NHCL4VAN.js?v=173f3383:3674
+invokeGuardedCallbackDev @ chunk-NHCL4VAN.js?v=173f3383:3699
+invokeGuardedCallback @ chunk-NHCL4VAN.js?v=173f3383:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-NHCL4VAN.js?v=173f3383:3736
+executeDispatch @ chunk-NHCL4VAN.js?v=173f3383:7014
+processDispatchQueueItemsInOrder @ chunk-NHCL4VAN.js?v=173f3383:7034
+processDispatchQueue @ chunk-NHCL4VAN.js?v=173f3383:7043
+dispatchEventsForPlugins @ chunk-NHCL4VAN.js?v=173f3383:7051
+(anonymous) @ chunk-NHCL4VAN.js?v=173f3383:7174
+batchedUpdates$1 @ chunk-NHCL4VAN.js?v=173f3383:18913
+batchedUpdates @ chunk-NHCL4VAN.js?v=173f3383:3579
+dispatchEventForPluginEventSystem @ chunk-NHCL4VAN.js?v=173f3383:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-NHCL4VAN.js?v=173f3383:5478
+dispatchEvent @ chunk-NHCL4VAN.js?v=173f3383:5472
+dispatchDiscreteEvent @ chunk-NHCL4VAN.js?v=173f3383:5449
+FileUploader.jsx?t=1765894639395:253 DHIS2 create/update events failed FetchError: Forbidden
+    at parseStatus (chunk-YBK4VJTG.js?v=173f3383:9979:11)
+    at async handleCreateUpdateEvents (FileUploader.jsx?t=1765894639395:250:22)
+handleCreateUpdateEvents @ FileUploader.jsx?t=1765894639395:253
+await in handleCreateUpdateEvents
+callCallback2 @ chunk-NHCL4VAN.js?v=173f3383:3674
+invokeGuardedCallbackDev @ chunk-NHCL4VAN.js?v=173f3383:3699
+invokeGuardedCallback @ chunk-NHCL4VAN.js?v=173f3383:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-NHCL4VAN.js?v=173f3383:3736
+executeDispatch @ chunk-NHCL4VAN.js?v=173f3383:7014
+processDispatchQueueItemsInOrder @ chunk-NHCL4VAN.js?v=173f3383:7034
+processDispatchQueue @ chunk-NHCL4VAN.js?v=173f3383:7043
+dispatchEventsForPlugins @ chunk-NHCL4VAN.js?v=173f3383:7051
+(anonymous) @ chunk-NHCL4VAN.js?v=173f3383:7174
+batchedUpdates$1 @ chunk-NHCL4VAN.js?v=173f3383:18913
+batchedUpdates @ chunk-NHCL4VAN.js?v=173f3383:3579
+dispatchEventForPluginEventSystem @ chunk-NHCL4VAN.js?v=173f3383:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-NHCL4VAN.js?v=173f3383:5478
+dispatchEvent @ chunk-NHCL4VAN.js?v=173f3383:5472
+dispatchDiscreteEvent @ chunk-NHCL4VAN.js?v=173f3383:5449
+FileUploader.jsx?t=1765894639395:254 Events payload: [
+  {
+    "orgUnit": "FV43JisquSm",
+    "occurredAt": "2025-12-09",
+    "status": "ACTIVE",
+    "program": "EThvOOPdWdU",
+    "programStage": "QfEdltht9gW",
+    "trackedEntity": "DLC7I0DynV3",
+    "enrollment": "lECm0ACiwJ9",
+    "dataValues": [
+      {
+        "dataElement": "ZkLhYyo0muJ",
+        "value": "00:00"
+      },
+      {
+        "dataElement": "DEMIzoie6FB",
+        "value": "00:00"
+      },
+      {
+        "dataElement": "iMon5EnL5tT",
+        "value": "22.6"
+      },
+      {
+        "dataElement": "lMGgg93GNCj",
+        "value": "ALARM"
+      },
+      {
+        "dataElement": "ITjXBXe4LHp",
+        "value": "22.8"
+      },
+      {
+        "dataElement": "ELbtzJtt9xI",
+        "value": "22.8"
+      },
+      {
+        "dataElement": "pXXv6fqYhhx",
+        "value": "23"
+      },
+      {
+        "dataElement": "uKw4f9GjumZ",
+        "value": "10:51"
+      },
+      {
+        "dataElement": "twdH0WRfqwl",
+        "value": "10:51"
+      },
+      {
+        "dataElement": "XZHVruaj3BD",
+        "value": "0"
+      },
+      {
+        "dataElement": "YBjvNW66Q78",
+        "value": "HEAT"
+      }
+    ]
+  },
+  {
+    "orgUnit": "FV43JisquSm",
+    "occurredAt": "2025-12-08",
+    "status": "ACTIVE",
+    "program": "EThvOOPdWdU",
+    "programStage": "QfEdltht9gW",
+    "trackedEntity": "DLC7I0DynV3",
+    "enrollment": "lECm0ACiwJ9",
+    "dataValues": [
+      {
+        "dataElement": "ZkLhYyo0muJ",
+        "value": "00:00"
+      },
+      {
+        "dataElement": "DEMIzoie6FB",
+        "value": "00:00"
+      },
+      {
+        "dataElement": "iMon5EnL5tT",
+        "value": "22.5"
+      },
+      {
+        "dataElement": "lMGgg93GNCj",
+        "value": "ALARM"
+      },
+      {
+        "dataElement": "ITjXBXe4LHp",
+        "value": "22.8"
+      },
+      {
+        "dataElement": "ELbtzJtt9xI",
+        "value": "22.8"
+      },
+      {
+        "dataElement": "pXXv6fqYhhx",
+        "value": "23.1"
+      },
+      {
+        "dataElement": "uKw4f9GjumZ",
+        "value": "24:00"
+      },
+      {
+        "dataElement": "twdH0WRfqwl",
+        "value": "24:00"
+      },
+      {
+        "dataElement": "XZHVruaj3BD",
+        "value": "0"
+      },
+      {
+        "dataElement": "YBjvNW66Q78",
+        "value": "HEAT"
+      }
+    ]
+  },
+  {
+    "orgUnit": "FV43JisquSm",
+    "occurredAt": "2025-12-07",
+    "status": "ACTIVE",
+    "program": "EThvOOPdWdU",
+    "programStage": "QfEdltht9gW",
+    "trackedEntity": "DLC7I0DynV3",
+    "enrollment": "lECm0ACiwJ9",
+    "dataValues": [
+      {
+        "dataElement": "ZkLhYyo0muJ",
+        "value": "00:00"
+      },
+      {
+        "dataElement": "DEMIzoie6FB",
+        "value": "00:00"
+      },
+      {
+        "dataElement": "iMon5EnL5tT",
+        "value": "22.9"
+      },
+      {
+        "dataElement": "lMGgg93GNCj",
+        "value": "ALARM"
+      },
+      {
+        "dataElement": "ITjXBXe4LHp",
+        "value": "23"
+      },
+      {
+        "dataElement": "ELbtzJtt9xI",
+        "value": "23"
+      },
+      {
+        "dataElement": "pXXv6fqYhhx",
+        "value": "23.1"
+      },
+      {
+        "dataElement": "uKw4f9GjumZ",
+        "value": "24:00"
+      },
+      {
+        "dataElement": "twdH0WRfqwl",
+        "value": "24:00"
+      },
+      {
+        "dataElement": "XZHVruaj3BD",
+        "value": "0"
+      },
+      {
+        "dataElement": "YBjvNW66Q78",
+        "value": "HEAT"
+      }
+    ]
+  },
+  {
+    "orgUnit": "FV43JisquSm",
+    "occurredAt": "2025-12-06",
+    "status": "ACTIVE",
+    "program": "EThvOOPdWdU",
+    "programStage": "QfEdltht9gW",
+    "trackedEntity": "DLC7I0DynV3",
+    "enrollment": "lECm0ACiwJ9",
+    "dataValues": [
+      {
+        "dataElement": "ZkLhYyo0muJ",
+        "value": "00:00"
+      },
+      {
+        "dataElement": "DEMIzoie6FB",
+        "value": "00:00"
+      },
+      {
+        "dataElement": "iMon5EnL5tT",
+        "value": "22.9"
+      },
+      {
+        "dataElement": "lMGgg93GNCj",
+        "value": "ALARM"
+      },
+      {
+        "dataElement": "ITjXBXe4LHp",
+        "value": "23"
+      },
+      {
+        "dataElement": "ELbtzJtt9xI",
+        "value": "23"
+      },
+      {
+        "dataElement": "pXXv6fqYhhx",
+        "value": "23.1"
+      },
+      {
+        "dataElement": "uKw4f9GjumZ",
+        "value": "24:00"
+      },
+      {
+        "dataElement": "twdH0WRfqwl",
+        "value": "24:00"
+      },
+      {
+        "dataElement": "XZHVruaj3BD",
+        "value": "0"
+      },
+      {
+        "dataElement": "YBjvNW66Q78",
+        "value": "HEAT"
+      }
+    ]
+  },
+  {
+    "orgUnit": "FV43JisquSm",
+    "occurredAt": "2025-12-05",
+    "status": "ACTIVE",
+    "program": "EThvOOPdWdU",
+    "programStage": "QfEdltht9gW",
+    "trackedEntity": "DLC7I0DynV3",
+    "enrollment": "lECm0ACiwJ9",
+    "dataValues": [
+      {
+        "dataElement": "ZkLhYyo0muJ",
+        "value": "00:00"
+      },
+      {
+        "dataElement": "DEMIzoie6FB",
+        "value": "00:00"
+      },
+      {
+        "dataElement": "iMon5EnL5tT",
+        "value": "22.5"
+      },
+      {
+        "dataElem
+
+
+DHIS2 Lookup Result
+DHIS2 create/update events failed: Forbidden: {&quot;status&quot;:&quot;ERROR&quot;,&quot;validationReport&quot;:{&quot;errorReports&quot;:[{&quot;message&quot;:&quot;DataElement `twdH0WRfqwl` is not valid: `value_not_valid_time`.&quot;,&quot;errorCode&quot;:&quot;E1302&quot;,&quot;trackerType&quot;:&quot;EVENT&quot;,&quot;uid&quot;:&quot;PYh5WBjZCu2&quot;,&quot;args&quot;:[&quot;twdH0WRfqwl&quot;,&quot;value_not_valid_time&quot;]},{&quot;message&quot;:&quot;DataElement `twdH0WRfqwl` is not valid: `value_not_valid_time`.&quot;,&quot;errorCode&quot;:&quot;E1302&quot;,&quot;trackerType&quot;:&quot;EVENT&quot;,&quot;uid&quot;:&quot;oBRRmGBZA7Y&quot;,&quot;args&quot;:[&quot;twdH0WRfqwl&quot;,&quot;value_not_valid_time&quot;]},{&quot;message&quot;:&quot;DataElement `uKw4f9GjumZ` is not valid: `value_not_valid_time`.&quot;,&quot;errorCode&quot;:&quot;E1302&quot;,&quot;trackerType&quot;:&quot;EVENT&quot;,&quot;uid&quot;:&quot;oBRRmGBZA7Y&quot;,&quot;args&quot;:[&quot;uKw4f9GjumZ&quot;,&quot;value_not_valid_time&quot;]},{&quot;message&quot;:&quot;DataElement `twdH0WRfqwl` is not valid: `value_not_valid_time`.&quot;,&quot;errorCode&quot;:&quot;E1302&quot;,&quot;trackerType&quot;:&quot;EVENT&quot;,&quot;uid&quot;:&quot;EJ1KQqQKb9l&quot;,&quot;args&quot;:[&quot;twdH0WRfqwl&quot;,&quot;value_not_valid_time&quot;]},{&quot;message&quot;:&quot;DataElement `twdH0WRfqwl` is not valid: `value_not_valid_time`.&quot;,&quot;errorCode&quot;:&quot;E1302&quot;,&quot;trackerType&quot;:&quot;EVENT&quot;,&quot;uid&quot;:&quot;aUGiGCjdkku&quot;,&quot;args&quot;:[&quot;twdH0WRfqwl&quot;,&quot;value_not_valid_time&quot;]},{&quot;message&quot;:&quot;DataElement `twdH0WRfqwl` is not valid: `value_not_valid_time`.&quot;,&quot;errorCode&quot;:&quot;E1302&quot;,&quot;trackerType&quot;:&quot;EVENT&quot;,&quot;uid&quot;:&quot;up2jy6h93zi&quot;,&quot;args&quot;:[&quot;twdH0WRfqwl&quot;,&quot;value_not_valid_time&quot;]},{&quot;message&quot;:&quot;DataElement `uKw4f9GjumZ` is not valid: `value_not_valid_time`.&quot;,&quot;errorCode&quot;:&quot;E1302&quot;,&quot;trackerType&quot;:&quot;EVENT&quot;,&quot;uid&quot;:&quot;aUGiGCjdkku&quot;,&quot;args&quot;:[&quot;uKw4f9GjumZ&quot;,&quot;value_not_valid_time&quot;]},{&quot;message&quot;:&quot;DataElement `twdH0WRfqwl` is not valid: `value_not_valid_time`.&quot;,&quot;errorCode&quot;:&quot;E1302&quot;,&quot;trackerType&quot;:&quot;EVENT&quot;,&quot;uid&quot;:&quot;uIYP5ZTYRVy&quot;,&quot;args&quot;:[&quot;twdH0WRfqwl&quot;,&quot;value_not_valid_time&quot;]},{&quot;message&quot;:&quot;DataElement `uKw4f9GjumZ` is not valid: `value_not_valid_time`.&quot;,&quot;errorCode&quot;:&quot;E1302&quot;,&quot;trackerType&quot;:&quot;EVENT&quot;,&quot;uid&quot;:&quot;EJ1KQqQKb9l&quot;,&quot;args&quot;:[&quot;uKw4f9GjumZ&quot;,&quot;value_not_valid_time&quot;]},{&quot;message&quot;:&quot;DataElement `uKw4f9GjumZ` is not valid: `value_not_valid_time`.&quot;,&quot;errorCode&quot;:&quot;E1302&quot;,&quot;trackerType&quot;:&quot;EVENT&quot;,&quot;uid&quot;:&quot;up2jy6h93zi&quot;,&quot;args&quot;:[&quot;uKw4f9GjumZ&quot;,&quot;value_not_valid_time&quot;]},{&quot;message&quot;:&quot;DataElement `uKw4f9GjumZ` is not valid: `value_not_valid_time`.&quot;,&quot;errorCode&quot;:&quot;E1302&quot;,&quot;trackerType&quot;:&quot;EVENT&quot;,&quot;uid&quot;:&quot;PYh5WBjZCu2&quot;,&quot;args&quot;:[&quot;uKw4f9GjumZ&quot;,&quot;value_not_valid_time&quot;]},{&quot;message&quot;:&quot;DataElement `uKw4f9GjumZ` is not valid: `value_not_valid_time`.&quot;,&quot;errorCode&quot;:&quot;E1302&quot;,&quot;trackerType&quot;:&quot;EVENT&quot;,&quot;uid&quot;:&quot;uIYP5ZTYRVy&quot;,&quot;args&quot;:[&quot;uKw4f9GjumZ&quot;,&quot;value_not_valid_time&quot;]}],&quot;warningReports&quot;:[]},&quot;stats&quot;:{&quot;created&quot;:0,&quot;updated&quot;:0,&quot;deleted&quot;:0,&quot;ignored&quot;:60,&quot;total&quot;:60}}
