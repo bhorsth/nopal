@@ -1,10 +1,13 @@
 import React from 'react'
-import { createHashRouter, Outlet, RouterProvider } from 'react-router-dom'
+import { createHashRouter, Navigate, Outlet, RouterProvider } from 'react-router-dom'
 import { CssReset, CssVariables } from '@dhis2/ui'
 import { Layout } from './components/layout/Layout'
 import { PageWrapper } from './components/layout/PageWrapper'
 import DataImportPage from './pages/DataImportPage'
-import SettingsPage from './pages/SettingsPage'
+import EmsSettingsPage from './pages/EmsSettingsPage'
+import GeneralSettingsPage from './pages/GeneralSettingsPage'
+import FridgeTagSettingsPage from './pages/FridgeTagSettingsPage'
+import { AppSettingsProvider } from './context/AppSettingsContext'
 import { ImportConfigProvider } from './context/ImportConfigContext'
 import { SyncUrlWithGlobalShell } from './utils/SyncUrlWithGlobalShell'
 // './locales' will be populated after running start or build scripts
@@ -30,7 +33,19 @@ const router = createHashRouter([
                             },
                             {
                                 path: '/settings',
-                                element: <SettingsPage />,
+                                element: <Navigate to="/settings/fridge-tag" replace />,
+                            },
+                            {
+                                path: '/settings/fridge-tag',
+                                element: <FridgeTagSettingsPage />,
+                            },
+                            {
+                                path: '/settings/ems',
+                                element: <EmsSettingsPage />,
+                            },
+                            {
+                                path: '/settings/general',
+                                element: <GeneralSettingsPage />,
                             },
                         ],
                     },
@@ -45,7 +60,9 @@ const App = () => (
         <CssReset />
         <CssVariables theme spacers colors elevations />
         <ImportConfigProvider>
-            <RouterProvider router={router} />
+            <AppSettingsProvider>
+                <RouterProvider router={router} />
+            </AppSettingsProvider>
         </ImportConfigProvider>
     </>
 )

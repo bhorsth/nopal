@@ -1,35 +1,41 @@
 import {
     DEFAULT_FIELD_MAPPINGS,
 } from '../config/fieldMappingDefinitions'
+import {
+    EMS_DEFAULT_FIELD_MAPPINGS,
+} from '../config/emsFieldMappingDefinitions'
 import { getDhis2Config } from '../config/dhis2'
 import { loadImportConfig, saveImportConfig } from '../config/importConfigStorage'
-import { setParserDebugEnabled } from '../utils/parserDebug'
 import {
-    dataStoreResource,
-    DATA_STORE_KEY,
     DATA_STORE_NAMESPACE,
+    DEVICE_DATA_STORE_KEYS,
+    getDataStoreResource,
     isDataStoreNotFoundError,
     normalizeDataStoreEntry,
 } from '../config/importSettingsDataStore'
 
-export const mergeImportSettings = (partial = {}) => {
-    const { config } = getDhis2Config()
+/** @typedef {'fridgeTag' | 'ems'} ImportDevice */
 
-    const settings = {
+const DEVICE_DEFAULT_FIELD_MAPPINGS = {
+    fridgeTag: DEFAULT_FIELD_MAPPINGS,
+    ems: EMS_DEFAULT_FIELD_MAPPINGS,
+}
+
+/**
+ * @param {ImportDevice} device
+ */
+export const mergeImportSettings = (device, partial = {}) => {
+    const { config } = getDhis2Config()
+    const defaultFieldMappings = DEVICE_DEFAULT_FIELD_MAPPINGS[device]
+
+    return {
         programId: partial.programId || config.programId || '',
         programStageId: partial.programStageId || config.programStageId || '',
         fieldMappings: {
-            ...DEFAULT_FIELD_MAPPINGS,
+            ...defaultFieldMappings,
             ...(partial.fieldMappings || {}),
         },
-        parserDebug:
-            typeof partial.parserDebug === 'boolean'
-                ? partial.parserDebug
-                : process.env.REACT_APP_PARSER_DEBUG === 'true',
     }
-
-    setParserDebugEnabled(settings.parserDebug)
-    return settings
 }
 
 const hasStoredSettings = (partial) =>
@@ -39,7 +45,13 @@ const hasStoredSettings = (partial) =>
             Object.values(partial?.fieldMappings || {}).some(Boolean)
     )
 
-export async function loadImportSettings(engine) {
+/**
+ * @param {ImportDevice} device
+ */
+export async function loadImportSettings(engine, device) {
+    const dataStoreResource = getDataStoreResource(device)
+    const dataStoreKey = DEVICE_DATA_STORE_KEYS[device]
+
     try {
         const result = await engine.query({
             settings: {
@@ -51,34 +63,34 @@ export async function loadImportSettings(engine) {
         const fromStore = normalizeDataStoreEntry(result?.settings)
         if (fromStore) {
             return {
-                settings: mergeImportSettings(fromStore),
+                settings: mergeImportSettings(device, fromStore),
                 source: 'dataStore',
             }
         }
     } catch (error) {
         if (!isDataStoreNotFoundError(error)) {
-            const local = loadImportConfig()
+            const local = loadImportConfig(device)
             if (hasStoredSettings(local)) {
                 return {
-                    settings: mergeImportSettings(local),
+                    settings: mergeImportSettings(device, local),
                     source: 'localStorage',
                     warning: error.message,
                 }
             }
             return {
-                settings: mergeImportSettings(),
+                settings: mergeImportSettings(device),
                 source: 'defaults',
                 warning: error.message,
             }
         }
     }
 
-    const local = loadImportConfig()
-    const settings = mergeImportSettings(local)
+    const local = loadImportConfig(device)
+    const settings = mergeImportSettings(device, local)
 
     if (hasStoredSettings(local)) {
         try {
-            await saveImportSettings(engine, settings)
+            await saveImportSettings(engine, device, settings)
             return { settings, source: 'dataStore', migratedFrom: 'localStorage' }
         } catch (migrationError) {
             return {
@@ -92,15 +104,28 @@ export async function loadImportSettings(engine) {
     return { settings, source: 'defaults' }
 }
 
-export async function saveImportSettings(engine, settings) {
+/**
+ * @param {ImportDevice} device
+ */
+const stripLegacyFields = (device, settings) => {
+    if (device !== 'fridgeTag') return settings
+    const { parserDebug, ...rest } = settings
+    return rest
+}
+
+export async function saveImportSettings(engine, device, settings) {
+    const dataStoreResource = getDataStoreResource(device)
+    const dataStoreKey = DEVICE_DATA_STORE_KEYS[device]
+    const payload = stripLegacyFields(device, settings)
+
     try {
         await engine.mutate({
             resource: 'dataStore',
             id: dataStoreResource,
             type: 'update',
-            data: settings,
+            data: payload,
         })
-        saveImportConfig(settings)
+        saveImportConfig(device, payload)
         return { source: 'dataStore' }
     } catch (error) {
         if (isDataStoreNotFoundError(error)) {
@@ -109,19 +134,19 @@ export async function saveImportSettings(engine, settings) {
                     resource: `dataStore/${DATA_STORE_NAMESPACE}`,
                     type: 'create',
                     data: {
-                        key: DATA_STORE_KEY,
-                        value: settings,
+                        key: dataStoreKey,
+                        value: payload,
                     },
                 })
-                saveImportConfig(settings)
+                saveImportConfig(device, payload)
                 return { source: 'dataStore' }
             } catch (createError) {
-                saveImportConfig(settings)
+                saveImportConfig(device, payload)
                 return { source: 'localStorage', warning: createError.message }
             }
         }
 
-        saveImportConfig(settings)
+        saveImportConfig(device, payload)
         return { source: 'localStorage', warning: error.message }
     }
 }

@@ -3,11 +3,12 @@ import i18n from '@dhis2/d2-i18n'
 import { Button, ButtonStrip, FileInputField, NoticeBox } from '@dhis2/ui'
 import { FridgeTagParser, toJson } from '../utils/fridgeTagParser'
 import classes from '../App.module.css'
+import { useAppSettings } from '../context/AppSettingsContext'
 import TemperatureHistoryPreview from './TemperatureHistoryPreview'
 import Dhis2Actions from './Dhis2Actions'
 
 const FileUploader = () => {
-    const [selectedFile, setSelectedFile] = useState(null)
+    const { showDownloadJson, showViewParsedData } = useAppSettings()
     const [uploadStatus, setUploadStatus] = useState({ kind: null, text: '' })
     const [parsedData, setParsedData] = useState(null)
     const [historyPreviewOpen, setHistoryPreviewOpen] = useState(false)
@@ -39,7 +40,6 @@ const FileUploader = () => {
 
     const handleFileChange = async ({ files }) => {
         const file = files?.length > 0 ? files[0] : null
-        setSelectedFile(file || null)
         setUploadStatus(
             file
                 ? {
@@ -54,10 +54,6 @@ const FileUploader = () => {
         if (file) {
             await parseFile(file)
         }
-    }
-
-    const handleParse = async () => {
-        await parseFile(selectedFile)
     }
 
     const downloadJSON = () => {
@@ -100,14 +96,13 @@ const FileUploader = () => {
                 />
             </div>
 
-            <ButtonStrip>
-                <Button primary onClick={handleParse} disabled={!selectedFile}>
-                    {i18n.t('Parse again')}
-                </Button>
-                <Button onClick={downloadJSON} disabled={!parsedData}>
-                    {i18n.t('Download JSON')}
-                </Button>
-            </ButtonStrip>
+            {showDownloadJson ? (
+                <ButtonStrip>
+                    <Button onClick={downloadJSON} disabled={!parsedData}>
+                        {i18n.t('Download JSON')}
+                    </Button>
+                </ButtonStrip>
+            ) : null}
 
             {uploadStatus.text ? (
                 <NoticeBox error={uploadStatus.kind === 'error'} valid={uploadStatus.kind === 'valid'}>
@@ -115,7 +110,7 @@ const FileUploader = () => {
                 </NoticeBox>
             ) : null}
 
-            {parsedData ? (
+            {parsedData && showViewParsedData ? (
                 <details>
                     <summary>{i18n.t('View Parsed Data')}</summary>
                     <pre className={classes.monospacePre}>{JSON.stringify(parsedData, null, 2)}</pre>

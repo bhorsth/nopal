@@ -9,43 +9,49 @@ import {
     Table,
     TableBody,
     TableCell,
-    SwitchField,
     TableRow,
 } from '@dhis2/ui'
-import { getDhis2Config } from '../config/dhis2'
-import FieldMappingFields from '../components/settings/FieldMappingFields'
-import { DATA_STORE_NAMESPACE, DATA_STORE_KEY } from '../config/importSettingsDataStore'
-import { useImportConfig } from '../context/ImportConfigContext'
-import { useProgramStages, useTrackerPrograms } from '../hooks/useTrackerPrograms'
-import classes from '../App.module.css'
+import { getDhis2Config } from '../../config/dhis2'
+import { DATA_STORE_NAMESPACE } from '../../config/importSettingsDataStore'
+import { useProgramStages, useTrackerPrograms } from '../../hooks/useTrackerPrograms'
+import FieldMappingFields from './FieldMappingFields'
+import classes from '../../App.module.css'
 
 const APP_CONFIG_LABELS = {
     REACT_APP_DHIS2_ORG_UNIT_ID: i18n.t('Organisation unit ID'),
     REACT_APP_DHIS2_TE_TYPE_ID: i18n.t('Tracked entity type ID'),
 }
 
-const SettingsPage = () => {
-    const { config, missing, isValid: isEnvValid } = useMemo(() => getDhis2Config(), [])
+const DeviceImportSettingsForm = ({
+    title,
+    description,
+    dataStoreKey,
+    config,
+    fieldMappingFields,
+    groupFieldMappingsByCategory = false,
+    incompleteSettingsMessage,
+}) => {
+    const { config: envConfig, missing, isValid: isEnvValid } = useMemo(() => getDhis2Config(), [])
     const {
         programId,
         programStageId,
+        fieldMappings,
         setProgramId,
         setProgramStageId,
+        setFieldMapping,
         isImportConfigValid,
         settingsLoading,
         settingsSaving,
         storageSource,
         storageWarning,
-        parserDebug,
-        setParserDebug,
-    } = useImportConfig()
+    } = config
 
     const { programs, loading: programsLoading, error: programsError } = useTrackerPrograms()
     const { stages, loading: stagesLoading, error: stagesError } = useProgramStages(programId)
 
     const appConfigRows = [
-        { key: 'REACT_APP_DHIS2_ORG_UNIT_ID', value: config.orgUnitId },
-        { key: 'REACT_APP_DHIS2_TE_TYPE_ID', value: config.teTypeId },
+        { key: 'REACT_APP_DHIS2_ORG_UNIT_ID', value: envConfig.orgUnitId },
+        { key: 'REACT_APP_DHIS2_TE_TYPE_ID', value: envConfig.teTypeId },
     ]
 
     const programInList = programs.some((p) => p.id === programId)
@@ -88,7 +94,7 @@ const SettingsPage = () => {
                 'Settings are saved in the DHIS2 data store ({{namespace}}/{{key}}) and shared by all users on this instance.',
                 {
                     namespace: DATA_STORE_NAMESPACE,
-                    key: DATA_STORE_KEY,
+                    key: dataStoreKey,
                     nsSeparator: false,
                 }
             )
@@ -102,20 +108,18 @@ const SettingsPage = () => {
             'Settings will be saved to the DHIS2 data store ({{namespace}}/{{key}}) when you make changes.',
             {
                 namespace: DATA_STORE_NAMESPACE,
-                key: DATA_STORE_KEY,
+                key: dataStoreKey,
                 nsSeparator: false,
             }
         )
-    }, [storageSource])
+    }, [storageSource, dataStoreKey])
 
     const selectedProgramLabel = programs.find((p) => p.id === programId)?.displayName
 
     return (
         <div className={classes.page}>
-            <h1 className={classes.pageTitle}>{i18n.t('Settings')}</h1>
-            <p className={classes.pageDescription}>
-                {i18n.t('Import metadata and developer options for this app.')}
-            </p>
+            <h1 className={classes.pageTitle}>{title}</h1>
+            <p className={classes.pageDescription}>{description}</p>
 
             {!isEnvValid ? (
                 <NoticeBox error title={i18n.t('Missing configuration')}>
@@ -146,9 +150,7 @@ const SettingsPage = () => {
 
             {!settingsLoading && !isImportConfigValid ? (
                 <NoticeBox warning title={i18n.t('Import settings incomplete')}>
-                    {i18n.t(
-                        'Select a program, program stage, and map all fields below to enable tracker imports.'
-                    )}
+                    {incompleteSettingsMessage}
                 </NoticeBox>
             ) : !settingsLoading && isEnvValid ? (
                 <NoticeBox valid title={i18n.t('Configuration complete')}>
@@ -245,7 +247,14 @@ const SettingsPage = () => {
                                     'Map each imported value to a tracked entity attribute or program stage data element on your instance.'
                                 )}
                             </p>
-                            <FieldMappingFields />
+                            <FieldMappingFields
+                                fieldMappingFields={fieldMappingFields}
+                                programId={programId}
+                                programStageId={programStageId}
+                                fieldMappings={fieldMappings}
+                                setFieldMapping={setFieldMapping}
+                                groupByCategory={groupFieldMappingsByCategory}
+                            />
                         </>
                     ) : null}
 
@@ -278,25 +287,8 @@ const SettingsPage = () => {
                     ) : null}
                 </div>
             </Card>
-
-            <Card className={classes.settingsCard}>
-                <div className={classes.cardBody}>
-                    <h2 className={classes.sectionTitle}>{i18n.t('Developer options')}</h2>
-                    <div className={classes.settingsFields}>
-                        <SwitchField
-                            label={i18n.t('Parser debug logging')}
-                            helpText={i18n.t(
-                                'When enabled, detailed parser steps are written to the browser console while importing a file (open Developer Tools → Console).'
-                            )}
-                            checked={parserDebug}
-                            onChange={({ checked }) => setParserDebug(checked)}
-                            disabled={settingsLoading || settingsSaving}
-                        />
-                    </div>
-                </div>
-            </Card>
         </div>
     )
 }
 
-export default SettingsPage
+export default DeviceImportSettingsForm

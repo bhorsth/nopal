@@ -1,9 +1,22 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import i18n from '@dhis2/d2-i18n'
 import { useDataEngine } from '@dhis2/app-runtime'
-import { Button, ButtonStrip, NoticeBox, Table, TableBody, TableCell, TableCellHead, TableHead, TableRow, TableRowHead } from '@dhis2/ui'
+import {
+    Button,
+    ButtonStrip,
+    NoticeBox,
+    Table,
+    TableBody,
+    TableCell,
+    TableCellHead,
+    TableHead,
+    TableRow,
+    TableRowHead,
+} from '@dhis2/ui'
 import { useImportConfig } from '../context/ImportConfigContext'
 import { buildEventDataValues } from '../utils/buildEventDataValues'
+import { getTeiAttributeByName, lookupTrackedEntitiesBySerial } from '../services/trackerLookup'
+import DeviceRegistrationPanel from './DeviceRegistrationPanel'
 import classes from '../App.module.css'
 
 const formatDate = (dateStr) => {
@@ -49,12 +62,18 @@ const Dhis2Actions = ({ parsedData }) => {
     const [createResult, setCreateResult] = useState(null)
 
     const resultScrollRef = useRef(null)
+    const lastAutoLookupKeyRef = useRef('')
 
     const serial = parsedData?.config?.serial
+    const serialAttributeId = fieldMappings.serialAttribute
 
-    const handleLookupInDhis2 = async () => {
+    const runLookup = useCallback(async () => {
         setLookupError('')
         setLookupResult(null)
+        setEventsResult(null)
+        setEventsError('')
+        setCreateResult(null)
+        setCreateError('')
 
         if (!serial) {
             setLookupError(i18n.t('No serial found in parsed data. Parse a file first.'))
@@ -70,19 +89,11 @@ const Dhis2Actions = ({ parsedData }) => {
 
         setLookupLoading(true)
         try {
-            const query = {
-                trackedEntities: {
-                    resource: 'tracker/trackedEntities',
-                    params: {
-                        filter: `${fieldMappings.serialAttribute}:like:${serial}`,
-                        fields: 'trackedEntity,orgUnit,attributes[attribute,displayName,value],enrollments[enrollment,orgUnit]',
-                        program: programId,
-                        orgUnitMode: 'ACCESSIBLE',
-                    },
-                },
-            }
-            const result = await engine.query(query)
-            const entities = result?.trackedEntities?.trackedEntities ?? []
+            const entities = await lookupTrackedEntitiesBySerial(engine, {
+                serial,
+                programId,
+                serialAttributeId,
+            })
             setLookupResult({ serial, entities })
         } catch (err) {
             // eslint-disable-next-line no-console
@@ -91,7 +102,17 @@ const Dhis2Actions = ({ parsedData }) => {
         } finally {
             setLookupLoading(false)
         }
-    }
+    }, [engine, serial, isImportConfigValid, programId, serialAttributeId])
+
+    useEffect(() => {
+        if (!parsedData || !serial) return
+
+        const lookupKey = `${serial}:${programId}:${serialAttributeId}:${isImportConfigValid}`
+        if (lastAutoLookupKeyRef.current === lookupKey) return
+        lastAutoLookupKeyRef.current = lookupKey
+
+        runLookup()
+    }, [parsedData, serial, programId, serialAttributeId, isImportConfigValid, runLookup])
 
     const handleGetEvents = async () => {
         setEventsError('')
@@ -115,7 +136,7 @@ const Dhis2Actions = ({ parsedData }) => {
                 trackedEntities: {
                     resource: 'tracker/trackedEntities',
                     params: {
-                        filter: `${fieldMappings.serialAttribute}:like:${serial}`,
+                        filter: `${serialAttributeId}:like:${serial}`,
                         fields: 'trackedEntity,enrollments[enrollment,events[event,occurredAt,status,programStage,dataValues[dataElement,value]]]',
                         program: programId,
                         orgUnitMode: 'ACCESSIBLE',
@@ -265,6 +286,12 @@ const Dhis2Actions = ({ parsedData }) => {
         }
     }
 
+    const handleRegistered = useCallback((result) => {
+        setLookupResult(result)
+        setLookupError('')
+        lastAutoLookupKeyRef.current = `${result.serial}:${programId}:${serialAttributeId}:${isImportConfigValid}`
+    }, [programId, serialAttributeId, isImportConfigValid])
+
     useEffect(() => {
         if (resultScrollRef.current) {
             resultScrollRef.current.scrollTop = resultScrollRef.current.scrollHeight
@@ -274,89 +301,98 @@ const Dhis2Actions = ({ parsedData }) => {
     const teiSummaryRows = useMemo(() => {
         if (!lookupResult?.entities?.length) return null
         const tei = lookupResult.entities[0]
-        const attributes = Array.isArray(tei.attributes) ? tei.attributes : []
-        const byName = (needle) =>
-            attributes.find((attr) => attr.displayName === needle || attr.displayName?.toLowerCase().includes(needle.toLowerCase()))
 
-        const manufacturer = byName('Appliance Manufacturer')
-        const manufacturerSerial = byName('Appliance Manufacturer Serial Number')
-        const model = byName('Appliance Model')
-
-        return { manufacturer, manufacturerSerial, model }
+        return {
+            manufacturer: getTeiAttributeByName(tei, 'Appliance Manufacturer'),
+            manufacturerSerial: getTeiAttributeByName(tei, 'Appliance Manufacturer Serial Number'),
+            model: getTeiAttributeByName(tei, 'Appliance Model'),
+        }
     }, [lookupResult])
 
     const busy = lookupLoading || eventsLoading || createLoading
+    const deviceFound = lookupResult?.entities?.length > 0
+    const lookupComplete = lookupResult !== null && !lookupLoading
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
                 <h2 style={{ margin: 0, fontSize: '16px' }}>{i18n.t('DHIS2 Actions')}</h2>
-                <ButtonStrip>
-                    <Button onClick={handleLookupInDhis2} disabled={busy}>
-                        {lookupLoading ? i18n.t('Looking up...') : i18n.t('Find Device in DHIS2')}
-                    </Button>
-                    <Button onClick={handleGetEvents} disabled={busy}>
-                        {eventsLoading ? i18n.t('Loading events...') : i18n.t('Show existing data')}
-                    </Button>
-                    <Button primary onClick={handleCreateEvents} disabled={busy}>
-                        {createLoading ? i18n.t('Creating/updating...') : i18n.t('Update data')}
-                    </Button>
-                </ButtonStrip>
+                {deviceFound ? (
+                    <ButtonStrip>
+                        <Button onClick={handleGetEvents} disabled={busy}>
+                            {eventsLoading ? i18n.t('Loading events...') : i18n.t('Show existing data')}
+                        </Button>
+                        <Button primary onClick={handleCreateEvents} disabled={busy}>
+                            {createLoading ? i18n.t('Creating/updating...') : i18n.t('Update data')}
+                        </Button>
+                    </ButtonStrip>
+                ) : null}
             </div>
+
+            {lookupLoading ? (
+                <NoticeBox title={i18n.t('Looking up device in DHIS2…')}>
+                    {i18n.t('Searching for logger serial {{serial}}.', { serial, nsSeparator: false })}
+                </NoticeBox>
+            ) : null}
 
             {lookupError ? <NoticeBox error>{lookupError}</NoticeBox> : null}
             {eventsError ? <NoticeBox error>{eventsError}</NoticeBox> : null}
             {createError ? <NoticeBox error>{createError}</NoticeBox> : null}
 
             <div ref={resultScrollRef} style={{ maxHeight: 420, overflow: 'auto' }}>
-                {lookupResult ? (
+                {lookupComplete && !deviceFound && isImportConfigValid && serial ? (
+                    <DeviceRegistrationPanel
+                        serial={serial}
+                        programId={programId}
+                        serialAttributeId={serialAttributeId}
+                        onRegistered={handleRegistered}
+                    />
+                ) : null}
+
+                {lookupResult && deviceFound ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        {lookupResult.entities.length === 0 ? (
-                            <NoticeBox warning>{i18n.t('No tracked entities found')}</NoticeBox>
-                        ) : (
-                            <div className={classes.tableWrap}>
-                                <Table>
-                                    <TableBody>
+                        <div className={classes.tableWrap}>
+                            <Table>
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell dense>{i18n.t('Serial')}</TableCell>
+                                        <TableCell dense>
+                                            <strong>{lookupResult.serial}</strong>
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell dense>{i18n.t('Tracked Entities Found')}</TableCell>
+                                        <TableCell dense>
+                                            <strong>{lookupResult.entities.length}</strong>
+                                        </TableCell>
+                                    </TableRow>
+                                    {teiSummaryRows?.manufacturer ? (
                                         <TableRow>
-                                            <TableCell dense>{i18n.t('Serial')}</TableCell>
+                                            <TableCell dense>{i18n.t('Appliance Manufacturer')}</TableCell>
                                             <TableCell dense>
-                                                <strong>{lookupResult.serial}</strong>
+                                                <strong>{teiSummaryRows.manufacturer.value}</strong>
                                             </TableCell>
                                         </TableRow>
+                                    ) : null}
+                                    {teiSummaryRows?.manufacturerSerial ? (
                                         <TableRow>
-                                            <TableCell dense>{i18n.t('Tracked Entities Found')}</TableCell>
+                                            <TableCell dense>{i18n.t('Appliance Manufacturer Serial Number')}</TableCell>
                                             <TableCell dense>
-                                                <strong>{lookupResult.entities.length}</strong>
+                                                <strong>{teiSummaryRows.manufacturerSerial.value}</strong>
                                             </TableCell>
                                         </TableRow>
-                                        {teiSummaryRows?.manufacturer ? (
-                                            <TableRow>
-                                                <TableCell dense>{i18n.t('Appliance Manufacturer')}</TableCell>
-                                                <TableCell dense>
-                                                    <strong>{teiSummaryRows.manufacturer.value}</strong>
-                                                </TableCell>
-                                            </TableRow>
-                                        ) : null}
-                                        {teiSummaryRows?.manufacturerSerial ? (
-                                            <TableRow>
-                                                <TableCell dense>{i18n.t('Appliance Manufacturer Serial Number')}</TableCell>
-                                                <TableCell dense>
-                                                    <strong>{teiSummaryRows.manufacturerSerial.value}</strong>
-                                                </TableCell>
-                                            </TableRow>
-                                        ) : null}
-                                        {teiSummaryRows?.model ? (
-                                            <TableRow>
-                                                <TableCell dense>{i18n.t('Appliance Model')}</TableCell>
-                                                <TableCell dense>
-                                                    <strong>{teiSummaryRows.model.value}</strong>
-                                                </TableCell>
-                                            </TableRow>
-                                        ) : null}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        )}
+                                    ) : null}
+                                    {teiSummaryRows?.model ? (
+                                        <TableRow>
+                                            <TableCell dense>{i18n.t('Appliance Model')}</TableCell>
+                                            <TableCell dense>
+                                                <strong>{teiSummaryRows.model.value}</strong>
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : null}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </div>
                 ) : null}
 
@@ -446,14 +482,9 @@ const Dhis2Actions = ({ parsedData }) => {
                         </div>
                     </div>
                 ) : null}
-
-                {!lookupError && !lookupResult && !eventsError && !eventsResult && !createError && !createResult ? (
-                    <div style={{ color: 'var(--colors-grey700)', fontSize: '14px' }}>{i18n.t('Run a DHIS2 action to see results here.')}</div>
-                ) : null}
             </div>
         </div>
     )
 }
 
 export default Dhis2Actions
-

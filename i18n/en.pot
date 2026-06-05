@@ -5,11 +5,18 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-22T08:05:50.306Z\n"
-"PO-Revision-Date: 2026-05-22T08:05:50.308Z\n"
+"POT-Creation-Date: 2026-06-05T08:57:00.565Z\n"
+"PO-Revision-Date: 2026-06-05T08:57:00.566Z\n"
 
 msgid "No serial found in parsed data. Parse a file first."
 msgstr "No serial found in parsed data. Parse a file first."
+
+msgid ""
+"Complete import settings and field mappings in Settings before using DHIS2 "
+"actions."
+msgstr ""
+"Complete import settings and field mappings in Settings before using DHIS2 "
+"actions."
 
 msgid "DHIS2 lookup failed: {{message}}"
 msgstr "DHIS2 lookup failed: {{message}}"
@@ -202,52 +209,32 @@ msgstr "Alarm trigger time"
 msgid "No history records available"
 msgstr "No history records available"
 
-msgid "Data Import"
-msgstr "Data Import"
-
-msgid "Settings"
-msgstr "Settings"
-
-msgid "Toggle navigation"
-msgstr "Toggle navigation"
-
-msgid ""
-"Import Berlinger Fridge-tag temperature logs and sync daily records to "
-"DHIS2."
-msgstr ""
-"Import Berlinger Fridge-tag temperature logs and sync daily records to "
-"DHIS2."
-
-msgid "DHIS2 base URL"
-msgstr "DHIS2 base URL"
-
-msgid "DHIS2 username"
-msgstr "DHIS2 username"
-
-msgid "DHIS2 password"
-msgstr "DHIS2 password"
-
-msgid "Program ID"
-msgstr "Program ID"
-
-msgid "Program stage ID"
-msgstr "Program stage ID"
-
 msgid "Organisation unit ID"
 msgstr "Organisation unit ID"
 
 msgid "Tracked entity type ID"
 msgstr "Tracked entity type ID"
 
-msgid "Set"
-msgstr "Set"
+msgid ""
+"Settings are saved in the DHIS2 data store ({{namespace}}/{{key}}) and "
+"shared by all users on this instance."
+msgstr ""
+"Settings are saved in the DHIS2 data store ({{namespace}}/{{key}}) and "
+"shared by all users on this instance."
 
 msgid ""
-"Configuration used by the app at build time and tracker metadata for "
-"imports."
+"Could not save to the DHIS2 data store. Settings are stored in this browser "
+"only."
 msgstr ""
-"Configuration used by the app at build time and tracker metadata for "
-"imports."
+"Could not save to the DHIS2 data store. Settings are stored in this browser "
+"only."
+
+msgid ""
+"Settings will be saved to the DHIS2 data store ({{namespace}}/{{key}}) when "
+"you make changes."
+msgstr ""
+"Settings will be saved to the DHIS2 data store ({{namespace}}/{{key}}) when "
+"you make changes."
 
 msgid "Missing configuration"
 msgstr "Missing configuration"
@@ -262,51 +249,424 @@ msgstr ""
 "Add them to a .env or dhis2.env file in the project root, then restart yarn "
 "start."
 
+msgid "Storage notice"
+msgstr "Storage notice"
+
+msgid "Shared settings"
+msgstr "Shared settings"
+
+msgid "Local settings only"
+msgstr "Local settings only"
+
+msgid "Import settings incomplete"
+msgstr "Import settings incomplete"
+
 msgid "Configuration complete"
 msgstr "Configuration complete"
 
-msgid "All required DHIS2 environment variables are present in this build."
-msgstr "All required DHIS2 environment variables are present in this build."
+msgid "Import settings are ready."
+msgstr "Import settings are ready."
 
-msgid "DHIS2 environment"
-msgstr "DHIS2 environment"
+msgid "Import settings"
+msgstr "Import settings"
 
-msgid "Tracker metadata"
-msgstr "Tracker metadata"
+msgid "Saving…"
+msgstr "Saving…"
 
-msgid "These IDs are used when looking up devices and creating events."
-msgstr "These IDs are used when looking up devices and creating events."
+msgid "Could not load programs"
+msgstr "Could not load programs"
 
-msgid "Program"
-msgstr "Program"
+msgid "Program ID"
+msgstr "Program ID"
 
-msgid "Program stage"
-msgstr "Program stage"
+msgid "Tracker programs you have access to on this instance"
+msgstr "Tracker programs you have access to on this instance"
 
-msgid "Serial attribute"
-msgstr "Serial attribute"
+msgid "Select a program"
+msgstr "Select a program"
+
+msgid "Filter programs"
+msgstr "Filter programs"
+
+msgid "No programs found"
+msgstr "No programs found"
+
+msgid "Could not load program stages"
+msgstr "Could not load program stages"
+
+msgid "Program stage ID"
+msgstr "Program stage ID"
+
+msgid "Stages for {{program}}"
+msgstr "Stages for {{program}}"
+
+msgid "Select a program first"
+msgstr "Select a program first"
+
+msgid "Select a program stage"
+msgstr "Select a program stage"
+
+msgid "Filter program stages"
+msgstr "Filter program stages"
+
+msgid "No program stages found"
+msgstr "No program stages found"
+
+msgid "Field mapping"
+msgstr "Field mapping"
+
+msgid ""
+"Map each imported value to a tracked entity attribute or program stage data "
+"element on your instance."
+msgstr ""
+"Map each imported value to a tracked entity attribute or program stage data "
+"element on your instance."
+
+msgid "Additional settings"
+msgstr "Additional settings"
+
+msgid "Select mapping"
+msgstr "Select mapping"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "No matches found"
+msgstr "No matches found"
+
+msgid "Tracked entity attribute"
+msgstr "Tracked entity attribute"
+
+msgid "Program stage data element"
+msgstr "Program stage data element"
+
+msgid "Select a program and program stage to map fields to DHIS2 metadata."
+msgstr "Select a program and program stage to map fields to DHIS2 metadata."
+
+msgid "Could not load field options"
+msgstr "Could not load field options"
+
+msgid ""
+"This EMS field ({{objectId}}) maps to organisation unit metadata and cannot "
+"be configured here yet."
+msgstr ""
+"This EMS field ({{objectId}}) maps to organisation unit metadata and cannot "
+"be configured here yet."
+
+msgid "Data Import"
+msgstr "Data Import"
+
+msgid "Settings"
+msgstr "Settings"
+
+msgid "Fridge-tag"
+msgstr "Fridge-tag"
+
+msgid "EMS"
+msgstr "EMS"
 
 msgid "Developer options"
 msgstr "Developer options"
 
+msgid "Toggle navigation"
+msgstr "Toggle navigation"
+
+msgid "Appliance manufacturer"
+msgstr "Appliance manufacturer"
+
+msgid "EMS field: {{objectId}}"
+msgstr "EMS field: {{objectId}}"
+
+msgid "Appliance model"
+msgstr "Appliance model"
+
+msgid "Appliance manufacturer serial number"
+msgstr "Appliance manufacturer serial number"
+
+msgid "Appliance indentifier"
+msgstr "Appliance indentifier"
+
+msgid "Appliance date of production"
+msgstr "Appliance date of production"
+
+msgid "Appliance PQS code"
+msgstr "Appliance PQS code"
+
+msgid "Appliance PQS device type"
+msgstr "Appliance PQS device type"
+
+msgid "Logger manufacturer"
+msgstr "Logger manufacturer"
+
+msgid "Logger model"
+msgstr "Logger model"
+
+msgid "Logger serial number"
+msgstr "Logger serial number"
+
+msgid "Logger identifier"
+msgstr "Logger identifier"
+
+msgid "Logger date of production"
+msgstr "Logger date of production"
+
+msgid "Logger software version"
+msgstr "Logger software version"
+
+msgid "Logger PQS code"
+msgstr "Logger PQS code"
+
+msgid "EMD identifier"
+msgstr "EMD identifier"
+
+msgid "EMD manufacturer"
+msgstr "EMD manufacturer"
+
+msgid "EMD model"
+msgstr "EMD model"
+
+msgid "EMD serial number"
+msgstr "EMD serial number"
+
+msgid "EMD date of production"
+msgstr "EMD date of production"
+
+msgid "EMD software version"
+msgstr "EMD software version"
+
+msgid "EMD PQS code"
+msgstr "EMD PQS code"
+
+msgid "Compressor Electronic Unit Manufacturer"
+msgstr "Compressor Electronic Unit Manufacturer"
+
+msgid "Compressor Electronic Unit Product Code"
+msgstr "Compressor Electronic Unit Product Code"
+
+msgid "Compressor Electronic Unit Software version"
+msgstr "Compressor Electronic Unit Software version"
+
+msgid "Compressor Electronic Unit production date"
+msgstr "Compressor Electronic Unit production date"
+
+msgid "Secondary Compressor Electronic Unit Manufacturer"
+msgstr "Secondary Compressor Electronic Unit Manufacturer"
+
+msgid "Secondary Compressor Electronic Unit Product Code"
+msgstr "Secondary Compressor Electronic Unit Product Code"
+
+msgid "Secondary Compressor Electronic Unit Software version"
+msgstr "Secondary Compressor Electronic Unit Software version"
+
+msgid "Secondary Compressor Electronic Unit production date"
+msgstr "Secondary Compressor Electronic Unit production date"
+
+msgid "Relative Time"
+msgstr "Relative Time"
+
+msgid "RTC Wakeup"
+msgstr "RTC Wakeup"
+
+msgid "Absolute time in UTC"
+msgstr "Absolute time in UTC"
+
+msgid "Region name"
+msgstr "Region name"
+
+msgid "District name"
+msgstr "District name"
+
+msgid "Facility name"
+msgstr "Facility name"
+
+msgid "Country ID"
+msgstr "Country ID"
+
+msgid "Facility ID"
+msgstr "Facility ID"
+
+msgid "Location / GIS Coordinates / Latitude"
+msgstr "Location / GIS Coordinates / Latitude"
+
+msgid "Location / GIS Coordinates / Longitude"
+msgstr "Location / GIS Coordinates / Longitude"
+
+msgid "Location accuracy"
+msgstr "Location accuracy"
+
+msgid "File integrity check"
+msgstr "File integrity check"
+
+msgid "AC supply voltage to the appliance"
+msgstr "AC supply voltage to the appliance"
+
+msgid "AC supply voltage availability"
+msgstr "AC supply voltage availability"
+
+msgid "DC supply voltage to the appliance"
+msgstr "DC supply voltage to the appliance"
+
+msgid "Ambient relative humidity"
+msgstr "Ambient relative humidity"
+
+msgid "Ambient temperature"
+msgstr "Ambient temperature"
+
+msgid "AC current drawn by the appliance"
+msgstr "AC current drawn by the appliance"
+
+msgid "DC current drawn by the appliance"
+msgstr "DC current drawn by the appliance"
+
+msgid "Compartment relative humidity"
+msgstr "Compartment relative humidity"
+
+msgid "Condenser temperature"
+msgstr "Condenser temperature"
+
+msgid "Secondary Condenser temperature"
+msgstr "Secondary Condenser temperature"
+
+msgid "Compressor speed"
+msgstr "Compressor speed"
+
+msgid "Compressor runtime"
+msgstr "Compressor runtime"
+
+msgid "Compressor Electronic Unit temperature"
+msgstr "Compressor Electronic Unit temperature"
+
+msgid "Secondary Compressor speed"
+msgstr "Secondary Compressor speed"
+
+msgid "Secondary Compressor runtime"
+msgstr "Secondary Compressor runtime"
+
+msgid "Secondary Compressor Electronic Unit temperature"
+msgstr "Secondary Compressor Electronic Unit temperature"
+
+msgid "Fan speed"
+msgstr "Fan speed"
+
+msgid "Logger battery remaining"
+msgstr "Logger battery remaining"
+
+msgid "Vaccine Compartment Temperature"
+msgstr "Vaccine Compartment Temperature"
+
+msgid "Freezer Compartment Temperature"
+msgstr "Freezer Compartment Temperature"
+
+msgid "EMD battery remaining"
+msgstr "EMD battery remaining"
+
+msgid "Holdover, autonomy, or independence time"
+msgstr "Holdover, autonomy, or independence time"
+
+msgid "Logger Error codes"
+msgstr "Logger Error codes"
+
+msgid "EMD Error codes"
+msgstr "EMD Error codes"
+
+msgid "Alarm condition"
+msgstr "Alarm condition"
+
+msgid "Door/lid opening (vaccine compartment)"
+msgstr "Door/lid opening (vaccine compartment)"
+
+msgid "Instantaneous door/lid opening (vaccine compartment)"
+msgstr "Instantaneous door/lid opening (vaccine compartment)"
+
+msgid "Number of door/lid openings (vaccine compartment)"
+msgstr "Number of door/lid openings (vaccine compartment)"
+
+msgid "Door/lid opening (freezer/other compartment)"
+msgstr "Door/lid opening (freezer/other compartment)"
+
+msgid "Instantaneous door/lid opening (freezer compartment)"
+msgstr "Instantaneous door/lid opening (freezer compartment)"
+
+msgid "Number of door/lid openings (freezer/other compartment)"
+msgstr "Number of door/lid openings (freezer/other compartment)"
+
+msgid "Main ON/OFF switch"
+msgstr "Main ON/OFF switch"
+
+msgid "Serial attribute"
+msgstr "Serial attribute"
+
+msgid "Average storage temperature (°C)"
+msgstr "Average storage temperature (°C)"
+
+msgid "Min. temp. (°C)"
+msgstr "Min. temp. (°C)"
+
+msgid "Max. temp. (°C)"
+msgstr "Max. temp. (°C)"
+
+msgid "Average ambient temp (°C)"
+msgstr "Average ambient temp (°C)"
+
+msgid "Faults"
+msgstr "Faults"
+
+msgid ""
+"Import Berlinger Fridge-tag temperature logs and sync daily records to "
+"DHIS2."
+msgstr ""
+"Import Berlinger Fridge-tag temperature logs and sync daily records to "
+"DHIS2."
+
+msgid "Developer and Data Import UI options for this app."
+msgstr "Developer and Data Import UI options for this app."
+
 msgid "Parser debug logging"
 msgstr "Parser debug logging"
 
-msgid "Enabled"
-msgstr "Enabled"
-
-msgid "Disabled"
-msgstr "Disabled"
-
-msgctxt "DEBUG=true yarn start."
-msgid "To enable verbose parser logs, restart the dev server with REACT_APP_PARSER"
+msgid ""
+"When enabled, detailed parser steps are written to the browser console "
+"while importing a file (open Developer Tools → Console)."
 msgstr ""
-"To enable verbose parser logs, restart the dev server with "
-"REACT_APP_PARSER_DEBUG=true yarn start."
+"When enabled, detailed parser steps are written to the browser console "
+"while importing a file (open Developer Tools → Console)."
+
+msgid ""
+"Control which optional actions appear on the Data Import page after a file "
+"is parsed."
+msgstr ""
+"Control which optional actions appear on the Data Import page after a file "
+"is parsed."
+
+msgid "Show the Download JSON button on the Data Import page."
+msgstr "Show the Download JSON button on the Data Import page."
+
+msgid "Show the expandable View Parsed Data panel on the Data Import page."
+msgstr "Show the expandable View Parsed Data panel on the Data Import page."
+
+msgid "Import metadata and field mappings for EMS devices (multiple suppliers)."
+msgstr "Import metadata and field mappings for EMS devices (multiple suppliers)."
+
+msgid ""
+"Select a program, program stage, and map all required EMS fields below to "
+"enable tracker imports."
+msgstr ""
+"Select a program, program stage, and map all required EMS fields below to "
+"enable tracker imports."
+
+msgid "Import metadata for Berlinger Fridge-tag devices."
+msgstr "Import metadata for Berlinger Fridge-tag devices."
+
+msgid ""
+"Select a program, program stage, and map all fields below to enable tracker "
+"imports."
+msgstr ""
+"Select a program, program stage, and map all fields below to enable tracker "
+"imports."
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"
-msgstr "Temperature-Data-Import"
+msgstr "EMS-Data-Import"
 
 msgctxt "Application description"
 msgid "__MANIFEST_APP_DESCRIPTION"

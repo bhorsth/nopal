@@ -1,8 +1,6 @@
 import i18n from '@dhis2/d2-i18n'
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { NoticeBox, SingleSelectField, SingleSelectOption } from '@dhis2/ui'
-import { FIELD_MAPPING_FIELDS } from '../../config/fieldMappingDefinitions'
-import { useImportConfig } from '../../context/ImportConfigContext'
 import { useProgramFieldOptions } from '../../hooks/useProgramFieldOptions'
 import classes from '../../App.module.css'
 
@@ -16,8 +14,65 @@ const withSelectedOption = (options, selectedId) => {
     return [{ id: selectedId, displayName: selectedId }, ...options]
 }
 
-const FieldMappingFields = () => {
-    const { programId, programStageId, fieldMappings, setFieldMapping } = useImportConfig()
+const FieldMappingSelect = ({
+    fieldKey,
+    label,
+    kind,
+    helpText,
+    programId,
+    programStageId,
+    fieldMappings,
+    setFieldMapping,
+    attributes,
+    dataElements,
+    loading,
+    programMetadataReady,
+    stageMetadataReady,
+}) => {
+    const baseOptions = kind === 'attribute' ? attributes : dataElements
+    const options =
+        kind === 'attribute'
+            ? withSelectedOption(baseOptions, fieldMappings[fieldKey])
+            : baseOptions
+    const metadataReady = kind === 'attribute' ? programMetadataReady : stageMetadataReady
+    const selected = fieldMappings[fieldKey]
+    const selectValue = selectValueIfValid(selected, options)
+    const fieldLoading = kind === 'attribute' ? loading && !programMetadataReady : loading
+
+    return (
+        <SingleSelectField
+            key={fieldKey}
+            label={label}
+            selected={selectValue}
+            onChange={({ selected: value }) => setFieldMapping(fieldKey, value)}
+            placeholder={i18n.t('Select mapping')}
+            filterable
+            filterPlaceholder={i18n.t('Filter')}
+            noMatchText={i18n.t('No matches found')}
+            loading={fieldLoading}
+            disabled={fieldLoading || !metadataReady || options.length === 0}
+            helpText={
+                helpText ||
+                (kind === 'attribute'
+                    ? i18n.t('Tracked entity attribute')
+                    : i18n.t('Program stage data element'))
+            }
+        >
+            {options.map((opt) => (
+                <SingleSelectOption key={opt.id} label={opt.displayName} value={opt.id} />
+            ))}
+        </SingleSelectField>
+    )
+}
+
+const FieldMappingFields = ({
+    fieldMappingFields,
+    programId,
+    programStageId,
+    fieldMappings,
+    setFieldMapping,
+    groupByCategory = false,
+}) => {
     const {
         attributes,
         dataElements,
@@ -28,7 +83,8 @@ const FieldMappingFields = () => {
     } = useProgramFieldOptions(programId, programStageId)
 
     useEffect(() => {
-        FIELD_MAPPING_FIELDS.forEach(({ key, kind }) => {
+        fieldMappingFields.forEach(({ key, kind }) => {
+            if (kind === 'organisationUnit') return
             const metadataReady = kind === 'attribute' ? programMetadataReady : stageMetadataReady
             if (!metadataReady) return
 
@@ -39,6 +95,7 @@ const FieldMappingFields = () => {
             }
         })
     }, [
+        fieldMappingFields,
         programMetadataReady,
         stageMetadataReady,
         attributes,
@@ -46,6 +103,17 @@ const FieldMappingFields = () => {
         fieldMappings,
         setFieldMapping,
     ])
+
+    const groupedFields = useMemo(() => {
+        if (!groupByCategory) {
+            return [{ category: null, fields: fieldMappingFields }]
+        }
+        const categories = [...new Set(fieldMappingFields.map((f) => f.category).filter(Boolean))]
+        return categories.map((category) => ({
+            category,
+            fields: fieldMappingFields.filter((f) => f.category === category),
+        }))
+    }, [fieldMappingFields, groupByCategory])
 
     if (!programId || !programStageId) {
         return (
@@ -65,45 +133,51 @@ const FieldMappingFields = () => {
 
     return (
         <div className={classes.settingsFields}>
-            {FIELD_MAPPING_FIELDS.map(({ key, label, kind }) => {
-                const baseOptions = kind === 'attribute' ? attributes : dataElements
-                const options =
-                    kind === 'attribute'
-                        ? withSelectedOption(baseOptions, fieldMappings[key])
-                        : baseOptions
-                const metadataReady = kind === 'attribute' ? programMetadataReady : stageMetadataReady
-                const selected = fieldMappings[key]
-                const selectValue = selectValueIfValid(selected, options)
-                const fieldLoading = kind === 'attribute' ? loading && !programMetadataReady : loading
-
-                return (
-                    <SingleSelectField
-                        key={key}
-                        label={label()}
-                        selected={selectValue}
-                        onChange={({ selected: value }) => setFieldMapping(key, value)}
-                        placeholder={i18n.t('Select mapping')}
-                        filterable
-                        filterPlaceholder={i18n.t('Filter')}
-                        noMatchText={i18n.t('No matches found')}
-                        loading={fieldLoading}
-                        disabled={fieldLoading || !metadataReady || options.length === 0}
-                        helpText={
-                            kind === 'attribute'
-                                ? i18n.t('Tracked entity attribute')
-                                : i18n.t('Program stage data element')
+            {groupedFields.map(({ category, fields }) => (
+                <div key={category || 'all'}>
+                    {category ? (
+                        <h4 className={classes.subsectionTitle}>{category}</h4>
+                    ) : null}
+                    {fields.map(({ key, label, kind, helpText }) => {
+                        if (kind === 'organisationUnit') {
+                            return (
+                                <NoticeBox
+                                    key={key}
+                                    title={typeof label === 'function' ? label() : label}
+                                >
+                                    {i18n.t(
+                                        'This EMS field ({{objectId}}) maps to organisation unit metadata and cannot be configured here yet.',
+                                        { objectId: key, nsSeparator: false }
+                                    )}
+                                </NoticeBox>
+                            )
                         }
-                    >
-                        {options.map((opt) => (
-                            <SingleSelectOption
-                                key={opt.id}
-                                label={opt.displayName}
-                                value={opt.id}
+
+                        const labelText = typeof label === 'function' ? label() : label
+                        const help =
+                            typeof helpText === 'function' ? helpText() : helpText
+
+                        return (
+                            <FieldMappingSelect
+                                key={key}
+                                fieldKey={key}
+                                label={labelText}
+                                kind={kind}
+                                helpText={help}
+                                programId={programId}
+                                programStageId={programStageId}
+                                fieldMappings={fieldMappings}
+                                setFieldMapping={setFieldMapping}
+                                attributes={attributes}
+                                dataElements={dataElements}
+                                loading={loading}
+                                programMetadataReady={programMetadataReady}
+                                stageMetadataReady={stageMetadataReady}
                             />
-                        ))}
-                    </SingleSelectField>
-                )
-            })}
+                        )
+                    })}
+                </div>
+            ))}
         </div>
     )
 }

@@ -7,3 +7,5 @@ dhis2.env
 .env
 .agents
 skills-lock.json
+/data/*
+.cursor/*
