@@ -29,6 +29,10 @@ const DeviceImportSettingsForm = ({
     config,
     fieldMappingFields,
     groupFieldMappingsByCategory = false,
+    groupFieldMappingsByStageOrAttribute = false,
+    fieldMappingGroups = null,
+    autoMapFieldMappings = false,
+    requiresProgramStage = true,
     incompleteSettingsMessage,
 }) => {
     const { config: envConfig, missing, isValid: isEnvValid } = useMemo(() => getDhis2Config(), [])
@@ -68,7 +72,7 @@ const DeviceImportSettingsForm = ({
     }, [settingsLoading, programsLoading, programs, programId, programInList, setProgramId])
 
     useEffect(() => {
-        if (settingsLoading) return
+        if (!requiresProgramStage || settingsLoading) return
         if (
             programId &&
             !stagesLoading &&
@@ -79,6 +83,7 @@ const DeviceImportSettingsForm = ({
             setProgramStageId('')
         }
     }, [
+        requiresProgramStage,
         settingsLoading,
         programId,
         stagesLoading,
@@ -200,43 +205,47 @@ const DeviceImportSettingsForm = ({
                             ))}
                         </SingleSelectField>
 
-                        {stagesError ? (
-                            <NoticeBox error title={i18n.t('Could not load program stages')}>
-                                {stagesError.message}
-                            </NoticeBox>
-                        ) : null}
+                        {requiresProgramStage ? (
+                            <>
+                                {stagesError ? (
+                                    <NoticeBox error title={i18n.t('Could not load program stages')}>
+                                        {stagesError.message}
+                                    </NoticeBox>
+                                ) : null}
 
-                        <SingleSelectField
-                            label={i18n.t('Program stage ID')}
-                            helpText={
-                                programId
-                                    ? i18n.t('Stages for {{program}}', {
-                                          program: selectedProgramLabel || programId,
-                                          nsSeparator: false,
-                                      })
-                                    : i18n.t('Select a program first')
-                            }
-                            selected={stageSelectValue}
-                            onChange={({ selected }) => setProgramStageId(selected)}
-                            placeholder={
-                                programId
-                                    ? i18n.t('Select a program stage')
-                                    : i18n.t('Select a program first')
-                            }
-                            filterable
-                            filterPlaceholder={i18n.t('Filter program stages')}
-                            noMatchText={i18n.t('No program stages found')}
-                            loading={stagesLoading}
-                            disabled={!programId || stagesLoading}
-                        >
-                            {stages.map((stage) => (
-                                <SingleSelectOption
-                                    key={stage.id}
-                                    label={stage.displayName}
-                                    value={stage.id}
-                                />
-                            ))}
-                        </SingleSelectField>
+                                <SingleSelectField
+                                    label={i18n.t('Program stage ID')}
+                                    helpText={
+                                        programId
+                                            ? i18n.t('Stages for {{program}}', {
+                                                  program: selectedProgramLabel || programId,
+                                                  nsSeparator: false,
+                                              })
+                                            : i18n.t('Select a program first')
+                                    }
+                                    selected={stageSelectValue}
+                                    onChange={({ selected }) => setProgramStageId(selected)}
+                                    placeholder={
+                                        programId
+                                            ? i18n.t('Select a program stage')
+                                            : i18n.t('Select a program first')
+                                    }
+                                    filterable
+                                    filterPlaceholder={i18n.t('Filter program stages')}
+                                    noMatchText={i18n.t('No program stages found')}
+                                    loading={stagesLoading}
+                                    disabled={!programId || stagesLoading}
+                                >
+                                    {stages.map((stage) => (
+                                        <SingleSelectOption
+                                            key={stage.id}
+                                            label={stage.displayName}
+                                            value={stage.id}
+                                        />
+                                    ))}
+                                </SingleSelectField>
+                            </>
+                        ) : null}
                     </div>
 
                     {!settingsLoading ? (
@@ -254,6 +263,9 @@ const DeviceImportSettingsForm = ({
                                 fieldMappings={fieldMappings}
                                 setFieldMapping={setFieldMapping}
                                 groupByCategory={groupFieldMappingsByCategory}
+                                groupByStageOrAttribute={groupFieldMappingsByStageOrAttribute}
+                                fieldMappingGroups={fieldMappingGroups}
+                                autoMapOnProgramLoad={autoMapFieldMappings}
                             />
                         </>
                     ) : null}

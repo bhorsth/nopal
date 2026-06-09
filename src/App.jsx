@@ -33,7 +33,7 @@ const router = createHashRouter([
                             },
                             {
                                 path: '/settings',
-                                element: <Navigate to="/settings/fridge-tag" replace />,
+                                element: <Navigate to="/settings/general" replace />,
                             },
                             {
                                 path: '/settings/fridge-tag',

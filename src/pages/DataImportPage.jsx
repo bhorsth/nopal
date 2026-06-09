@@ -9,7 +9,9 @@ const DataImportPage = () => {
         <div className={classes.page}>
             <h1 className={classes.pageTitle}>{i18n.t('Data Import')}</h1>
             <p className={classes.pageDescription}>
-                {i18n.t('Import Berlinger Fridge-tag temperature logs and sync daily records to DHIS2.')}
+                {i18n.t(
+                    'Import from your temperature data logger or EMS appliance and sync with the system.'
+                )}
             </p>
             <Card>
                 <div className={classes.cardBody}>

@@ -29,9 +29,9 @@ export const Sidebar = ({ className, hideSidebar }) => {
                         open={isSettingsExpanded}
                         onClick={() => setSettingsOpen(!isSettingsExpanded)}
                     >
-                        <SidebarNavLink to="/settings/fridge-tag" label={i18n.t('Fridge-tag')} />
-                        <SidebarNavLink to="/settings/ems" label={i18n.t('EMS')} />
                         <SidebarNavLink to="/settings/general" label={i18n.t('General')} />
+                        <SidebarNavLink to="/settings/ems" label={i18n.t('EMS')} />
+                        <SidebarNavLink to="/settings/fridge-tag" label={i18n.t('Fridge-tag')} />
                     </SidenavParent>
                 </SidenavItems>
             </Sidenav>

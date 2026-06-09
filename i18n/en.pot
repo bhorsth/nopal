@@ -5,8 +5,65 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-05T08:57:00.565Z\n"
-"PO-Revision-Date: 2026-06-05T08:57:00.566Z\n"
+"POT-Creation-Date: 2026-06-09T09:16:27.609Z\n"
+"PO-Revision-Date: 2026-06-09T09:16:27.609Z\n"
+
+msgid ""
+"Organisation unit ID and tracked entity type ID must be set in environment "
+"configuration before registering a new appliance."
+msgstr ""
+"Organisation unit ID and tracked entity type ID must be set in environment "
+"configuration before registering a new appliance."
+
+msgid "Registration failed: {{message}}"
+msgstr "Registration failed: {{message}}"
+
+msgid "Select an existing appliance to continue."
+msgstr "Select an existing appliance to continue."
+
+msgid "No matching device found"
+msgstr "No matching device found"
+
+msgid ""
+"No tracked entity in DHIS2 matches logger serial {{serial}}. Register the "
+"device to continue."
+msgstr ""
+"No tracked entity in DHIS2 matches logger serial {{serial}}. Register the "
+"device to continue."
+
+msgid "Register new appliance"
+msgstr "Register new appliance"
+
+msgid "Register logger on existing appliance"
+msgstr "Register logger on existing appliance"
+
+msgid ""
+"A new tracked entity will be created with logger serial {{serial}} and "
+"enrolled in the configured program."
+msgstr ""
+"A new tracked entity will be created with logger serial {{serial}} and "
+"enrolled in the configured program."
+
+msgid "Confirm registration"
+msgstr "Confirm registration"
+
+msgid "Back"
+msgstr "Back"
+
+msgid "Select an appliance and assign logger serial {{serial}} to it."
+msgstr "Select an appliance and assign logger serial {{serial}} to it."
+
+msgid "Existing appliance"
+msgstr "Existing appliance"
+
+msgid "Select an appliance"
+msgstr "Select an appliance"
+
+msgid "Filter appliances"
+msgstr "Filter appliances"
+
+msgid "No appliances found"
+msgstr "No appliances found"
 
 msgid "No serial found in parsed data. Parse a file first."
 msgstr "No serial found in parsed data. Parse a file first."
@@ -50,12 +107,6 @@ msgstr "DHIS2 create/update events failed: {{message}}"
 msgid "DHIS2 Actions"
 msgstr "DHIS2 Actions"
 
-msgid "Looking up..."
-msgstr "Looking up..."
-
-msgid "Find Device in DHIS2"
-msgstr "Find Device in DHIS2"
-
 msgid "Loading events..."
 msgstr "Loading events..."
 
@@ -68,8 +119,11 @@ msgstr "Creating/updating..."
 msgid "Update data"
 msgstr "Update data"
 
-msgid "No tracked entities found"
-msgstr "No tracked entities found"
+msgid "Looking up device in DHIS2…"
+msgstr "Looking up device in DHIS2…"
+
+msgid "Searching for logger serial {{serial}}."
+msgstr "Searching for logger serial {{serial}}."
 
 msgid "Serial"
 msgstr "Serial"
@@ -119,9 +173,6 @@ msgstr "Updated"
 msgid "Total"
 msgstr "Total"
 
-msgid "Run a DHIS2 action to see results here."
-msgstr "Run a DHIS2 action to see results here."
-
 msgid "Please select a file to upload."
 msgstr "Please select a file to upload."
 
@@ -134,23 +185,17 @@ msgstr "Successful!"
 msgid "An error occurred during parsing."
 msgstr "An error occurred during parsing."
 
-msgid "Selected file"
-msgstr "Selected file"
-
 msgid "No file selected. Please try again."
 msgstr "No file selected. Please try again."
 
-msgid "Import Data Logger File"
-msgstr "Import Data Logger File"
+msgid "No file uploaded yet"
+msgstr "No file uploaded yet"
+
+msgid "Clear"
+msgstr "Clear"
 
 msgid "Choose file"
 msgstr "Choose file"
-
-msgid "Choose a Fridge-tag export file (.txt)"
-msgstr "Choose a Fridge-tag export file (.txt)"
-
-msgid "Parse again"
-msgstr "Parse again"
 
 msgid "Download JSON"
 msgstr "Download JSON"
@@ -340,12 +385,6 @@ msgstr "Tracked entity attribute"
 msgid "Program stage data element"
 msgstr "Program stage data element"
 
-msgid "Select a program and program stage to map fields to DHIS2 metadata."
-msgstr "Select a program and program stage to map fields to DHIS2 metadata."
-
-msgid "Could not load field options"
-msgstr "Could not load field options"
-
 msgid ""
 "This EMS field ({{objectId}}) maps to organisation unit metadata and cannot "
 "be configured here yet."
@@ -353,20 +392,39 @@ msgstr ""
 "This EMS field ({{objectId}}) maps to organisation unit metadata and cannot "
 "be configured here yet."
 
+msgid "Select a program and program stage to map fields to DHIS2 metadata."
+msgstr "Select a program and program stage to map fields to DHIS2 metadata."
+
+msgid "Select a program to map fields to DHIS2 metadata."
+msgstr "Select a program to map fields to DHIS2 metadata."
+
+msgid "Could not load field options"
+msgstr "Could not load field options"
+
+msgid "Program stage not found"
+msgstr "Program stage not found"
+
+msgid ""
+"No program stage named \"{{stage}}\" exists on the selected program. Data "
+"element fields in this section cannot be mapped until the stage is added."
+msgstr ""
+"No program stage named \"{{stage}}\" exists on the selected program. Data "
+"element fields in this section cannot be mapped until the stage is added."
+
 msgid "Data Import"
 msgstr "Data Import"
 
 msgid "Settings"
 msgstr "Settings"
 
-msgid "Fridge-tag"
-msgstr "Fridge-tag"
+msgid "General"
+msgstr "General"
 
 msgid "EMS"
 msgstr "EMS"
 
-msgid "Developer options"
-msgstr "Developer options"
+msgid "Fridge-tag"
+msgstr "Fridge-tag"
 
 msgid "Toggle navigation"
 msgstr "Toggle navigation"
@@ -612,14 +670,37 @@ msgid "Faults"
 msgstr "Faults"
 
 msgid ""
-"Import Berlinger Fridge-tag temperature logs and sync daily records to "
-"DHIS2."
+"Import from your temperature data logger or EMS appliance and sync with the "
+"system."
 msgstr ""
-"Import Berlinger Fridge-tag temperature logs and sync daily records to "
-"DHIS2."
+"Import from your temperature data logger or EMS appliance and sync with the "
+"system."
 
-msgid "Developer and Data Import UI options for this app."
-msgstr "Developer and Data Import UI options for this app."
+msgid "Import metadata and field mappings for EMS devices (multiple suppliers)."
+msgstr "Import metadata and field mappings for EMS devices (multiple suppliers)."
+
+msgid ""
+"Select a program and map all required EMS fields below to enable tracker "
+"imports."
+msgstr ""
+"Select a program and map all required EMS fields below to enable tracker "
+"imports."
+
+msgid "Import metadata for Berlinger Fridge-tag devices."
+msgstr "Import metadata for Berlinger Fridge-tag devices."
+
+msgid ""
+"Select a program, program stage, and map all fields below to enable tracker "
+"imports."
+msgstr ""
+"Select a program, program stage, and map all fields below to enable tracker "
+"imports."
+
+msgid "General app settings and Data Import options."
+msgstr "General app settings and Data Import options."
+
+msgid "Debugging"
+msgstr "Debugging"
 
 msgid "Parser debug logging"
 msgstr "Parser debug logging"
@@ -643,26 +724,6 @@ msgstr "Show the Download JSON button on the Data Import page."
 
 msgid "Show the expandable View Parsed Data panel on the Data Import page."
 msgstr "Show the expandable View Parsed Data panel on the Data Import page."
-
-msgid "Import metadata and field mappings for EMS devices (multiple suppliers)."
-msgstr "Import metadata and field mappings for EMS devices (multiple suppliers)."
-
-msgid ""
-"Select a program, program stage, and map all required EMS fields below to "
-"enable tracker imports."
-msgstr ""
-"Select a program, program stage, and map all required EMS fields below to "
-"enable tracker imports."
-
-msgid "Import metadata for Berlinger Fridge-tag devices."
-msgstr "Import metadata for Berlinger Fridge-tag devices."
-
-msgid ""
-"Select a program, program stage, and map all fields below to enable tracker "
-"imports."
-msgstr ""
-"Select a program, program stage, and map all fields below to enable tracker "
-"imports."
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"

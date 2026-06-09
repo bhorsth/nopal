@@ -59,6 +59,7 @@ const createDeviceApi = ({
     setConfig,
     persist,
     fieldMappingFields,
+    requiresProgramStage = true,
 }) => {
     const setProgramId = (programId) => {
         setConfig((prev) => {
@@ -135,7 +136,7 @@ const createDeviceApi = ({
         isImportConfigValid: Boolean(
             !loading &&
                 resolved.programId &&
-                resolved.programStageId &&
+                (requiresProgramStage ? resolved.programStageId : true) &&
                 isMappingsComplete(device, resolved.fieldMappings)
         ),
     }
@@ -253,6 +254,7 @@ export const ImportConfigProvider = ({ children }) => {
                 setConfig: setEmsConfig,
                 persist: persistEms,
                 fieldMappingFields: EMS_FIELD_MAPPING_FIELDS,
+                requiresProgramStage: false,
             }),
         [emsConfig, emsMeta, persistEms]
     )
