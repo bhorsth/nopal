@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-09T09:16:27.609Z\n"
-"PO-Revision-Date: 2026-06-09T09:16:27.609Z\n"
+"POT-Creation-Date: 2026-06-11T12:18:58.773Z\n"
+"PO-Revision-Date: 2026-06-11T12:18:58.774Z\n"
 
 msgid ""
 "Organisation unit ID and tracked entity type ID must be set in environment "
@@ -131,6 +131,9 @@ msgstr "Serial"
 msgid "Tracked Entities Found"
 msgstr "Tracked Entities Found"
 
+msgid "Facility name"
+msgstr "Facility name"
+
 msgid "Appliance Manufacturer"
 msgstr "Appliance Manufacturer"
 
@@ -173,29 +176,84 @@ msgstr "Updated"
 msgid "Total"
 msgstr "Total"
 
+msgid "EMS Device Data Preview"
+msgstr "EMS Device Data Preview"
+
+msgid "Logger serial number"
+msgstr "Logger serial number"
+
+msgid "Records"
+msgstr "Records"
+
+msgid "Device metadata"
+msgstr "Device metadata"
+
+msgid "Value"
+msgstr "Value"
+
+msgid "No measurement records available in this file."
+msgstr "No measurement records available in this file."
+
+msgid "No."
+msgstr "No."
+
+msgid "No logger serial found in parsed data. Parse a file first."
+msgstr "No logger serial found in parsed data. Parse a file first."
+
+msgid ""
+"Complete EMS import settings and field mappings in Settings before using "
+"DHIS2 actions."
+msgstr ""
+"Complete EMS import settings and field mappings in Settings before using "
+"DHIS2 actions."
+
+msgid "Program metadata is still loading. Please try again in a moment."
+msgstr "Program metadata is still loading. Please try again in a moment."
+
+msgid "No EMS data available to sync with the current field mappings."
+msgstr "No EMS data available to sync with the current field mappings."
+
+msgid "DHIS2 create/update failed: {{message}}"
+msgstr "DHIS2 create/update failed: {{message}}"
+
+msgid "Syncing..."
+msgstr "Syncing..."
+
+msgid "Occurred at"
+msgstr "Occurred at"
+
 msgid "Please select a file to upload."
 msgstr "Please select a file to upload."
 
 msgid "Parsing…"
 msgstr "Parsing…"
 
-msgid "Successful!"
-msgstr "Successful!"
+msgid "EMS device"
+msgstr "EMS device"
+
+msgid "Fridge-tag"
+msgstr "Fridge-tag"
+
+msgid "{{deviceType}} file parsed successfully."
+msgstr "{{deviceType}} file parsed successfully."
+
+msgid "Unrecognized file format. Upload a Fridge-tag export or EMS JSON file."
+msgstr "Unrecognized file format. Upload a Fridge-tag export or EMS JSON file."
+
+msgid "The file contains invalid JSON."
+msgstr "The file contains invalid JSON."
 
 msgid "An error occurred during parsing."
 msgstr "An error occurred during parsing."
 
-msgid "No file selected. Please try again."
-msgstr "No file selected. Please try again."
+msgid "Choose file"
+msgstr "Choose file"
 
 msgid "No file uploaded yet"
 msgstr "No file uploaded yet"
 
 msgid "Clear"
 msgstr "Clear"
-
-msgid "Choose file"
-msgstr "Choose file"
 
 msgid "Download JSON"
 msgstr "Download JSON"
@@ -226,9 +284,6 @@ msgstr "Upper alarm limit"
 
 msgid "Above +8.0°C for 10h"
 msgstr "Above +8.0°C for 10h"
-
-msgid "No."
-msgstr "No."
 
 msgid "Events"
 msgstr "Events"
@@ -423,9 +478,6 @@ msgstr "General"
 msgid "EMS"
 msgstr "EMS"
 
-msgid "Fridge-tag"
-msgstr "Fridge-tag"
-
 msgid "Toggle navigation"
 msgstr "Toggle navigation"
 
@@ -458,9 +510,6 @@ msgstr "Logger manufacturer"
 
 msgid "Logger model"
 msgstr "Logger model"
-
-msgid "Logger serial number"
-msgstr "Logger serial number"
 
 msgid "Logger identifier"
 msgstr "Logger identifier"
@@ -533,9 +582,6 @@ msgstr "Region name"
 
 msgid "District name"
 msgstr "District name"
-
-msgid "Facility name"
-msgstr "Facility name"
 
 msgid "Country ID"
 msgstr "Country ID"

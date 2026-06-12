@@ -12,6 +12,7 @@ import {
 import { getDhis2Config } from '../config/dhis2'
 import {
     formatTeiOptionLabel,
+    getTeiOrgUnitId,
     linkLoggerToExistingAppliance,
     listProgramTrackedEntities,
     lookupTrackedEntitiesBySerial,
@@ -116,7 +117,8 @@ const DeviceRegistrationPanel = ({
         try {
             await linkLoggerToExistingAppliance(engine, {
                 trackedEntity: tei.trackedEntity,
-                orgUnit: tei.orgUnit,
+                trackedEntityType: tei.trackedEntityType,
+                orgUnit: getTeiOrgUnitId(tei),
                 programId,
                 serialAttributeId,
                 serial,

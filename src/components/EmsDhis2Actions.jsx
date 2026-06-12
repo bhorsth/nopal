@@ -16,13 +16,14 @@ import {
 import { EMS_FIELD_MAPPING_FIELDS } from '../config/emsFieldMappingDefinitions'
 import { useEmsImportConfig } from '../context/ImportConfigContext'
 import { useProgramMetadata } from '../hooks/useProgramMetadata'
-import {
-    buildEmsAttributeValues,
-    groupEmsRecordDataValuesByStage,
-} from '../utils/buildEmsEventDataValues'
+import { groupEmsRecordDataValuesByStage } from '../utils/buildEmsEventDataValues'
 import { computeEmsOccurredAtTimes } from '../utils/isoDuration'
 import { formatEmsValue } from '../utils/emsValue'
-import { getTeiAttributeByName, lookupTrackedEntitiesBySerial } from '../services/trackerLookup'
+import {
+    getTeiOrgUnitId,
+    getTeiSummaryInfo,
+    lookupTrackedEntitiesBySerial,
+} from '../services/trackerLookup'
 import DeviceRegistrationPanel from './DeviceRegistrationPanel'
 import classes from '../App.module.css'
 
@@ -69,7 +70,6 @@ const EmsDhis2Actions = ({ parsedData }) => {
     const serial = parsedData?.config?.serial
     const serialAttributeId = fieldMappings.LSER
     const records = parsedData?.records ?? []
-    const metadata = parsedData?.metadata ?? {}
 
     const previewEventFields = useMemo(() => {
         return EMS_FIELD_MAPPING_FIELDS.filter(
@@ -216,7 +216,7 @@ const EmsDhis2Actions = ({ parsedData }) => {
         const tei = lookupResult.entities[0]
         const trackedEntity = tei.trackedEntity
         const enrollment = tei.enrollments?.[0]?.enrollment
-        const orgUnit = tei.orgUnit
+        const orgUnit = getTeiOrgUnitId(tei)
 
         if (!trackedEntity || !enrollment || !orgUnit) {
             setSyncError(i18n.t('Missing tracked entity, enrollment, or org unit. Please lookup the device again.'))
@@ -270,30 +270,14 @@ const EmsDhis2Actions = ({ parsedData }) => {
             })
         })
 
-        const attributeValues = buildEmsAttributeValues(metadata, fieldMappings)
-        const hasEvents = events.length > 0
-        const hasAttributes = attributeValues.length > 0
-
-        if (!hasEvents && !hasAttributes) {
+        if (events.length === 0) {
             setSyncError(i18n.t('No EMS data available to sync with the current field mappings.'))
             return
         }
 
         setSyncLoading(true)
         try {
-            const payload = {}
-            if (hasAttributes) {
-                payload.trackedEntities = [
-                    {
-                        trackedEntity,
-                        orgUnit,
-                        attributes: attributeValues,
-                    },
-                ]
-            }
-            if (hasEvents) {
-                payload.events = events
-            }
+            const payload = { events }
 
             const mutation = {
                 resource: 'tracker',
@@ -329,13 +313,7 @@ const EmsDhis2Actions = ({ parsedData }) => {
 
     const teiSummaryRows = useMemo(() => {
         if (!lookupResult?.entities?.length) return null
-        const tei = lookupResult.entities[0]
-
-        return {
-            manufacturer: getTeiAttributeByName(tei, 'Appliance Manufacturer'),
-            manufacturerSerial: getTeiAttributeByName(tei, 'Appliance Manufacturer Serial Number'),
-            model: getTeiAttributeByName(tei, 'Appliance Model'),
-        }
+        return getTeiSummaryInfo(lookupResult.entities[0])
     }, [lookupResult])
 
     const busy = lookupLoading || eventsLoading || syncLoading
@@ -403,6 +381,14 @@ const EmsDhis2Actions = ({ parsedData }) => {
                                             <strong>{lookupResult.entities.length}</strong>
                                         </TableCell>
                                     </TableRow>
+                                    {teiSummaryRows?.facilityName ? (
+                                        <TableRow>
+                                            <TableCell dense>{i18n.t('Facility name')}</TableCell>
+                                            <TableCell dense>
+                                                <strong>{teiSummaryRows.facilityName}</strong>
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : null}
                                     {teiSummaryRows?.manufacturer ? (
                                         <TableRow>
                                             <TableCell dense>{i18n.t('Appliance Manufacturer')}</TableCell>

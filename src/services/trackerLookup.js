@@ -8,7 +8,7 @@ export async function lookupTrackedEntitiesBySerial(engine, { serial, programId,
             resource: 'tracker/trackedEntities',
             params: {
                 filter: `${serialAttributeId}:like:${serial}`,
-                fields: 'trackedEntity,orgUnit,attributes[attribute,displayName,value],enrollments[enrollment,orgUnit,program]',
+                fields: 'trackedEntity,trackedEntityType,orgUnit[id,name],attributes[attribute,displayName,value],enrollments[enrollment,orgUnit,program]',
                 program: programId,
                 orgUnitMode: 'ACCESSIBLE',
             },
@@ -22,7 +22,7 @@ export async function listProgramTrackedEntities(engine, { programId, pageSize =
         trackedEntities: {
             resource: 'tracker/trackedEntities',
             params: {
-                fields: 'trackedEntity,orgUnit,attributes[attribute,displayName,value],enrollments[enrollment,program,orgUnit]',
+                fields: 'trackedEntity,trackedEntityType,orgUnit[id,name],attributes[attribute,displayName,value],enrollments[enrollment,program,orgUnit]',
                 program: programId,
                 orgUnitMode: 'ACCESSIBLE',
                 pageSize,
@@ -68,6 +68,7 @@ export async function registerNewAppliance(engine, {
 
 export async function linkLoggerToExistingAppliance(engine, {
     trackedEntity,
+    trackedEntityType,
     orgUnit,
     programId,
     serialAttributeId,
@@ -79,6 +80,7 @@ export async function linkLoggerToExistingAppliance(engine, {
 
     const payload = {
         trackedEntity,
+        trackedEntityType,
         orgUnit,
         attributes: [{ attribute: serialAttributeId, value: serial }],
     }
@@ -113,6 +115,36 @@ export const getTeiAttributeByName = (tei, nameFragment) => {
             attr.displayName?.toLowerCase().includes(needle)
     )
 }
+
+export const getTeiOrgUnitId = (tei) => {
+    const orgUnit = tei?.orgUnit
+    if (!orgUnit) {
+        return null
+    }
+
+    return typeof orgUnit === 'object' ? orgUnit.id : orgUnit
+}
+
+export const getTeiFacilityName = (tei) => {
+    const facilityAttribute = getTeiAttributeByName(tei, 'Facility name')
+    if (facilityAttribute?.value) {
+        return facilityAttribute.value
+    }
+
+    const orgUnit = tei?.orgUnit
+    if (orgUnit && typeof orgUnit === 'object') {
+        return orgUnit.name || orgUnit.displayName || null
+    }
+
+    return null
+}
+
+export const getTeiSummaryInfo = (tei) => ({
+    facilityName: getTeiFacilityName(tei),
+    manufacturer: getTeiAttributeByName(tei, 'Appliance Manufacturer'),
+    manufacturerSerial: getTeiAttributeByName(tei, 'Appliance Manufacturer Serial Number'),
+    model: getTeiAttributeByName(tei, 'Appliance Model'),
+})
 
 export const formatTeiOptionLabel = (tei, serialAttributeId) => {
     const serialAttr = tei.attributes?.find((a) => a.attribute === serialAttributeId)

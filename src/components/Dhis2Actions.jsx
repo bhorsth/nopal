@@ -15,7 +15,11 @@ import {
 } from '@dhis2/ui'
 import { useImportConfig } from '../context/ImportConfigContext'
 import { buildEventDataValues } from '../utils/buildEventDataValues'
-import { getTeiAttributeByName, lookupTrackedEntitiesBySerial } from '../services/trackerLookup'
+import {
+    getTeiOrgUnitId,
+    getTeiSummaryInfo,
+    lookupTrackedEntitiesBySerial,
+} from '../services/trackerLookup'
 import DeviceRegistrationPanel from './DeviceRegistrationPanel'
 import classes from '../App.module.css'
 
@@ -226,7 +230,7 @@ const Dhis2Actions = ({ parsedData }) => {
         const tei = lookupResult.entities[0]
         const trackedEntity = tei.trackedEntity
         const enrollment = tei.enrollments?.[0]?.enrollment
-        const orgUnit = tei.orgUnit
+        const orgUnit = getTeiOrgUnitId(tei)
 
         if (!trackedEntity || !enrollment || !orgUnit) {
             setCreateError(i18n.t('Missing tracked entity, enrollment, or org unit. Please lookup the device again.'))
@@ -300,13 +304,7 @@ const Dhis2Actions = ({ parsedData }) => {
 
     const teiSummaryRows = useMemo(() => {
         if (!lookupResult?.entities?.length) return null
-        const tei = lookupResult.entities[0]
-
-        return {
-            manufacturer: getTeiAttributeByName(tei, 'Appliance Manufacturer'),
-            manufacturerSerial: getTeiAttributeByName(tei, 'Appliance Manufacturer Serial Number'),
-            model: getTeiAttributeByName(tei, 'Appliance Model'),
-        }
+        return getTeiSummaryInfo(lookupResult.entities[0])
     }, [lookupResult])
 
     const busy = lookupLoading || eventsLoading || createLoading
@@ -366,6 +364,14 @@ const Dhis2Actions = ({ parsedData }) => {
                                             <strong>{lookupResult.entities.length}</strong>
                                         </TableCell>
                                     </TableRow>
+                                    {teiSummaryRows?.facilityName ? (
+                                        <TableRow>
+                                            <TableCell dense>{i18n.t('Facility name')}</TableCell>
+                                            <TableCell dense>
+                                                <strong>{teiSummaryRows.facilityName}</strong>
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : null}
                                     {teiSummaryRows?.manufacturer ? (
                                         <TableRow>
                                             <TableCell dense>{i18n.t('Appliance Manufacturer')}</TableCell>
