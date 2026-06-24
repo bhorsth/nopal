@@ -10,6 +10,7 @@ import React, {
 import {
     DEFAULT_FIELD_MAPPINGS,
     FIELD_MAPPING_KEYS,
+    REQUIRED_FIELD_MAPPING_KEYS,
 } from '../config/fieldMappingDefinitions'
 import {
     EMS_DEFAULT_FIELD_MAPPINGS,
@@ -35,7 +36,7 @@ const DEVICE_DEFAULTS = {
 }
 
 const isFridgeTagMappingsComplete = (fieldMappings) =>
-    FIELD_MAPPING_KEYS.every((key) => Boolean(fieldMappings[key]))
+    REQUIRED_FIELD_MAPPING_KEYS.every((key) => Boolean(fieldMappings[key]))
 
 const isEmsMappingsComplete = (fieldMappings) =>
     EMS_REQUIRED_FIELD_MAPPING_KEYS.every((key) => Boolean(fieldMappings[key]))
@@ -49,23 +50,42 @@ const createEmptyConfig = (device) => ({
     fieldMappings: { ...DEVICE_DEFAULTS[device].fieldMappings },
 })
 
+const configsEqual = (a, b) => {
+    if (!a || !b) return a === b
+    if (a.programId !== b.programId || a.programStageId !== b.programStageId) {
+        return false
+    }
+    const keys = new Set([
+        ...Object.keys(a.fieldMappings || {}),
+        ...Object.keys(b.fieldMappings || {}),
+    ])
+    for (const key of keys) {
+        if ((a.fieldMappings || {})[key] !== (b.fieldMappings || {})[key]) {
+            return false
+        }
+    }
+    return true
+}
+
 const createDeviceApi = ({
     device,
-    config,
+    savedConfig,
+    draftConfig,
     loading,
     saving,
     storageSource,
     storageWarning,
-    setConfig,
-    persist,
+    setDraftConfig,
+    saveDraft,
+    cancelDraft,
     fieldMappingFields,
     requiresProgramStage = true,
 }) => {
     const setProgramId = (programId) => {
-        setConfig((prev) => {
+        setDraftConfig((prev) => {
             if (!prev) return prev
             const programChanged = programId !== prev.programId
-            const next = {
+            return {
                 ...prev,
                 programId,
                 programStageId: programChanged ? '' : prev.programStageId,
@@ -73,13 +93,11 @@ const createDeviceApi = ({
                     ? { ...DEVICE_DEFAULTS[device].fieldMappings }
                     : prev.fieldMappings,
             }
-            persist(next)
-            return next
         })
     }
 
     const setProgramStageId = (programStageId) => {
-        setConfig((prev) => {
+        setDraftConfig((prev) => {
             if (!prev) return prev
             const stageChanged = programStageId !== prev.programStageId
             const nextMappings = { ...prev.fieldMappings }
@@ -98,54 +116,59 @@ const createDeviceApi = ({
                     })
                 }
             }
-            const next = {
+            return {
                 ...prev,
                 programStageId,
                 fieldMappings: stageChanged ? nextMappings : prev.fieldMappings,
             }
-            persist(next)
-            return next
         })
     }
 
     const setFieldMapping = (key, value) => {
-        setConfig((prev) => {
+        setDraftConfig((prev) => {
             if (!prev) return prev
-            const next = {
+            return {
                 ...prev,
                 fieldMappings: { ...prev.fieldMappings, [key]: value },
             }
-            persist(next)
-            return next
         })
     }
 
-    const resolved = config || createEmptyConfig(device)
+    const saved = savedConfig || createEmptyConfig(device)
+    const draft = draftConfig || createEmptyConfig(device)
 
     return {
-        programId: resolved.programId,
-        programStageId: resolved.programStageId,
-        fieldMappings: resolved.fieldMappings,
+        programId: saved.programId,
+        programStageId: saved.programStageId,
+        fieldMappings: saved.fieldMappings,
+        draftProgramId: draft.programId,
+        draftProgramStageId: draft.programStageId,
+        draftFieldMappings: draft.fieldMappings,
         setProgramId,
         setProgramStageId,
         setFieldMapping,
+        saveDraft,
+        cancelDraft,
+        isDraftDirty: !configsEqual(saved, draft),
         settingsLoading: loading,
         settingsSaving: saving,
         storageSource,
         storageWarning,
         isImportConfigValid: Boolean(
             !loading &&
-                resolved.programId &&
-                (requiresProgramStage ? resolved.programStageId : true) &&
-                isMappingsComplete(device, resolved.fieldMappings)
+                saved.programId &&
+                (requiresProgramStage ? saved.programStageId : true) &&
+                isMappingsComplete(device, saved.fieldMappings)
         ),
     }
 }
 
 export const ImportConfigProvider = ({ children }) => {
     const engine = useDataEngine()
-    const [fridgeTagConfig, setFridgeTagConfig] = useState(null)
-    const [emsConfig, setEmsConfig] = useState(null)
+    const [fridgeTagSaved, setFridgeTagSaved] = useState(null)
+    const [fridgeTagDraft, setFridgeTagDraft] = useState(null)
+    const [emsSaved, setEmsSaved] = useState(null)
+    const [emsDraft, setEmsDraft] = useState(null)
     const [fridgeTagMeta, setFridgeTagMeta] = useState({
         loading: true,
         saving: false,
@@ -162,12 +185,13 @@ export const ImportConfigProvider = ({ children }) => {
     useEffect(() => {
         let cancelled = false
 
-        const loadDevice = async (device, setConfig, setMeta) => {
+        const loadDevice = async (device, setSaved, setDraft, setMeta) => {
             setMeta((prev) => ({ ...prev, loading: true }))
             try {
                 const result = await loadImportSettings(engine, device)
                 if (cancelled) return
-                setConfig(result.settings)
+                setSaved(result.settings)
+                setDraft(result.settings)
                 setMeta({
                     loading: false,
                     saving: false,
@@ -176,7 +200,9 @@ export const ImportConfigProvider = ({ children }) => {
                 })
             } catch (error) {
                 if (cancelled) return
-                setConfig(createEmptyConfig(device))
+                const empty = createEmptyConfig(device)
+                setSaved(empty)
+                setDraft(empty)
                 setMeta({
                     loading: false,
                     saving: false,
@@ -186,20 +212,21 @@ export const ImportConfigProvider = ({ children }) => {
             }
         }
 
-        loadDevice('fridgeTag', setFridgeTagConfig, setFridgeTagMeta)
-        loadDevice('ems', setEmsConfig, setEmsMeta)
+        loadDevice('fridgeTag', setFridgeTagSaved, setFridgeTagDraft, setFridgeTagMeta)
+        loadDevice('ems', setEmsSaved, setEmsDraft, setEmsMeta)
 
         return () => {
             cancelled = true
         }
     }, [engine])
 
-    const createPersist = useCallback(
-        (device, setConfig, setMeta) => async (next) => {
-            setConfig(next)
+    const createSaveDraft = useCallback(
+        (device, draft, setSaved, setMeta) => async () => {
+            if (!draft) return
             setMeta((prev) => ({ ...prev, saving: true }))
             try {
-                const result = await saveImportSettings(engine, device, next)
+                const result = await saveImportSettings(engine, device, draft)
+                setSaved(draft)
                 setMeta((prev) => ({
                     ...prev,
                     saving: false,
@@ -212,51 +239,71 @@ export const ImportConfigProvider = ({ children }) => {
                     saving: false,
                     storageWarning: error.message,
                 }))
+                throw error
             }
         },
         [engine]
     )
 
-    const persistFridgeTag = useMemo(
-        () => createPersist('fridgeTag', setFridgeTagConfig, setFridgeTagMeta),
-        [createPersist]
+    const createCancelDraft = useCallback((saved, setDraft) => () => {
+        if (saved) {
+            setDraft({ ...saved, fieldMappings: { ...saved.fieldMappings } })
+        }
+    }, [])
+
+    const saveFridgeTagDraft = useMemo(
+        () => createSaveDraft('fridgeTag', fridgeTagDraft, setFridgeTagSaved, setFridgeTagMeta),
+        [createSaveDraft, fridgeTagDraft]
     )
-    const persistEms = useMemo(
-        () => createPersist('ems', setEmsConfig, setEmsMeta),
-        [createPersist]
+    const saveEmsDraft = useMemo(
+        () => createSaveDraft('ems', emsDraft, setEmsSaved, setEmsMeta),
+        [createSaveDraft, emsDraft]
+    )
+
+    const cancelFridgeTagDraft = useMemo(
+        () => createCancelDraft(fridgeTagSaved, setFridgeTagDraft),
+        [createCancelDraft, fridgeTagSaved]
+    )
+    const cancelEmsDraft = useMemo(
+        () => createCancelDraft(emsSaved, setEmsDraft),
+        [createCancelDraft, emsSaved]
     )
 
     const fridgeTagApi = useMemo(
         () =>
             createDeviceApi({
                 device: 'fridgeTag',
-                config: fridgeTagConfig,
+                savedConfig: fridgeTagSaved,
+                draftConfig: fridgeTagDraft,
                 loading: fridgeTagMeta.loading,
                 saving: fridgeTagMeta.saving,
                 storageSource: fridgeTagMeta.storageSource,
                 storageWarning: fridgeTagMeta.storageWarning,
-                setConfig: setFridgeTagConfig,
-                persist: persistFridgeTag,
+                setDraftConfig: setFridgeTagDraft,
+                saveDraft: saveFridgeTagDraft,
+                cancelDraft: cancelFridgeTagDraft,
                 fieldMappingFields: [],
             }),
-        [fridgeTagConfig, fridgeTagMeta, persistFridgeTag]
+        [fridgeTagSaved, fridgeTagDraft, fridgeTagMeta, saveFridgeTagDraft, cancelFridgeTagDraft]
     )
 
     const emsApi = useMemo(
         () =>
             createDeviceApi({
                 device: 'ems',
-                config: emsConfig,
+                savedConfig: emsSaved,
+                draftConfig: emsDraft,
                 loading: emsMeta.loading,
                 saving: emsMeta.saving,
                 storageSource: emsMeta.storageSource,
                 storageWarning: emsMeta.storageWarning,
-                setConfig: setEmsConfig,
-                persist: persistEms,
+                setDraftConfig: setEmsDraft,
+                saveDraft: saveEmsDraft,
+                cancelDraft: cancelEmsDraft,
                 fieldMappingFields: EMS_FIELD_MAPPING_FIELDS,
                 requiresProgramStage: false,
             }),
-        [emsConfig, emsMeta, persistEms]
+        [emsSaved, emsDraft, emsMeta, saveEmsDraft, cancelEmsDraft]
     )
 
     const value = useMemo(

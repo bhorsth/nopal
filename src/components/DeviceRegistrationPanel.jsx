@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDataEngine } from '@dhis2/app-runtime'
 import {
     Button,
@@ -8,8 +8,13 @@ import {
     NoticeBox,
     SingleSelectField,
     SingleSelectOption,
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
 } from '@dhis2/ui'
 import { getDhis2Config } from '../config/dhis2'
+import { EMS_FIELD_MAPPING_FIELDS } from '../config/emsFieldMappingDefinitions'
 import {
     formatTeiOptionLabel,
     getTeiOrgUnitId,
@@ -18,12 +23,17 @@ import {
     lookupTrackedEntitiesBySerial,
     registerNewAppliance,
 } from '../services/trackerLookup'
+import { buildRegistrationAttributes } from '../utils/buildRegistrationAttributes'
+import OrganisationUnitPicker from './OrganisationUnitPicker'
 import classes from '../App.module.css'
 
 const DeviceRegistrationPanel = ({
+    deviceType = 'fridgeTag',
     serial,
     programId,
     serialAttributeId,
+    fieldMappings = {},
+    parsedData = null,
     onRegistered,
 }) => {
     const engine = useDataEngine()
@@ -32,11 +42,53 @@ const DeviceRegistrationPanel = ({
     const [mode, setMode] = useState(null)
     const [registerLoading, setRegisterLoading] = useState(false)
     const [registerError, setRegisterError] = useState('')
+    const [selectedOrgUnitId, setSelectedOrgUnitId] = useState(envConfig.orgUnitId || '')
 
     const [appliancesLoading, setAppliancesLoading] = useState(false)
     const [appliancesError, setAppliancesError] = useState('')
     const [appliances, setAppliances] = useState([])
     const [selectedTeiId, setSelectedTeiId] = useState('')
+
+    const registrationAttributes = useMemo(
+        () =>
+            buildRegistrationAttributes({
+                deviceType,
+                parsedData,
+                fieldMappings,
+                serialAttributeId,
+                serial,
+            }),
+        [deviceType, parsedData, fieldMappings, serialAttributeId, serial]
+    )
+
+    const attributePreviewRows = useMemo(() => {
+        if (deviceType === 'ems') {
+            return EMS_FIELD_MAPPING_FIELDS.filter((field) => field.kind === 'attribute')
+                .map((field) => {
+                    const attributeId = fieldMappings[field.key]
+                    const sourceValue = parsedData?.metadata?.[field.key]
+                    const willWrite = registrationAttributes.find((a) => a.attribute === attributeId)
+                    return {
+                        key: field.key,
+                        label: field.label(),
+                        attributeId,
+                        sourceValue,
+                        willWrite: Boolean(willWrite),
+                        value: willWrite?.value ?? '',
+                    }
+                })
+                .filter((row) => row.attributeId || row.sourceValue != null)
+        }
+
+        return registrationAttributes.map((attr) => ({
+            key: attr.attribute,
+            label: attr.attribute === serialAttributeId ? i18n.t('Logger serial') : attr.attribute,
+            attributeId: attr.attribute,
+            sourceValue: attr.value,
+            willWrite: true,
+            value: attr.value,
+        }))
+    }, [deviceType, fieldMappings, parsedData, registrationAttributes, serialAttributeId])
 
     useEffect(() => {
         if (mode !== 'existing') return
@@ -74,10 +126,11 @@ const DeviceRegistrationPanel = ({
 
     const handleRegisterNewAppliance = async () => {
         setRegisterError('')
-        if (!envConfig.orgUnitId || !envConfig.teTypeId) {
+        const orgUnitId = selectedOrgUnitId || envConfig.orgUnitId
+        if (!orgUnitId || !envConfig.teTypeId) {
             setRegisterError(
                 i18n.t(
-                    'Organisation unit ID and tracked entity type ID must be set in environment configuration before registering a new appliance.'
+                    'Select an organisation unit and ensure tracked entity type ID is set in environment configuration.'
                 )
             )
             return
@@ -87,10 +140,11 @@ const DeviceRegistrationPanel = ({
         try {
             await registerNewAppliance(engine, {
                 programId,
-                orgUnitId: envConfig.orgUnitId,
+                orgUnitId,
                 teTypeId: envConfig.teTypeId,
                 serialAttributeId,
                 serial,
+                attributes: registrationAttributes,
             })
             await refreshLookup()
         } catch (err) {
@@ -123,6 +177,7 @@ const DeviceRegistrationPanel = ({
                 serialAttributeId,
                 serial,
                 enrollments: tei.enrollments ?? [],
+                attributes: registrationAttributes,
             })
             await refreshLookup()
         } catch (err) {
@@ -137,21 +192,38 @@ const DeviceRegistrationPanel = ({
         }
     }
 
+    const deviceLabel =
+        deviceType === 'ems' ? i18n.t('EMS device') : i18n.t('Fridge-tag logger')
+
+    const attributePreviewTable =
+        attributePreviewRows.length > 0 ? (
+            <div className={classes.tableWrap}>
+                <Table>
+                    <TableBody>
+                        {attributePreviewRows.map((row) => (
+                            <TableRow key={row.key}>
+                                <TableCell dense>{row.label}</TableCell>
+                                <TableCell dense>
+                                    {row.willWrite ? row.value || row.sourceValue : i18n.t('Skipped')}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+        ) : null
+
     if (mode === null) {
         return (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <NoticeBox warning title={i18n.t('No matching device found')}>
                     {i18n.t(
-                        'No tracked entity in DHIS2 matches logger serial {{serial}}. Register the device to continue.',
-                        { serial, nsSeparator: false }
+                        'No tracked entity in DHIS2 matches {{deviceType}} serial {{serial}}. Register or link the device to continue.',
+                        { deviceType: deviceLabel, serial, nsSeparator: false }
                     )}
                 </NoticeBox>
                 <ButtonStrip>
-                    <Button
-                        primary
-                        onClick={() => setMode('new')}
-                        disabled={registerLoading}
-                    >
+                    <Button primary onClick={() => setMode('new')} disabled={registerLoading}>
                         {i18n.t('Register new appliance')}
                     </Button>
                     <Button onClick={() => setMode('existing')} disabled={registerLoading}>
@@ -167,10 +239,16 @@ const DeviceRegistrationPanel = ({
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <NoticeBox title={i18n.t('Register new appliance')}>
                     {i18n.t(
-                        'A new tracked entity will be created with logger serial {{serial}} and enrolled in the configured program.',
-                        { serial, nsSeparator: false }
+                        'A new tracked entity will be created for {{deviceType}} serial {{serial}} and enrolled in the configured program.',
+                        { deviceType: deviceLabel, serial, nsSeparator: false }
                     )}
                 </NoticeBox>
+                <OrganisationUnitPicker
+                    selectedOrgUnitId={selectedOrgUnitId}
+                    onChange={setSelectedOrgUnitId}
+                    disabled={registerLoading}
+                />
+                {attributePreviewTable}
                 {registerError ? <NoticeBox error>{registerError}</NoticeBox> : null}
                 <ButtonStrip>
                     <Button primary onClick={handleRegisterNewAppliance} loading={registerLoading}>
@@ -188,13 +266,14 @@ const DeviceRegistrationPanel = ({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <NoticeBox title={i18n.t('Register logger on existing appliance')}>
                 {i18n.t(
-                    'Select an appliance and assign logger serial {{serial}} to it.',
-                    { serial, nsSeparator: false }
+                    'Select an appliance and assign {{deviceType}} serial {{serial}} to it.',
+                    { deviceType: deviceLabel, serial, nsSeparator: false }
                 )}
             </NoticeBox>
 
             {appliancesError ? <NoticeBox error>{appliancesError}</NoticeBox> : null}
             {registerError ? <NoticeBox error>{registerError}</NoticeBox> : null}
+            {attributePreviewTable}
 
             {appliancesLoading ? (
                 <div className={classes.settingsLoader}>

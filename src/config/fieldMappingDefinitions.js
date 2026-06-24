@@ -80,9 +80,45 @@ export const FIELD_MAPPING_FIELDS = [
         kind: 'dataElement',
         defaultValue: 'YBjvNW66Q78',
     },
+    {
+        key: 'lowerAlarmStatus',
+        label: () => i18n.t('Lower alarm status'),
+        kind: 'dataElement',
+        defaultValue: '',
+    },
+    {
+        key: 'upperAlarmStatus',
+        label: () => i18n.t('Upper alarm status'),
+        kind: 'dataElement',
+        defaultValue: '',
+    },
+    {
+        key: 'lowerAlarmStatusNumeric',
+        label: () => i18n.t('Lower alarm status (numeric)'),
+        kind: 'dataElement',
+        defaultValue: '',
+    },
+    {
+        key: 'upperAlarmStatusNumeric',
+        label: () => i18n.t('Upper alarm status (numeric)'),
+        kind: 'dataElement',
+        defaultValue: '',
+    },
 ]
 
 export const FIELD_MAPPING_KEYS = FIELD_MAPPING_FIELDS.map((f) => f.key)
+
+/** Optional mappings — import works without these configured. */
+export const OPTIONAL_FIELD_MAPPING_KEYS = [
+    'lowerAlarmStatus',
+    'upperAlarmStatus',
+    'lowerAlarmStatusNumeric',
+    'upperAlarmStatusNumeric',
+]
+
+export const REQUIRED_FIELD_MAPPING_KEYS = FIELD_MAPPING_KEYS.filter(
+    (key) => !OPTIONAL_FIELD_MAPPING_KEYS.includes(key)
+)
 
 export const DEFAULT_FIELD_MAPPINGS = Object.fromEntries(
     FIELD_MAPPING_FIELDS.map((f) => [f.key, f.defaultValue])

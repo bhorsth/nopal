@@ -354,9 +354,12 @@ const EmsDhis2Actions = ({ parsedData }) => {
             <div ref={resultScrollRef} style={{ maxHeight: 420, overflow: 'auto' }}>
                 {lookupComplete && !deviceFound && isImportConfigValid && serial ? (
                     <DeviceRegistrationPanel
+                        deviceType="ems"
                         serial={serial}
                         programId={programId}
                         serialAttributeId={serialAttributeId}
+                        fieldMappings={fieldMappings}
+                        parsedData={parsedData}
                         onRegistered={handleRegistered}
                     />
                 ) : null}
@@ -378,6 +381,22 @@ const EmsDhis2Actions = ({ parsedData }) => {
                                             <strong>{lookupResult.entities.length}</strong>
                                         </TableCell>
                                     </TableRow>
+                                    {teiSummaryRows?.orgUnit?.name || teiSummaryRows?.orgUnit?.id ? (
+                                        <TableRow>
+                                            <TableCell dense>{i18n.t('Organisation unit')}</TableCell>
+                                            <TableCell dense>
+                                                <strong>
+                                                    {teiSummaryRows.orgUnit.name || teiSummaryRows.orgUnit.id}
+                                                </strong>
+                                                {teiSummaryRows.orgUnit.name && teiSummaryRows.orgUnit.id ? (
+                                                    <span style={{ color: 'var(--colors-grey700)' }}>
+                                                        {' '}
+                                                        ({teiSummaryRows.orgUnit.id})
+                                                    </span>
+                                                ) : null}
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : null}
                                     {teiSummaryRows?.facilityName ? (
                                         <TableRow>
                                             <TableCell dense>{i18n.t('Facility name')}</TableCell>

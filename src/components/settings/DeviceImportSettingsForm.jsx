@@ -1,6 +1,8 @@
 import i18n from '@dhis2/d2-i18n'
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
+    Button,
+    ButtonStrip,
     Card,
     CircularLoader,
     NoticeBox,
@@ -37,18 +39,27 @@ const DeviceImportSettingsForm = ({
 }) => {
     const { config: envConfig, missing, isValid: isEnvValid } = useMemo(() => getDhis2Config(), [])
     const {
-        programId,
-        programStageId,
-        fieldMappings,
+        draftProgramId,
+        draftProgramStageId,
+        draftFieldMappings,
         setProgramId,
         setProgramStageId,
         setFieldMapping,
+        saveDraft,
+        cancelDraft,
+        isDraftDirty,
         isImportConfigValid,
         settingsLoading,
         settingsSaving,
         storageSource,
         storageWarning,
     } = config
+
+    const programId = draftProgramId
+    const programStageId = draftProgramStageId
+    const fieldMappings = draftFieldMappings
+
+    const [saveError, setSaveError] = useState('')
 
     const { programs, loading: programsLoading, error: programsError } = useTrackerPrograms()
     const { stages, loading: stagesLoading, error: stagesError } = useProgramStages(programId)
@@ -110,7 +121,7 @@ const DeviceImportSettingsForm = ({
             )
         }
         return i18n.t(
-            'Settings will be saved to the DHIS2 data store ({{namespace}}/{{key}}) when you make changes.',
+            'Settings are saved to the DHIS2 data store ({{namespace}}/{{key}}) when you click Save.',
             {
                 namespace: DATA_STORE_NAMESPACE,
                 key: dataStoreKey,
@@ -120,6 +131,20 @@ const DeviceImportSettingsForm = ({
     }, [storageSource, dataStoreKey])
 
     const selectedProgramLabel = programs.find((p) => p.id === programId)?.displayName
+
+    const handleSave = async () => {
+        setSaveError('')
+        try {
+            await saveDraft()
+        } catch (error) {
+            setSaveError(error.message)
+        }
+    }
+
+    const handleCancel = () => {
+        setSaveError('')
+        cancelDraft()
+    }
 
     return (
         <div className={classes.page}>
@@ -153,6 +178,18 @@ const DeviceImportSettingsForm = ({
                 </NoticeBox>
             ) : null}
 
+            {saveError ? (
+                <NoticeBox error title={i18n.t('Could not save settings')}>
+                    {saveError}
+                </NoticeBox>
+            ) : null}
+
+            {isDraftDirty && !settingsLoading ? (
+                <NoticeBox warning title={i18n.t('Unsaved changes')}>
+                    {i18n.t('You have unsaved changes. Click Save to apply them or Cancel to discard.')}
+                </NoticeBox>
+            ) : null}
+
             {!settingsLoading && !isImportConfigValid ? (
                 <NoticeBox warning title={i18n.t('Import settings incomplete')}>
                     {incompleteSettingsMessage}
@@ -170,6 +207,21 @@ const DeviceImportSettingsForm = ({
                         {storageInfoMessage}
                         {settingsSaving ? ` ${i18n.t('Saving…')}` : ''}
                     </p>
+
+                    {!settingsLoading ? (
+                        <ButtonStrip>
+                            <Button
+                                primary
+                                onClick={handleSave}
+                                disabled={!isDraftDirty || settingsSaving}
+                            >
+                                {settingsSaving ? i18n.t('Saving…') : i18n.t('Save')}
+                            </Button>
+                            <Button onClick={handleCancel} disabled={!isDraftDirty || settingsSaving}>
+                                {i18n.t('Cancel')}
+                            </Button>
+                        </ButtonStrip>
+                    ) : null}
 
                     {settingsLoading ? (
                         <div className={classes.settingsLoader}>

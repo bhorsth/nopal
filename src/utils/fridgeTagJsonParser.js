@@ -1,4 +1,5 @@
 import { parseHmToMinutes } from './timeFormat'
+import { enrichAlarmsWithStatus } from './fridgeTagAlarmStatus'
 
 /**
  * Parse Fridge-tag JSON export (e.g. Q-tag app export) into the same shape as fridgeTagParser.toJson().
@@ -43,7 +44,10 @@ export function parseFridgeTagJson(raw) {
                 maxTime: record.timestampMaxTemperature ?? null,
                 avg: record.averageTemperature ?? null,
             },
-            alarms: alarms.sort((a, b) => a.level - b.level),
+            alarms: enrichAlarmsWithStatus(
+                alarms.sort((a, b) => a.level - b.level),
+                alarmThresholds
+            ),
             sensorTimeoutMinutes: parseHmToMinutes(
                 record.internalSensorTimeout?.accumulatedSensorTimeout
             ),

@@ -14,18 +14,14 @@ import {
     TableRowHead,
 } from '@dhis2/ui'
 import { useImportConfig } from '../context/ImportConfigContext'
-import { buildEventDataValues } from '../utils/buildEventDataValues'
+import { FIELD_MAPPING_FIELDS } from '../config/fieldMappingDefinitions'
+import { buildFridgeTagEventPayloads } from '../utils/buildFridgeTagEventPayloads'
 import {
     getTeiOrgUnitId,
     getTeiSummaryInfo,
     lookupTrackedEntitiesBySerial,
 } from '../services/trackerLookup'
 import { fetchTrackerEventsBySerial, syncTrackerEventPayloads } from '../services/trackerEvents'
-import {
-    buildExistingEventIdIndex,
-    partitionPlannedEventsForSync,
-    todayIsoDate,
-} from '../utils/trackerEventSync'
 import DeviceRegistrationPanel from './DeviceRegistrationPanel'
 import classes from '../App.module.css'
 
@@ -164,26 +160,39 @@ const Dhis2Actions = ({ parsedData }) => {
         loadExistingEvents()
     }, [lookupResult, serial, programId, serialAttributeId, isImportConfigValid, loadExistingEvents])
 
-    const mapHistoryRecordToEvent = (record, trackedEntity, enrollment, orgUnit, existingEventId = null) => {
-        const dataValues = buildEventDataValues(record, fieldMappings)
+    const plannedSync = useMemo(() => {
+        if (!lookupResult?.entities?.length || !eventsResult?.events) {
+            return null
+        }
 
-        const eventObj = {
-            orgUnit,
-            occurredAt: record.date || '',
-            status: 'ACTIVE',
-            program: programId,
-            programStage: programStageId,
+        const tei = lookupResult.entities[0]
+        const trackedEntity = tei.trackedEntity
+        const enrollment = tei.enrollments?.[0]?.enrollment
+        const orgUnit = getTeiOrgUnitId(tei)
+
+        if (!trackedEntity || !enrollment || !orgUnit) {
+            return null
+        }
+
+        return buildFridgeTagEventPayloads({
+            parsedData,
+            fieldMappings,
+            programId,
+            programStageId,
             trackedEntity,
             enrollment,
-            dataValues,
-        }
+            orgUnit,
+            existingEvents: eventsResult.events,
+        })
+    }, [lookupResult, eventsResult, parsedData, fieldMappings, programId, programStageId])
 
-        if (existingEventId) {
-            eventObj.event = existingEventId
-        }
-
-        return eventObj
-    }
+    const previewFields = useMemo(
+        () =>
+            FIELD_MAPPING_FIELDS.filter(
+                (field) => field.kind === 'dataElement' && fieldMappings[field.key]
+            ).slice(0, 6),
+        [fieldMappings]
+    )
 
     const handleCreateEvents = async () => {
         setCreateError('')
@@ -225,29 +234,18 @@ const Dhis2Actions = ({ parsedData }) => {
             return
         }
 
-        const todayDate = todayIsoDate()
-        const existingEventIdsByKey = buildExistingEventIdIndex(
-            existingEvents.events,
-            (evt) => (evt.occurredAt ? String(evt.occurredAt).slice(0, 10) : null)
-        )
-
-        const datePattern = /^\d{4}-\d{2}-\d{2}$/
-        const validRecords = parsedData.history.records.filter((record) => {
-            const date = record.date?.trim()
-            return date && datePattern.test(date)
+        const syncPlan = buildFridgeTagEventPayloads({
+            parsedData,
+            fieldMappings,
+            programId,
+            programStageId,
+            trackedEntity,
+            enrollment,
+            orgUnit,
+            existingEvents: existingEvents.events,
         })
 
-        const eventPayloads = validRecords.map((record) => ({
-            date: record.date.trim(),
-            ...mapHistoryRecordToEvent(record, trackedEntity, enrollment, orgUnit),
-        }))
-
-        const { creates, updates } = partitionPlannedEventsForSync(
-            eventPayloads,
-            existingEventIdsByKey,
-            todayDate,
-            (item) => item.date
-        )
+        const { creates, updates, validRecords } = syncPlan
 
         if (creates.length === 0 && updates.length === 0) {
             if (validRecords.length > 0) {
@@ -328,9 +326,12 @@ const Dhis2Actions = ({ parsedData }) => {
             <div ref={resultScrollRef} style={{ maxHeight: 420, overflow: 'auto' }}>
                 {lookupComplete && !deviceFound && isImportConfigValid && serial ? (
                     <DeviceRegistrationPanel
+                        deviceType="fridgeTag"
                         serial={serial}
                         programId={programId}
                         serialAttributeId={serialAttributeId}
+                        fieldMappings={fieldMappings}
+                        parsedData={parsedData}
                         onRegistered={handleRegistered}
                     />
                 ) : null}
@@ -352,6 +353,22 @@ const Dhis2Actions = ({ parsedData }) => {
                                             <strong>{lookupResult.entities.length}</strong>
                                         </TableCell>
                                     </TableRow>
+                                    {teiSummaryRows?.orgUnit?.name || teiSummaryRows?.orgUnit?.id ? (
+                                        <TableRow>
+                                            <TableCell dense>{i18n.t('Organisation unit')}</TableCell>
+                                            <TableCell dense>
+                                                <strong>
+                                                    {teiSummaryRows.orgUnit.name || teiSummaryRows.orgUnit.id}
+                                                </strong>
+                                                {teiSummaryRows.orgUnit.name && teiSummaryRows.orgUnit.id ? (
+                                                    <span style={{ color: 'var(--colors-grey700)' }}>
+                                                        {' '}
+                                                        ({teiSummaryRows.orgUnit.id})
+                                                    </span>
+                                                ) : null}
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : null}
                                     {teiSummaryRows?.facilityName ? (
                                         <TableRow>
                                             <TableCell dense>{i18n.t('Facility name')}</TableCell>
@@ -387,6 +404,59 @@ const Dhis2Actions = ({ parsedData }) => {
                                 </TableBody>
                             </Table>
                         </div>
+
+                        {plannedSync ? (
+                            <details>
+                                <summary style={{ cursor: 'pointer' }}>
+                                    <strong>{i18n.t('Planned sync preview')}</strong>
+                                    {' — '}
+                                    {i18n.t('{{creates}} to create, {{updates}} to update, {{skipped}} skipped', {
+                                        creates: plannedSync.creates.length,
+                                        updates: plannedSync.updates.length,
+                                        skipped: plannedSync.skippedPastDuplicates,
+                                        nsSeparator: false,
+                                    })}
+                                </summary>
+                                <div className={classes.tableWrap} style={{ marginTop: '8px' }}>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRowHead>
+                                                <TableCellHead dense>{i18n.t('Date')}</TableCellHead>
+                                                <TableCellHead dense>{i18n.t('Action')}</TableCellHead>
+                                                {previewFields.map((field) => (
+                                                    <TableCellHead dense key={field.key}>
+                                                        {field.label()}
+                                                    </TableCellHead>
+                                                ))}
+                                            </TableRowHead>
+                                        </TableHead>
+                                        <TableBody>
+                                            {plannedSync.planned.slice(0, 60).map((item) => {
+                                                const action = plannedSync.creates.some((c) => c.date === item.date)
+                                                    ? 'create'
+                                                    : plannedSync.updates.some((u) => u.date === item.date)
+                                                      ? 'update'
+                                                      : 'skip'
+                                                return (
+                                                    <TableRow key={item.date}>
+                                                        <TableCell dense>{formatDate(item.date)}</TableCell>
+                                                        <TableCell dense>{action}</TableCell>
+                                                        {previewFields.map((field) => (
+                                                            <TableCell dense key={field.key}>
+                                                                {getDataValue(
+                                                                    item.dataValues,
+                                                                    fieldMappings[field.key]
+                                                                ) || ''}
+                                                            </TableCell>
+                                                        ))}
+                                                    </TableRow>
+                                                )
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            </details>
+                        ) : null}
                     </div>
                 ) : null}
 

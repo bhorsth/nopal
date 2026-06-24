@@ -16,6 +16,8 @@ import {
 
 /** @typedef {'fridgeTag' | 'ems'} ImportDevice */
 
+const EMS_REMOVED_FIELD_KEYS = ['RNAM', 'DNAM', 'FNAM', 'CID', 'FID']
+
 const DEVICE_DEFAULT_FIELD_MAPPINGS = {
     fridgeTag: DEFAULT_FIELD_MAPPINGS,
     ems: EMS_DEFAULT_FIELD_MAPPINGS,
@@ -27,14 +29,21 @@ const DEVICE_DEFAULT_FIELD_MAPPINGS = {
 export const mergeImportSettings = (device, partial = {}) => {
     const { config } = getDhis2Config()
     const defaultFieldMappings = DEVICE_DEFAULT_FIELD_MAPPINGS[device]
+    const mergedMappings = {
+        ...defaultFieldMappings,
+        ...(partial.fieldMappings || {}),
+    }
+
+    if (device === 'ems') {
+        EMS_REMOVED_FIELD_KEYS.forEach((key) => {
+            delete mergedMappings[key]
+        })
+    }
 
     return {
         programId: partial.programId || config.programId || '',
         programStageId: partial.programStageId || config.programStageId || '',
-        fieldMappings: {
-            ...defaultFieldMappings,
-            ...(partial.fieldMappings || {}),
-        },
+        fieldMappings: mergedMappings,
     }
 }
 

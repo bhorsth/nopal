@@ -13,11 +13,7 @@ const formatDate = (dateStr) => {
 }
 
 const TemperatureHistoryPreview = ({ history, config, historyMetadata, isOpen }) => {
-    const getAlarmStatus = (alarm) => {
-        if (!alarm) return 'ok'
-        if (alarm.accumulatedMinutes && alarm.accumulatedMinutes > 0) return 'In progress'
-        return 'ok'
-    }
+    const formatAlarmStatus = (alarm) => alarm?.status || 'ok'
 
     return (
         <div>
@@ -124,7 +120,7 @@ const TemperatureHistoryPreview = ({ history, config, historyMetadata, isOpen })
                                                 <TableCell dense>{rec.temperature?.minTime || rec.temperature?.maxTime || ''}</TableCell>
                                                 <TableCell dense>{rec.temperature?.avg ?? ''}</TableCell>
 
-                                                <TableCell dense>{getAlarmStatus(coldAlarm)}</TableCell>
+                                                <TableCell dense>{formatAlarmStatus(coldAlarm)}</TableCell>
                                                 <TableCell dense>{rec.temperature?.min ?? ''}</TableCell>
                                                 <TableCell dense>
                                                     {coldAlarm?.accumulatedMinutes && coldAlarm.accumulatedMinutes > 0
@@ -133,7 +129,7 @@ const TemperatureHistoryPreview = ({ history, config, historyMetadata, isOpen })
                                                 </TableCell>
                                                 <TableCell dense>{coldAlarm?.triggerTime || ''}</TableCell>
 
-                                                <TableCell dense>{getAlarmStatus(hotAlarm)}</TableCell>
+                                                <TableCell dense>{formatAlarmStatus(hotAlarm)}</TableCell>
                                                 <TableCell dense>{rec.temperature?.max ?? ''}</TableCell>
                                                 <TableCell dense>
                                                     {hotAlarm?.accumulatedMinutes && hotAlarm.accumulatedMinutes > 0

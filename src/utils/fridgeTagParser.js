@@ -8,6 +8,7 @@
 import { Key } from './keys.js'
 import { isParserDebugEnabled } from './parserDebug.js'
 import { parseHmToMinutes } from './timeFormat.js'
+import { enrichAlarmsWithStatus } from './fridgeTagAlarmStatus.js'
 
 const logDebug = (...args) => {
   if (isParserDebugEnabled()) {
@@ -346,6 +347,15 @@ export class FridgeTagParser {
  */
 export function toJson(data) {
   logDebug('fridgeTagParser.toJson: transforming parsed data')
+  const alarmThresholds = data.config.alarmThresholds
+    .sort((a, b) => a.level - b.level)
+    .map((t) => ({
+      level: t.level,
+      type: t.level === 0 ? 'cold' : 'hot',
+      temperatureLimit: t.tempLimit,
+      durationMinutes: t.timeLimitMinutes,
+    }))
+
   return {
     device: {
       name: data.device,
@@ -359,14 +369,7 @@ export function toJson(data) {
       cid: data.config.cid,
       lot: data.config.lot,
       zone: data.config.zone,
-      alarmThresholds: data.config.alarmThresholds
-        .sort((a, b) => a.level - b.level)
-        .map((t) => ({
-          level: t.level,
-          type: t.level === 0 ? 'cold' : 'hot',
-          temperatureLimit: t.tempLimit,
-          durationMinutes: t.timeLimitMinutes,
-        })),
+      alarmThresholds,
     },
     history: {
       activationTimestamp: data.history.activationTimestamp,
@@ -382,15 +385,18 @@ export function toJson(data) {
           maxTime: r.maxTempTime,
           avg: r.avgTemp,
         },
-        alarms: r.alarms
-          .sort((a, b) => a.level - b.level)
-          .map((a) => ({
-            level: a.level,
-            type: a.level === 0 ? 'cold' : 'hot',
-            accumulatedMinutes: a.accumulatedMinutes,
-            triggerTime: a.timestamp !== '00:00' ? a.timestamp : null,
-            eventCount: a.count,
-          })),
+        alarms: enrichAlarmsWithStatus(
+          r.alarms
+            .sort((a, b) => a.level - b.level)
+            .map((a) => ({
+              level: a.level,
+              type: a.level === 0 ? 'cold' : 'hot',
+              accumulatedMinutes: a.accumulatedMinutes,
+              triggerTime: a.timestamp !== '00:00' ? a.timestamp : null,
+              eventCount: a.count,
+            })),
+          alarmThresholds
+        ),
         sensorTimeoutMinutes: r.sensorTimeoutMinutes,
         events: r.events,
         verified: r.checked

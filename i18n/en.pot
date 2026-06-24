@@ -5,15 +5,18 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-12T14:35:42.569Z\n"
-"PO-Revision-Date: 2026-06-12T14:35:42.571Z\n"
+"POT-Creation-Date: 2026-06-24T07:41:15.627Z\n"
+"PO-Revision-Date: 2026-06-24T07:41:15.629Z\n"
+
+msgid "Logger serial"
+msgstr "Logger serial"
 
 msgid ""
-"Organisation unit ID and tracked entity type ID must be set in environment "
-"configuration before registering a new appliance."
+"Select an organisation unit and ensure tracked entity type ID is set in "
+"environment configuration."
 msgstr ""
-"Organisation unit ID and tracked entity type ID must be set in environment "
-"configuration before registering a new appliance."
+"Select an organisation unit and ensure tracked entity type ID is set in "
+"environment configuration."
 
 msgid "Registration failed: {{message}}"
 msgstr "Registration failed: {{message}}"
@@ -21,15 +24,24 @@ msgstr "Registration failed: {{message}}"
 msgid "Select an existing appliance to continue."
 msgstr "Select an existing appliance to continue."
 
+msgid "EMS device"
+msgstr "EMS device"
+
+msgid "Fridge-tag logger"
+msgstr "Fridge-tag logger"
+
+msgid "Skipped"
+msgstr "Skipped"
+
 msgid "No matching device found"
 msgstr "No matching device found"
 
 msgid ""
-"No tracked entity in DHIS2 matches logger serial {{serial}}. Register the "
-"device to continue."
+"No tracked entity in DHIS2 matches {{deviceType}} serial {{serial}}. "
+"Register or link the device to continue."
 msgstr ""
-"No tracked entity in DHIS2 matches logger serial {{serial}}. Register the "
-"device to continue."
+"No tracked entity in DHIS2 matches {{deviceType}} serial {{serial}}. "
+"Register or link the device to continue."
 
 msgid "Register new appliance"
 msgstr "Register new appliance"
@@ -38,11 +50,11 @@ msgid "Register logger on existing appliance"
 msgstr "Register logger on existing appliance"
 
 msgid ""
-"A new tracked entity will be created with logger serial {{serial}} and "
-"enrolled in the configured program."
+"A new tracked entity will be created for {{deviceType}} serial {{serial}} "
+"and enrolled in the configured program."
 msgstr ""
-"A new tracked entity will be created with logger serial {{serial}} and "
-"enrolled in the configured program."
+"A new tracked entity will be created for {{deviceType}} serial {{serial}} "
+"and enrolled in the configured program."
 
 msgid "Confirm registration"
 msgstr "Confirm registration"
@@ -50,8 +62,8 @@ msgstr "Confirm registration"
 msgid "Back"
 msgstr "Back"
 
-msgid "Select an appliance and assign logger serial {{serial}} to it."
-msgstr "Select an appliance and assign logger serial {{serial}} to it."
+msgid "Select an appliance and assign {{deviceType}} serial {{serial}} to it."
+msgstr "Select an appliance and assign {{deviceType}} serial {{serial}} to it."
 
 msgid "Existing appliance"
 msgstr "Existing appliance"
@@ -134,6 +146,9 @@ msgstr "Serial"
 msgid "Tracked Entities Found"
 msgstr "Tracked Entities Found"
 
+msgid "Organisation unit"
+msgstr "Organisation unit"
+
 msgid "Facility name"
 msgstr "Facility name"
 
@@ -146,6 +161,18 @@ msgstr "Appliance Manufacturer Serial Number"
 msgid "Appliance Model"
 msgstr "Appliance Model"
 
+msgid "Planned sync preview"
+msgstr "Planned sync preview"
+
+msgid "{{creates}} to create, {{updates}} to update, {{skipped}} skipped"
+msgstr "{{creates}} to create, {{updates}} to update, {{skipped}} skipped"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Action"
+msgstr "Action"
+
 msgid "No events found"
 msgstr "No events found"
 
@@ -154,9 +181,6 @@ msgstr "Events found"
 
 msgid "showing 60 most recent"
 msgstr "showing 60 most recent"
-
-msgid "Date"
-msgstr "Date"
 
 msgid "Average storage temperature"
 msgstr "Average storage temperature"
@@ -238,9 +262,6 @@ msgstr "Please select a file to upload."
 msgid "Parsing…"
 msgstr "Parsing…"
 
-msgid "EMS device"
-msgstr "EMS device"
-
 msgid "Fridge-tag"
 msgstr "Fridge-tag"
 
@@ -270,6 +291,27 @@ msgstr "Download JSON"
 
 msgid "View Parsed Data"
 msgstr "View Parsed Data"
+
+msgid "Could not load organisation units"
+msgstr "Could not load organisation units"
+
+msgid "Select a facility (level {{level}}) from your accessible organisation units."
+msgstr "Select a facility (level {{level}}) from your accessible organisation units."
+
+msgid "Select an organisation unit from your accessible hierarchy."
+msgstr "Select an organisation unit from your accessible hierarchy."
+
+msgid "Loading organisation units…"
+msgstr "Loading organisation units…"
+
+msgid "Select organisation unit"
+msgstr "Select organisation unit"
+
+msgid "Filter organisation units"
+msgstr "Filter organisation units"
+
+msgid "No organisation units found"
+msgstr "No organisation units found"
 
 msgid "Data Logger Temperature History Preview"
 msgstr "Data Logger Temperature History Preview"
@@ -313,8 +355,8 @@ msgstr "notes"
 msgid "Cumulative"
 msgstr "Cumulative"
 
-msgid "daily time"
-msgstr "daily time"
+msgid "daily time (min)"
+msgstr "daily time (min)"
 
 msgid "Alarm trigger time"
 msgstr "Alarm trigger time"
@@ -343,11 +385,11 @@ msgstr ""
 "only."
 
 msgid ""
-"Settings will be saved to the DHIS2 data store ({{namespace}}/{{key}}) when "
-"you make changes."
+"Settings are saved to the DHIS2 data store ({{namespace}}/{{key}}) when you "
+"click Save."
 msgstr ""
-"Settings will be saved to the DHIS2 data store ({{namespace}}/{{key}}) when "
-"you make changes."
+"Settings are saved to the DHIS2 data store ({{namespace}}/{{key}}) when you "
+"click Save."
 
 msgid "Missing configuration"
 msgstr "Missing configuration"
@@ -371,6 +413,15 @@ msgstr "Shared settings"
 msgid "Local settings only"
 msgstr "Local settings only"
 
+msgid "Could not save settings"
+msgstr "Could not save settings"
+
+msgid "Unsaved changes"
+msgstr "Unsaved changes"
+
+msgid "You have unsaved changes. Click Save to apply them or Cancel to discard."
+msgstr "You have unsaved changes. Click Save to apply them or Cancel to discard."
+
 msgid "Import settings incomplete"
 msgstr "Import settings incomplete"
 
@@ -385,6 +436,12 @@ msgstr "Import settings"
 
 msgid "Saving…"
 msgstr "Saving…"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Cancel"
+msgstr "Cancel"
 
 msgid "Could not load programs"
 msgstr "Could not load programs"
@@ -590,18 +647,6 @@ msgstr "RTC Wakeup"
 msgid "Absolute time in UTC"
 msgstr "Absolute time in UTC"
 
-msgid "Region name"
-msgstr "Region name"
-
-msgid "District name"
-msgstr "District name"
-
-msgid "Country ID"
-msgstr "Country ID"
-
-msgid "Facility ID"
-msgstr "Facility ID"
-
 msgid "Location / GIS Coordinates / Latitude"
 msgstr "Location / GIS Coordinates / Latitude"
 
@@ -719,14 +764,38 @@ msgstr "Average storage temperature (°C)"
 msgid "Min. temp. (°C)"
 msgstr "Min. temp. (°C)"
 
+msgid "Total time below -0.5°C (minutes)"
+msgstr "Total time below -0.5°C (minutes)"
+
+msgid "Total low alarm time (minutes)"
+msgstr "Total low alarm time (minutes)"
+
 msgid "Max. temp. (°C)"
 msgstr "Max. temp. (°C)"
+
+msgid "Total time above 8.0°C (minutes)"
+msgstr "Total time above 8.0°C (minutes)"
+
+msgid "Total high alarm time (minutes)"
+msgstr "Total high alarm time (minutes)"
 
 msgid "Average ambient temp (°C)"
 msgstr "Average ambient temp (°C)"
 
 msgid "Faults"
 msgstr "Faults"
+
+msgid "Lower alarm status"
+msgstr "Lower alarm status"
+
+msgid "Upper alarm status"
+msgstr "Upper alarm status"
+
+msgid "Lower alarm status (numeric)"
+msgstr "Lower alarm status (numeric)"
+
+msgid "Upper alarm status (numeric)"
+msgstr "Upper alarm status (numeric)"
 
 msgid ""
 "Import from your temperature data logger or EMS appliance and sync with the "
@@ -754,6 +823,13 @@ msgid ""
 msgstr ""
 "Select a program, program stage, and map all fields below to enable tracker "
 "imports."
+
+msgid ""
+"Settings will be saved to the DHIS2 data store ({{namespace}}/{{key}}) when "
+"you make changes."
+msgstr ""
+"Settings will be saved to the DHIS2 data store ({{namespace}}/{{key}}) when "
+"you make changes."
 
 msgid "General app settings and Data Import options."
 msgstr "General app settings and Data Import options."

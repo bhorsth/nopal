@@ -23,6 +23,7 @@ const EmsSettingsPage = () => {
             groupFieldMappingsByStageOrAttribute
             fieldMappingGroups={EMS_FIELD_STAGE_OR_ATTRIBUTE_GROUPS}
             autoMapFieldMappings
+            requiresProgramStage={false}
             incompleteSettingsMessage={i18n.t(
                 'Select a program and map all required EMS fields below to enable tracker imports.'
             )}

@@ -20,6 +20,7 @@ export function getDhis2Config() {
         programStageId: process.env.REACT_APP_DHIS2_PROGRAM_STAGE_ID || '',
         orgUnitId: process.env.REACT_APP_DHIS2_ORG_UNIT_ID || '',
         teTypeId: process.env.REACT_APP_DHIS2_TE_TYPE_ID || '',
+        facilityLevel: process.env.REACT_APP_DHIS2_FACILITY_LEVEL || '',
     }
 
     if (process.env.NODE_ENV === 'development') {

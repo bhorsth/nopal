@@ -40,8 +40,13 @@ export async function registerNewAppliance(engine, {
     teTypeId,
     serialAttributeId,
     serial,
+    attributes: attributesOverride,
 }) {
     const today = todayIsoDate()
+    const attributes =
+        attributesOverride ??
+        [{ attribute: serialAttributeId, value: serial }]
+
     return engine.mutate({
         resource: 'tracker',
         type: 'create',
@@ -51,7 +56,7 @@ export async function registerNewAppliance(engine, {
                 {
                     trackedEntityType: teTypeId,
                     orgUnit: orgUnitId,
-                    attributes: [{ attribute: serialAttributeId, value: serial }],
+                    attributes,
                     enrollments: [
                         {
                             program: programId,
@@ -74,15 +79,20 @@ export async function linkLoggerToExistingAppliance(engine, {
     serialAttributeId,
     serial,
     enrollments = [],
+    attributes: attributesOverride,
 }) {
     const today = todayIsoDate()
     const hasProgramEnrollment = enrollments.some((e) => e.program === programId)
+
+    const attributes =
+        attributesOverride ??
+        [{ attribute: serialAttributeId, value: serial }]
 
     const payload = {
         trackedEntity,
         trackedEntityType,
         orgUnit,
-        attributes: [{ attribute: serialAttributeId, value: serial }],
+        attributes,
     }
 
     if (!hasProgramEnrollment) {
@@ -139,7 +149,22 @@ export const getTeiFacilityName = (tei) => {
     return null
 }
 
+export const getTeiOrgUnitDisplay = (tei) => {
+    const orgUnit = tei?.orgUnit
+    if (!orgUnit) {
+        return { id: null, name: null }
+    }
+    if (typeof orgUnit === 'object') {
+        return {
+            id: orgUnit.id || null,
+            name: orgUnit.name || orgUnit.displayName || null,
+        }
+    }
+    return { id: orgUnit, name: null }
+}
+
 export const getTeiSummaryInfo = (tei) => ({
+    orgUnit: getTeiOrgUnitDisplay(tei),
     facilityName: getTeiFacilityName(tei),
     manufacturer: getTeiAttributeByName(tei, 'Appliance Manufacturer'),
     manufacturerSerial: getTeiAttributeByName(tei, 'Appliance Manufacturer Serial Number'),

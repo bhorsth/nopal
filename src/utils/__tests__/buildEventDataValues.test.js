@@ -63,4 +63,32 @@ describe('buildEventDataValues', () => {
             ])
         )
     })
+
+    it('posts lower and upper alarm status fields when mapped', () => {
+        const record = {
+            date: '2024-01-15',
+            temperature: { avg: 4.1 },
+            alarms: [
+                { level: 0, accumulatedMinutes: 30, status: 'in progress', statusNumeric: 1 },
+                { level: 1, accumulatedMinutes: 0, status: 'ok', statusNumeric: 0 },
+            ],
+        }
+
+        const dataValues = buildEventDataValues(record, {
+            ...mappings,
+            lowerAlarmStatus: 'de-low-status',
+            upperAlarmStatus: 'de-high-status',
+            lowerAlarmStatusNumeric: 'de-low-num',
+            upperAlarmStatusNumeric: 'de-high-num',
+        })
+
+        expect(dataValues).toEqual(
+            expect.arrayContaining([
+                { dataElement: 'de-low-status', value: 'in progress' },
+                { dataElement: 'de-high-status', value: 'ok' },
+                { dataElement: 'de-low-num', value: '1' },
+                { dataElement: 'de-high-num', value: '0' },
+            ])
+        )
+    })
 })

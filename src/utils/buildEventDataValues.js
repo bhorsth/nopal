@@ -1,9 +1,12 @@
+import { deriveAlarmStatus, getThresholdForLevel } from './fridgeTagAlarmStatus'
+
 /**
  * Build tracker event dataValues from a parsed history record using configured field mappings.
  * @param {object} record - Parsed history record
  * @param {Record<string, string>} mappings - Field key → data element id
+ * @param {Array<{ level: number, durationMinutes?: number|null }>} [alarmThresholds]
  */
-export function buildEventDataValues(record, mappings) {
+export function buildEventDataValues(record, mappings, alarmThresholds = []) {
     const coldAlarm = record.alarms?.find((a) => a.level === 0)
     const hotAlarm = record.alarms?.find((a) => a.level === 1)
 
@@ -53,6 +56,24 @@ export function buildEventDataValues(record, mappings) {
 
     push('faults', record.sensorTimeoutMinutes != null ? record.sensorTimeoutMinutes : '0')
     push('alarmCondition', alarmCondition)
+
+    const coldStatus =
+        coldAlarm?.status ??
+        deriveAlarmStatus(coldAlarm, getThresholdForLevel(alarmThresholds, 0)).status
+    const hotStatus =
+        hotAlarm?.status ??
+        deriveAlarmStatus(hotAlarm, getThresholdForLevel(alarmThresholds, 1)).status
+    const coldNumeric =
+        coldAlarm?.statusNumeric ??
+        deriveAlarmStatus(coldAlarm, getThresholdForLevel(alarmThresholds, 0)).numeric
+    const hotNumeric =
+        hotAlarm?.statusNumeric ??
+        deriveAlarmStatus(hotAlarm, getThresholdForLevel(alarmThresholds, 1)).numeric
+
+    push('lowerAlarmStatus', coldStatus)
+    push('upperAlarmStatus', hotStatus)
+    push('lowerAlarmStatusNumeric', coldNumeric)
+    push('upperAlarmStatusNumeric', hotNumeric)
 
     return dataValues
 }
