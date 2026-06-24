@@ -16,14 +16,22 @@ import {
 import { EMS_FIELD_MAPPING_FIELDS } from '../config/emsFieldMappingDefinitions'
 import { useEmsImportConfig } from '../context/ImportConfigContext'
 import { useProgramMetadata } from '../hooks/useProgramMetadata'
-import { groupEmsRecordDataValuesByStage } from '../utils/buildEmsEventDataValues'
-import { computeEmsOccurredAtTimes } from '../utils/isoDuration'
-import { formatEmsValue } from '../utils/emsValue'
+import { aggregateEmsRecordsByDay } from '../utils/aggregateEmsRecordsDaily'
+import {
+    buildEmsDailyEventsByStage,
+    buildStageNameToIdMap,
+} from '../utils/buildEmsEventDataValues'
 import {
     getTeiOrgUnitId,
     getTeiSummaryInfo,
     lookupTrackedEntitiesBySerial,
 } from '../services/trackerLookup'
+import { fetchTrackerEventsBySerial, syncTrackerEventPayloads } from '../services/trackerEvents'
+import {
+    buildExistingEventIdIndex,
+    partitionPlannedEventsForSync,
+    todayIsoDate,
+} from '../utils/trackerEventSync'
 import DeviceRegistrationPanel from './DeviceRegistrationPanel'
 import classes from '../App.module.css'
 
@@ -33,24 +41,11 @@ const getDataValue = (dataValues, dataElementId) => {
     return dv?.value || null
 }
 
-const resolveStageId = (stageName, stages) => {
-    if (!stageName || !Array.isArray(stages)) {
-        return null
-    }
-
-    const normalized = stageName.trim().toLowerCase()
-    const exact = stages.find((stage) => stage.displayName.trim().toLowerCase() === normalized)
-    if (exact) {
-        return exact.id
-    }
-
-    return stages.find((stage) => stage.displayName.toLowerCase().includes(normalized))?.id || null
-}
-
 const EmsDhis2Actions = ({ parsedData }) => {
     const engine = useDataEngine()
     const { programId, fieldMappings, isImportConfigValid } = useEmsImportConfig()
-    const { stages, loading: stagesLoading } = useProgramMetadata(programId)
+    const { stages, programMetadataReady } = useProgramMetadata(programId)
+    const stageNameToId = useMemo(() => buildStageNameToIdMap(stages), [stages])
 
     const [lookupLoading, setLookupLoading] = useState(false)
     const [lookupError, setLookupError] = useState('')
@@ -66,6 +61,7 @@ const EmsDhis2Actions = ({ parsedData }) => {
 
     const resultScrollRef = useRef(null)
     const lastAutoLookupKeyRef = useRef('')
+    const lastAutoEventsKeyRef = useRef('')
 
     const serial = parsedData?.config?.serial
     const serialAttributeId = fieldMappings.LSER
@@ -84,6 +80,7 @@ const EmsDhis2Actions = ({ parsedData }) => {
         setEventsError('')
         setSyncResult(null)
         setSyncError('')
+        lastAutoEventsKeyRef.current = ''
 
         if (!serial) {
             setLookupError(i18n.t('No logger serial found in parsed data. Parse a file first.'))
@@ -124,68 +121,43 @@ const EmsDhis2Actions = ({ parsedData }) => {
         runLookup()
     }, [parsedData, serial, programId, serialAttributeId, isImportConfigValid, runLookup])
 
-    const handleGetEvents = async () => {
+    const loadExistingEvents = useCallback(async () => {
+        if (!serial || !isImportConfigValid) {
+            return null
+        }
+
         setEventsError('')
-        setEventsResult(null)
-
-        if (!serial) {
-            setEventsError(i18n.t('No logger serial found in parsed data. Parse a file first.'))
-            return
-        }
-
-        if (!isImportConfigValid) {
-            setEventsError(
-                i18n.t('Complete EMS import settings and field mappings in Settings before using DHIS2 actions.')
-            )
-            return
-        }
-
         setEventsLoading(true)
         try {
-            const query = {
-                trackedEntities: {
-                    resource: 'tracker/trackedEntities',
-                    params: {
-                        filter: `${serialAttributeId}:like:${serial}`,
-                        fields: 'trackedEntity,enrollments[enrollment,events[event,occurredAt,status,programStage,dataValues[dataElement,value]]]',
-                        program: programId,
-                        orgUnitMode: 'ACCESSIBLE',
-                    },
-                },
-            }
-            const result = await engine.query(query)
-            const entities = result?.trackedEntities?.trackedEntities ?? []
-
-            const allEvents = []
-            entities.forEach((tei) => {
-                if (Array.isArray(tei.enrollments)) {
-                    tei.enrollments.forEach((enrollment) => {
-                        if (Array.isArray(enrollment.events)) {
-                            allEvents.push(
-                                ...enrollment.events.map((evt) => ({
-                                    ...evt,
-                                    trackedEntity: tei.trackedEntity,
-                                    enrollment: enrollment.enrollment,
-                                }))
-                            )
-                        }
-                    })
-                }
+            const result = await fetchTrackerEventsBySerial(engine, {
+                serial,
+                programId,
+                serialAttributeId,
             })
-
-            const sortedEvents = allEvents
-                .sort((a, b) => new Date(b.occurredAt || 0) - new Date(a.occurredAt || 0))
-                .slice(0, 60)
-
-            setEventsResult({ serial, events: sortedEvents })
+            setEventsResult(result)
+            return result
         } catch (err) {
             // eslint-disable-next-line no-console
             console.error('DHIS2 get events failed', err)
             setEventsError(i18n.t('DHIS2 get events failed: {{message}}', { message: err.message, nsSeparator: false }))
+            return null
         } finally {
             setEventsLoading(false)
         }
-    }
+    }, [engine, serial, isImportConfigValid, programId, serialAttributeId])
+
+    useEffect(() => {
+        if (!lookupResult?.entities?.length || !isImportConfigValid || !serial) {
+            return
+        }
+
+        const eventsKey = `${serial}:${programId}:${serialAttributeId}`
+        if (lastAutoEventsKeyRef.current === eventsKey) {
+            return
+        }
+        lastAutoEventsKeyRef.current = eventsKey
+        loadExistingEvents()
+    }, [lookupResult, serial, programId, serialAttributeId, isImportConfigValid, loadExistingEvents])
 
     const handleSyncData = async () => {
         setSyncError('')
@@ -208,8 +180,10 @@ const EmsDhis2Actions = ({ parsedData }) => {
             return
         }
 
-        if (stagesLoading) {
-            setSyncError(i18n.t('Program metadata is still loading. Please try again in a moment.'))
+        if (!programMetadataReady) {
+            setSyncError(
+                i18n.t('Program metadata is still loading. Wait a moment and try syncing again.')
+            )
             return
         }
 
@@ -223,70 +197,91 @@ const EmsDhis2Actions = ({ parsedData }) => {
             return
         }
 
-        const existingEventsByRelT = new Map()
-        if (eventsResult && Array.isArray(eventsResult.events)) {
-            const reltMappingId = fieldMappings.RELT
-            eventsResult.events.forEach((evt) => {
-                if (!reltMappingId) return
-                const relt = getDataValue(evt.dataValues, reltMappingId)
-                if (relt) {
-                    existingEventsByRelT.set(relt, evt.event)
-                }
-            })
+        let existingEvents = eventsResult
+        if (!existingEvents || !Array.isArray(existingEvents.events)) {
+            existingEvents = await loadExistingEvents()
+        }
+        if (!existingEvents || !Array.isArray(existingEvents.events)) {
+            setSyncError(i18n.t('Could not load existing DHIS2 events. Try again in a moment.'))
+            return
         }
 
-        const occurredAtTimes = computeEmsOccurredAtTimes(records)
-        const events = []
+        const referenceTime = new Date()
+        const todayDate = todayIsoDate(referenceTime)
+        const existingEventIdsByKey = buildExistingEventIdIndex(
+            existingEvents.events,
+            (evt) =>
+                evt.occurredAt && evt.programStage
+                    ? `${String(evt.occurredAt).slice(0, 10)}:${evt.programStage}`
+                    : null
+        )
 
-        records.forEach((record, index) => {
-            const relt = formatEmsValue(record.RELT)
-            if (relt && existingEventsByRelT.has(relt)) {
+        const dailyRecords = aggregateEmsRecordsByDay(records, referenceTime)
+        const plannedEvents = buildEmsDailyEventsByStage(dailyRecords, fieldMappings, stageNameToId)
+        const unresolvedStages = new Set()
+        const eventPayloads = []
+
+        plannedEvents.forEach((plannedEvent) => {
+            if (!plannedEvent.programStageId) {
+                unresolvedStages.add(plannedEvent.stageName)
                 return
             }
 
-            const byStage = groupEmsRecordDataValuesByStage(record, fieldMappings)
-            const occurredAt = occurredAtTimes[index]
-
-            Object.entries(byStage).forEach(([stageName, dataValues]) => {
-                if (dataValues.length === 0) {
-                    return
-                }
-
-                const programStage = resolveStageId(stageName, stages)
-                if (!programStage) {
-                    return
-                }
-
-                events.push({
-                    orgUnit,
-                    occurredAt,
-                    status: 'ACTIVE',
-                    program: programId,
-                    programStage,
-                    trackedEntity,
-                    enrollment,
-                    dataValues,
-                })
+            eventPayloads.push({
+                date: plannedEvent.date,
+                orgUnit,
+                occurredAt: plannedEvent.date,
+                status: 'ACTIVE',
+                program: programId,
+                programStage: plannedEvent.programStageId,
+                trackedEntity,
+                enrollment,
+                dataValues: plannedEvent.dataValues,
             })
         })
 
-        if (events.length === 0) {
-            setSyncError(i18n.t('No EMS data available to sync with the current field mappings.'))
+        if (unresolvedStages.size > 0 && eventPayloads.length === 0) {
+            setSyncError(
+                i18n.t(
+                    'Could not resolve program stages for: {{stages}}. Check that stage names on the selected program match the EMS field mapping groups.',
+                    { stages: [...unresolvedStages].join(', '), nsSeparator: false }
+                )
+            )
+            return
+        }
+
+        const { creates, updates } = partitionPlannedEventsForSync(
+            eventPayloads,
+            existingEventIdsByKey,
+            todayDate,
+            (item) => `${item.date}:${item.programStage}`
+        )
+
+        if (creates.length === 0 && updates.length === 0) {
+            if (unresolvedStages.size > 0) {
+                setSyncError(
+                    i18n.t(
+                        'Could not resolve program stages for: {{stages}}. Check that stage names on the selected program match the EMS field mapping groups.',
+                        { stages: [...unresolvedStages].join(', '), nsSeparator: false }
+                    )
+                )
+            } else if (eventPayloads.length > 0) {
+                setSyncError(i18n.t('All daily records already exist in DHIS2. No new events to create.'))
+            } else {
+                setSyncError(i18n.t('No EMS data available to sync with the current field mappings.'))
+            }
             return
         }
 
         setSyncLoading(true)
         try {
-            const payload = { events }
-
-            const mutation = {
-                resource: 'tracker',
-                type: 'create',
-                params: { async: false },
-                data: payload,
-            }
-            const result = await engine.mutate(mutation)
+            const result = await syncTrackerEventPayloads(engine, {
+                eventsToCreate: creates,
+                eventsToUpdate: updates,
+            })
             setSyncResult(result)
+            lastAutoEventsKeyRef.current = ''
+            await loadExistingEvents()
         } catch (err) {
             // eslint-disable-next-line no-console
             console.error('DHIS2 EMS sync failed', err)
@@ -334,9 +329,6 @@ const EmsDhis2Actions = ({ parsedData }) => {
                 <h2 style={{ margin: 0, fontSize: '16px' }}>{i18n.t('DHIS2 Actions')}</h2>
                 {deviceFound ? (
                     <ButtonStrip>
-                        <Button onClick={handleGetEvents} disabled={busy}>
-                            {eventsLoading ? i18n.t('Loading events...') : i18n.t('Show existing data')}
-                        </Button>
                         <Button primary onClick={handleSyncData} disabled={busy}>
                             {syncLoading ? i18n.t('Syncing...') : i18n.t('Update data')}
                         </Button>
@@ -351,6 +343,11 @@ const EmsDhis2Actions = ({ parsedData }) => {
             ) : null}
 
             {lookupError ? <NoticeBox error>{lookupError}</NoticeBox> : null}
+            {eventsLoading ? (
+                <NoticeBox title={i18n.t('Loading existing DHIS2 events…')}>
+                    {i18n.t('Fetching events for logger serial {{serial}}.', { serial, nsSeparator: false })}
+                </NoticeBox>
+            ) : null}
             {eventsError ? <NoticeBox error>{eventsError}</NoticeBox> : null}
             {syncError ? <NoticeBox error>{syncError}</NoticeBox> : null}
 
@@ -440,7 +437,7 @@ const EmsDhis2Actions = ({ parsedData }) => {
                                     <Table>
                                         <TableHead>
                                             <TableRowHead>
-                                                <TableCellHead dense>{i18n.t('Occurred at')}</TableCellHead>
+                                                <TableCellHead dense>{i18n.t('Date')}</TableCellHead>
                                                 {previewEventFields.map((field) => (
                                                     <TableCellHead dense key={field.key}>
                                                         {field.label()}
@@ -452,7 +449,7 @@ const EmsDhis2Actions = ({ parsedData }) => {
                                             {eventsResult.events.map((event, index) => (
                                                 <TableRow key={event.event || index}>
                                                     <TableCell dense>
-                                                        {event.occurredAt ? event.occurredAt.replace('T', ' ').slice(0, 19) : ''}
+                                                        {event.occurredAt ? event.occurredAt.split('T')[0] : ''}
                                                     </TableCell>
                                                     {previewEventFields.map((field) => (
                                                         <TableCell dense key={field.key}>

@@ -69,6 +69,45 @@ export function groupEmsRecordDataValuesByStage(record, mappings) {
 }
 
 /**
+ * @param {Array<{ id: string, displayName: string }>} stages
+ * @returns {Record<string, string>}
+ */
+export function buildStageNameToIdMap(stages) {
+    return Object.fromEntries((stages ?? []).map((stage) => [stage.displayName, stage.id]))
+}
+
+/**
+ * Build one event payload per calendar day and program stage from daily EMS records.
+ * Program stage is inferred from each field's stageOrAttribute in the EMS spec.
+ * @param {Array<{ date: string, fields: Record<string, unknown> }>} dailyRecords
+ * @param {Record<string, string>} mappings
+ * @param {Record<string, string>} stageNameToId
+ * @returns {Array<{ date: string, stageName: string, programStageId: string | null, dataValues: Array<{ dataElement: string, value: string }> }>}
+ */
+export function buildEmsDailyEventsByStage(dailyRecords, mappings, stageNameToId) {
+    const events = []
+
+    dailyRecords.forEach((dailyRecord) => {
+        const byStage = groupEmsRecordDataValuesByStage(dailyRecord.fields, mappings)
+
+        Object.entries(byStage).forEach(([stageName, dataValues]) => {
+            if (dataValues.length === 0) {
+                return
+            }
+
+            events.push({
+                date: dailyRecord.date,
+                stageName,
+                programStageId: stageNameToId[stageName] || null,
+                dataValues,
+            })
+        })
+    })
+
+    return events
+}
+
+/**
  * Build TEI attribute values from EMS file header metadata.
  * @param {Record<string, unknown>} metadata
  * @param {Record<string, string>} mappings

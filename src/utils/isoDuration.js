@@ -25,7 +25,7 @@ export function parseIsoDurationToSeconds(duration) {
 
 /**
  * Compute occurredAt timestamps for EMS records from RELT values.
- * Uses the maximum RELT as the newest reading aligned to referenceTime.
+ * Uses the minimum RELT as the most current reading aligned to referenceTime (upload time).
  * @param {Array<{ RELT?: string }>} records
  * @param {Date} [referenceTime]
  * @returns {string[]}
@@ -36,7 +36,7 @@ export function computeEmsOccurredAtTimes(records, referenceTime = new Date()) {
     }
 
     const relSeconds = records.map((record) => parseIsoDurationToSeconds(record.RELT))
-    const maxSeconds = Math.max(...relSeconds, 0)
+    const minSeconds = Math.min(...relSeconds)
     const refMs = referenceTime.getTime()
 
     return records.map((record, index) => {
@@ -46,7 +46,7 @@ export function computeEmsOccurredAtTimes(records, referenceTime = new Date()) {
         }
 
         const seconds = relSeconds[index] ?? 0
-        const offsetMs = (maxSeconds - seconds) * 1000
+        const offsetMs = (seconds - minSeconds) * 1000
         return new Date(refMs - offsetMs).toISOString()
     })
 }

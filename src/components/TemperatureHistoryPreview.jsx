@@ -1,7 +1,6 @@
 import React from 'react'
 import i18n from '@dhis2/d2-i18n'
 import { Table, TableBody, TableCell, TableCellHead, TableHead, TableRow, TableRowHead } from '@dhis2/ui'
-import formatMinutesToHHMM from '../utils/timeFormat'
 import classes from '../App.module.css'
 
 const formatDate = (dateStr) => {
@@ -88,7 +87,7 @@ const TemperatureHistoryPreview = ({ history, config, historyMetadata, isOpen })
                                     <TableCellHead dense>
                                         {i18n.t('Cumulative')}
                                         <br />
-                                        {i18n.t('daily time')}
+                                        {i18n.t('daily time (min)')}
                                     </TableCellHead>
                                     <TableCellHead dense>{i18n.t('Alarm trigger time')}</TableCellHead>
                                     <TableCellHead dense>{i18n.t('Status')}</TableCellHead>
@@ -100,7 +99,7 @@ const TemperatureHistoryPreview = ({ history, config, historyMetadata, isOpen })
                                     <TableCellHead dense>
                                         {i18n.t('Cumulative')}
                                         <br />
-                                        {i18n.t('daily time')}
+                                        {i18n.t('daily time (min)')}
                                     </TableCellHead>
                                     <TableCellHead dense>{i18n.t('Alarm trigger time')}</TableCellHead>
                                     <TableCellHead dense />
@@ -129,7 +128,7 @@ const TemperatureHistoryPreview = ({ history, config, historyMetadata, isOpen })
                                                 <TableCell dense>{rec.temperature?.min ?? ''}</TableCell>
                                                 <TableCell dense>
                                                     {coldAlarm?.accumulatedMinutes && coldAlarm.accumulatedMinutes > 0
-                                                        ? formatMinutesToHHMM(coldAlarm.accumulatedMinutes)
+                                                        ? coldAlarm.accumulatedMinutes
                                                         : ''}
                                                 </TableCell>
                                                 <TableCell dense>{coldAlarm?.triggerTime || ''}</TableCell>
@@ -138,7 +137,7 @@ const TemperatureHistoryPreview = ({ history, config, historyMetadata, isOpen })
                                                 <TableCell dense>{rec.temperature?.max ?? ''}</TableCell>
                                                 <TableCell dense>
                                                     {hotAlarm?.accumulatedMinutes && hotAlarm.accumulatedMinutes > 0
-                                                        ? formatMinutesToHHMM(hotAlarm.accumulatedMinutes)
+                                                        ? hotAlarm.accumulatedMinutes
                                                         : ''}
                                                 </TableCell>
                                                 <TableCell dense>{hotAlarm?.triggerTime || ''}</TableCell>

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-11T12:18:58.773Z\n"
-"PO-Revision-Date: 2026-06-11T12:18:58.774Z\n"
+"POT-Creation-Date: 2026-06-12T14:35:42.569Z\n"
+"PO-Revision-Date: 2026-06-12T14:35:42.571Z\n"
 
 msgid ""
 "Organisation unit ID and tracked entity type ID must be set in environment "
@@ -95,6 +95,9 @@ msgstr ""
 "Missing tracked entity, enrollment, or org unit. Please lookup the device "
 "again."
 
+msgid "Could not load existing DHIS2 events. Try again in a moment."
+msgstr "Could not load existing DHIS2 events. Try again in a moment."
+
 msgid "All history records already exist in DHIS2. No new events to create."
 msgstr "All history records already exist in DHIS2. No new events to create."
 
@@ -107,12 +110,6 @@ msgstr "DHIS2 create/update events failed: {{message}}"
 msgid "DHIS2 Actions"
 msgstr "DHIS2 Actions"
 
-msgid "Loading events..."
-msgstr "Loading events..."
-
-msgid "Show existing data"
-msgstr "Show existing data"
-
 msgid "Creating/updating..."
 msgstr "Creating/updating..."
 
@@ -124,6 +121,12 @@ msgstr "Looking up device in DHIS2…"
 
 msgid "Searching for logger serial {{serial}}."
 msgstr "Searching for logger serial {{serial}}."
+
+msgid "Loading existing DHIS2 events…"
+msgstr "Loading existing DHIS2 events…"
+
+msgid "Fetching events for logger serial {{serial}}."
+msgstr "Fetching events for logger serial {{serial}}."
 
 msgid "Serial"
 msgstr "Serial"
@@ -182,8 +185,11 @@ msgstr "EMS Device Data Preview"
 msgid "Logger serial number"
 msgstr "Logger serial number"
 
-msgid "Records"
-msgstr "Records"
+msgid "Interval readings"
+msgstr "Interval readings"
+
+msgid "Daily records"
+msgstr "Daily records"
 
 msgid "Device metadata"
 msgstr "Device metadata"
@@ -193,9 +199,6 @@ msgstr "Value"
 
 msgid "No measurement records available in this file."
 msgstr "No measurement records available in this file."
-
-msgid "No."
-msgstr "No."
 
 msgid "No logger serial found in parsed data. Parse a file first."
 msgstr "No logger serial found in parsed data. Parse a file first."
@@ -207,8 +210,18 @@ msgstr ""
 "Complete EMS import settings and field mappings in Settings before using "
 "DHIS2 actions."
 
-msgid "Program metadata is still loading. Please try again in a moment."
-msgstr "Program metadata is still loading. Please try again in a moment."
+msgid "Program metadata is still loading. Wait a moment and try syncing again."
+msgstr "Program metadata is still loading. Wait a moment and try syncing again."
+
+msgid ""
+"Could not resolve program stages for: {{stages}}. Check that stage names on "
+"the selected program match the EMS field mapping groups."
+msgstr ""
+"Could not resolve program stages for: {{stages}}. Check that stage names on "
+"the selected program match the EMS field mapping groups."
+
+msgid "All daily records already exist in DHIS2. No new events to create."
+msgstr "All daily records already exist in DHIS2. No new events to create."
 
 msgid "No EMS data available to sync with the current field mappings."
 msgstr "No EMS data available to sync with the current field mappings."
@@ -218,9 +231,6 @@ msgstr "DHIS2 create/update failed: {{message}}"
 
 msgid "Syncing..."
 msgstr "Syncing..."
-
-msgid "Occurred at"
-msgstr "Occurred at"
 
 msgid "Please select a file to upload."
 msgstr "Please select a file to upload."
@@ -284,6 +294,9 @@ msgstr "Upper alarm limit"
 
 msgid "Above +8.0°C for 10h"
 msgstr "Above +8.0°C for 10h"
+
+msgid "No."
+msgstr "No."
 
 msgid "Events"
 msgstr "Events"

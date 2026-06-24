@@ -146,11 +146,11 @@ function parseIsoDurationToSeconds(duration) {
 
 function computeEmsOccurredAtTimes(records, referenceTime = new Date()) {
     const relSeconds = records.map((record) => parseIsoDurationToSeconds(record.RELT))
-    const maxSeconds = Math.max(...relSeconds, 0)
+    const minSeconds = Math.min(...relSeconds)
     const refMs = referenceTime.getTime()
     return records.map((_, index) => {
         const seconds = relSeconds[index] ?? 0
-        const offsetMs = (maxSeconds - seconds) * 1000
+        const offsetMs = (seconds - minSeconds) * 1000
         return new Date(refMs - offsetMs).toISOString()
     })
 }
@@ -188,6 +188,49 @@ function buildEmsAutoMappings(fieldDefinitions, { attributes, dataElementsByStag
         }
     })
     return mappings
+}
+
+function isNumericAggregateValue(value) {
+    if (typeof value === 'number' && !Number.isNaN(value)) return true
+    if (typeof value === 'string' && value.trim() !== '') {
+        return !Number.isNaN(Number(value))
+    }
+    return false
+}
+
+function aggregateEmsFieldsForDay(dayRecords) {
+    const fieldKeys = new Set()
+    dayRecords.forEach((record) => Object.keys(record).forEach((key) => fieldKeys.add(key)))
+    const aggregated = {}
+    fieldKeys.forEach((key) => {
+        const values = dayRecords.map((record) => record[key]).filter(isEmsPresentValue)
+        if (values.length === 0) return
+        if (values.every(isNumericAggregateValue)) {
+            const numbers = values.map((value) => Number(value))
+            aggregated[key] = numbers.reduce((total, value) => total + value, 0) / numbers.length
+            return
+        }
+        aggregated[key] = values[values.length - 1]
+    })
+    return aggregated
+}
+
+function aggregateEmsRecordsByDay(records, referenceTime = new Date()) {
+    const occurredAtTimes = computeEmsOccurredAtTimes(records, referenceTime)
+    const recordsByDay = new Map()
+    records.forEach((record, index) => {
+        const date = occurredAtTimes[index]?.slice(0, 10)
+        if (!date) return
+        if (!recordsByDay.has(date)) recordsByDay.set(date, [])
+        recordsByDay.get(date).push(record)
+    })
+    return [...recordsByDay.entries()]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([date, dayRecords]) => ({
+            date,
+            fields: aggregateEmsFieldsForDay(dayRecords),
+            readingCount: dayRecords.length,
+        }))
 }
 
 function groupEmsRecordDataValuesByStage(record, mappings, fieldDefinitions) {
@@ -262,13 +305,6 @@ function parseProgramMetadata(program) {
     return { attributes, stages, dataElementsByStageName }
 }
 
-function resolveStageId(stageName, stages) {
-    const normalized = stageName.trim().toLowerCase()
-    const exact = stages.find((stage) => stage.displayName.trim().toLowerCase() === normalized)
-    if (exact) return exact.id
-    return stages.find((stage) => stage.displayName.toLowerCase().includes(normalized))?.id || null
-}
-
 function getOrgUnitId(tei) {
     const orgUnit = tei?.orgUnit
     if (!orgUnit) return null
@@ -285,24 +321,26 @@ async function lookupTrackedEntity(serial, serialAttributeId) {
     return data?.trackedEntities?.[0] || null
 }
 
-function buildPayload({ parsed, fieldMappings, fieldDefinitions, stages, tei, referenceTime }) {
+function buildPayload({ parsed, fieldMappings, fieldDefinitions, tei, referenceTime, stages }) {
     const trackedEntity = tei?.trackedEntity || '<TRACKED_ENTITY_UID>'
     const enrollment = tei?.enrollments?.find((e) => e.program === programId)?.enrollment || '<ENROLLMENT_UID>'
     const orgUnit = getOrgUnitId(tei) || fallbackOrgUnitId || '<ORG_UNIT_UID>'
-
-    const occurredAtTimes = computeEmsOccurredAtTimes(parsed.records, referenceTime)
+    const stageNameToId = Object.fromEntries((stages ?? []).map((stage) => [stage.displayName, stage.id]))
+    const dailyRecords = aggregateEmsRecordsByDay(parsed.records, referenceTime)
     const events = []
 
-    parsed.records.forEach((record, index) => {
-        const byStage = groupEmsRecordDataValuesByStage(record, fieldMappings, fieldDefinitions)
-        const occurredAt = occurredAtTimes[index]
+    dailyRecords.forEach((dailyRecord) => {
+        const byStage = groupEmsRecordDataValuesByStage(
+            dailyRecord.fields,
+            fieldMappings,
+            fieldDefinitions
+        )
         Object.entries(byStage).forEach(([stageName, dataValues]) => {
-            if (dataValues.length === 0) return
-            const programStage = resolveStageId(stageName, stages)
-            if (!programStage) return
+            const programStage = stageNameToId[stageName]
+            if (!programStage || dataValues.length === 0) return
             events.push({
                 orgUnit,
-                occurredAt,
+                occurredAt: dailyRecord.date,
                 status: 'ACTIVE',
                 program: programId,
                 programStage,
@@ -315,12 +353,14 @@ function buildPayload({ parsed, fieldMappings, fieldDefinitions, stages, tei, re
 
     const payload = {
         _meta: {
-            description: 'Tracker import payload equivalent to EMS Update data',
+            description: 'Tracker import payload equivalent to EMS Update data (daily aggregated)',
             sourceFile: path.basename(inputPath),
             generatedAt: referenceTime.toISOString(),
             programId,
+            programStages: stages?.map((stage) => ({ id: stage.id, displayName: stage.displayName })) ?? [],
             loggerSerial: parsed.config.serial,
             recordCount: parsed.records.length,
+            dailyRecordCount: dailyRecords.length,
             eventCount: events.length,
             fieldMappingsResolved: Object.values(fieldMappings).filter(Boolean).length,
             trackedEntityLookup: tei
@@ -439,16 +479,20 @@ async function main() {
     const serial = parsed.config.serial
     if (!serial) throw new Error('No logger serial (LSER) found in EMS file')
 
+    const context = loadSyncContext()
     const { fieldMappings, stages, tei, idScheme } = await resolveGenerationContext(fieldDefinitions, serial)
+    if (!stages?.length) {
+        throw new Error('Could not resolve program stages from program metadata')
+    }
 
     const referenceTime = new Date()
     const payload = buildPayload({
         parsed,
         fieldMappings,
         fieldDefinitions,
-        stages,
         tei,
         referenceTime,
+        stages,
     })
     payload._meta.idScheme = idScheme
     if (idScheme === 'placeholder') {
@@ -462,6 +506,7 @@ async function main() {
         JSON.stringify(
             {
                 records: payload._meta.recordCount,
+                dailyRecords: payload._meta.dailyRecordCount,
                 events: payload._meta.eventCount,
                 mappedFields: payload._meta.fieldMappingsResolved,
             },

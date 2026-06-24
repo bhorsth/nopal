@@ -10,7 +10,7 @@ import {
     TableRowHead,
 } from '@dhis2/ui'
 import { EMS_FIELD_MAPPING_FIELDS } from '../config/emsFieldMappingDefinitions'
-import { getEmsRecordFieldKeys } from '../utils/emsParser'
+import { aggregateEmsRecordsByDay } from '../utils/aggregateEmsRecordsDaily'
 import { formatEmsValue } from '../utils/emsValue'
 import classes from '../App.module.css'
 
@@ -20,15 +20,33 @@ const EMS_FIELD_LABELS = Object.fromEntries(
 
 const PREVIEW_RECORD_LIMIT = 60
 
+const formatDate = (dateStr) => {
+    if (!dateStr) return ''
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        const [year, month, day] = dateStr.split('-')
+        return `${day}.${month}.${year}`
+    }
+    return dateStr
+}
+
 const EmsDataPreview = ({ parsedData, isOpen }) => {
     const records = parsedData?.records ?? []
     const metadata = parsedData?.metadata ?? {}
     const serial = parsedData?.config?.serial
 
+    const dailyRecords = useMemo(() => aggregateEmsRecordsByDay(records), [records])
+
     const previewColumns = useMemo(() => {
-        const recordKeys = getEmsRecordFieldKeys(records)
-        return recordKeys.filter((key) => EMS_FIELD_LABELS[key])
-    }, [records])
+        const keys = new Set()
+        dailyRecords.forEach((dailyRecord) => {
+            Object.entries(dailyRecord.fields).forEach(([key, value]) => {
+                if (formatEmsValue(value) != null && EMS_FIELD_LABELS[key]) {
+                    keys.add(key)
+                }
+            })
+        })
+        return [...keys].sort()
+    }, [dailyRecords])
 
     const metadataEntries = useMemo(() => {
         return EMS_FIELD_MAPPING_FIELDS.filter(
@@ -40,7 +58,7 @@ const EmsDataPreview = ({ parsedData, isOpen }) => {
         }))
     }, [metadata])
 
-    const previewRecords = records.slice(0, PREVIEW_RECORD_LIMIT)
+    const previewRecords = dailyRecords.slice(0, PREVIEW_RECORD_LIMIT)
 
     return (
         <div>
@@ -55,7 +73,10 @@ const EmsDataPreview = ({ parsedData, isOpen }) => {
                             <strong>{i18n.t('Logger serial number')}:</strong> {serial || ''}
                         </div>
                         <div>
-                            <strong>{i18n.t('Records')}:</strong> {records.length}
+                            <strong>{i18n.t('Interval readings')}:</strong> {records.length}
+                        </div>
+                        <div>
+                            <strong>{i18n.t('Daily records')}:</strong> {dailyRecords.length}
                         </div>
                     </div>
 
@@ -87,7 +108,7 @@ const EmsDataPreview = ({ parsedData, isOpen }) => {
                             <Table>
                                 <TableHead>
                                     <TableRowHead>
-                                        <TableCellHead dense>{i18n.t('No.')}</TableCellHead>
+                                        <TableCellHead dense>{i18n.t('Date')}</TableCellHead>
                                         {previewColumns.map((key) => (
                                             <TableCellHead dense key={key}>
                                                 {EMS_FIELD_LABELS[key]?.() || key}
@@ -96,23 +117,23 @@ const EmsDataPreview = ({ parsedData, isOpen }) => {
                                     </TableRowHead>
                                 </TableHead>
                                 <TableBody>
-                                    {previewRecords.map((record, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell dense>{index + 1}</TableCell>
+                                    {previewRecords.map((dailyRecord) => (
+                                        <TableRow key={dailyRecord.date}>
+                                            <TableCell dense>{formatDate(dailyRecord.date)}</TableCell>
                                             {previewColumns.map((key) => (
                                                 <TableCell dense key={key}>
-                                                    {formatEmsValue(record[key]) ?? ''}
+                                                    {formatEmsValue(dailyRecord.fields[key]) ?? ''}
                                                 </TableCell>
                                             ))}
                                         </TableRow>
                                     ))}
                                 </TableBody>
                             </Table>
-                            {records.length > PREVIEW_RECORD_LIMIT ? (
+                            {dailyRecords.length > PREVIEW_RECORD_LIMIT ? (
                                 <div style={{ marginTop: '8px', color: 'var(--colors-grey700)' }}>
-                                    {i18n.t('Showing {{count}} of {{total}} records', {
+                                    {i18n.t('Showing {{count}} of {{total}} daily records', {
                                         count: PREVIEW_RECORD_LIMIT,
-                                        total: records.length,
+                                        total: dailyRecords.length,
                                         nsSeparator: false,
                                     })}
                                 </div>

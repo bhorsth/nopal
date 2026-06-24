@@ -10,4 +10,28 @@ export const formatMinutesToHHMM = (minutes) => {
     return `${hh}:${mm}`
 }
 
+/**
+ * Parse HH:mm strings or numeric minute values into total minutes.
+ * @param {string|number|null|undefined} value
+ * @returns {number|null}
+ */
+export const parseHmToMinutes = (value) => {
+    if (value == null || value === '') {
+        return null
+    }
+
+    if (typeof value === 'number' && !Number.isNaN(value)) {
+        return value
+    }
+
+    const trimmed = String(value).trim()
+    const hmMatch = trimmed.match(/^(\d+):(\d{2})$/)
+    if (hmMatch) {
+        return Number(hmMatch[1]) * 60 + Number(hmMatch[2])
+    }
+
+    const numeric = Number(trimmed)
+    return Number.isNaN(numeric) ? null : numeric
+}
+
 export default formatMinutesToHHMM

@@ -7,6 +7,7 @@
 
 import { Key } from './keys.js'
 import { isParserDebugEnabled } from './parserDebug.js'
+import { parseHmToMinutes } from './timeFormat.js'
 
 const logDebug = (...args) => {
   if (isParserDebugEnabled()) {
@@ -256,8 +257,12 @@ export class FridgeTagParser {
   }
 
   _setValue(section, key, value, histRecord, alarmSection) {
+    const durationKeys = [Key.ACCUMULATED_TIME, Key.ACCUMULATED_SENSOR_TIMEOUT, Key.SENSOR_TIMEOUT]
+    const isDurationKey = durationKeys.includes(key)
+
     // Don't apply cleanNumber to date/timestamp fields
     if (
+      !isDurationKey &&
       ![
         Key.DATE,
         Key.MIN_TEMP_TIMESTAMP,
@@ -272,6 +277,8 @@ export class FridgeTagParser {
       ].includes(key)
     ) {
       value = cleanNumber(value)
+    } else if (isDurationKey) {
+      value = parseHmToMinutes(value)
     }
 
     if (section === 'root') {
@@ -307,6 +314,9 @@ export class FridgeTagParser {
       else if (key === Key.MAX_TEMP_TIMESTAMP) histRecord.maxTempTime = value
       else if (key === Key.AVG_TEMP) histRecord.avgTemp = value
       else if (key === Key.EVENTS) histRecord.events = value
+      else if (key === Key.SENSOR_TIMEOUT || key === Key.ACCUMULATED_SENSOR_TIMEOUT) {
+        histRecord.sensorTimeoutMinutes = value
+      }
     } else if (section.startsWith('AlarmLevel') && alarmSection === 'history' && histRecord) {
       const level = parseInt(section.replace('AlarmLevel', ''), 10)
       let alarm = histRecord.alarms.find((a) => a.level === level)

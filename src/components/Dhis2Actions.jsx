@@ -20,6 +20,12 @@ import {
     getTeiSummaryInfo,
     lookupTrackedEntitiesBySerial,
 } from '../services/trackerLookup'
+import { fetchTrackerEventsBySerial, syncTrackerEventPayloads } from '../services/trackerEvents'
+import {
+    buildExistingEventIdIndex,
+    partitionPlannedEventsForSync,
+    todayIsoDate,
+} from '../utils/trackerEventSync'
 import DeviceRegistrationPanel from './DeviceRegistrationPanel'
 import classes from '../App.module.css'
 
@@ -67,6 +73,7 @@ const Dhis2Actions = ({ parsedData }) => {
 
     const resultScrollRef = useRef(null)
     const lastAutoLookupKeyRef = useRef('')
+    const lastAutoEventsKeyRef = useRef('')
 
     const serial = parsedData?.config?.serial
     const serialAttributeId = fieldMappings.serialAttribute
@@ -78,6 +85,7 @@ const Dhis2Actions = ({ parsedData }) => {
         setEventsError('')
         setCreateResult(null)
         setCreateError('')
+        lastAutoEventsKeyRef.current = ''
 
         if (!serial) {
             setLookupError(i18n.t('No serial found in parsed data. Parse a file first.'))
@@ -118,72 +126,43 @@ const Dhis2Actions = ({ parsedData }) => {
         runLookup()
     }, [parsedData, serial, programId, serialAttributeId, isImportConfigValid, runLookup])
 
-    const handleGetEvents = async () => {
+    const loadExistingEvents = useCallback(async () => {
+        if (!serial || !isImportConfigValid) {
+            return null
+        }
+
         setEventsError('')
-        setEventsResult(null)
-
-        if (!serial) {
-            setEventsError(i18n.t('No serial found in parsed data. Parse a file first.'))
-            return
-        }
-
-        if (!isImportConfigValid) {
-            setEventsError(
-                i18n.t('Complete import settings and field mappings in Settings before using DHIS2 actions.')
-            )
-            return
-        }
-
         setEventsLoading(true)
         try {
-            const query = {
-                trackedEntities: {
-                    resource: 'tracker/trackedEntities',
-                    params: {
-                        filter: `${serialAttributeId}:like:${serial}`,
-                        fields: 'trackedEntity,enrollments[enrollment,events[event,occurredAt,status,programStage,dataValues[dataElement,value]]]',
-                        program: programId,
-                        orgUnitMode: 'ACCESSIBLE',
-                    },
-                },
-            }
-            const result = await engine.query(query)
-            const entities = result?.trackedEntities?.trackedEntities ?? []
-
-            const allEvents = []
-            entities.forEach((tei) => {
-                if (Array.isArray(tei.enrollments)) {
-                    tei.enrollments.forEach((enrollment) => {
-                        if (Array.isArray(enrollment.events)) {
-                            allEvents.push(
-                                ...enrollment.events.map((evt) => ({
-                                    ...evt,
-                                    trackedEntity: tei.trackedEntity,
-                                    enrollment: enrollment.enrollment,
-                                }))
-                            )
-                        }
-                    })
-                }
+            const result = await fetchTrackerEventsBySerial(engine, {
+                serial,
+                programId,
+                serialAttributeId,
             })
-
-            const sortedEvents = allEvents
-                .sort((a, b) => {
-                    const dateA = new Date(a.occurredAt || 0)
-                    const dateB = new Date(b.occurredAt || 0)
-                    return dateB - dateA
-                })
-                .slice(0, 60)
-
-            setEventsResult({ serial, events: sortedEvents })
+            setEventsResult(result)
+            return result
         } catch (err) {
             // eslint-disable-next-line no-console
             console.error('DHIS2 get events failed', err)
             setEventsError(i18n.t('DHIS2 get events failed: {{message}}', { message: err.message, nsSeparator: false }))
+            return null
         } finally {
             setEventsLoading(false)
         }
-    }
+    }, [engine, serial, isImportConfigValid, programId, serialAttributeId])
+
+    useEffect(() => {
+        if (!lookupResult?.entities?.length || !isImportConfigValid || !serial) {
+            return
+        }
+
+        const eventsKey = `${serial}:${programId}:${serialAttributeId}`
+        if (lastAutoEventsKeyRef.current === eventsKey) {
+            return
+        }
+        lastAutoEventsKeyRef.current = eventsKey
+        loadExistingEvents()
+    }, [lookupResult, serial, programId, serialAttributeId, isImportConfigValid, loadExistingEvents])
 
     const mapHistoryRecordToEvent = (record, trackedEntity, enrollment, orgUnit, existingEventId = null) => {
         const dataValues = buildEventDataValues(record, fieldMappings)
@@ -237,15 +216,20 @@ const Dhis2Actions = ({ parsedData }) => {
             return
         }
 
-        const existingEventsByDate = new Map()
-        if (eventsResult && Array.isArray(eventsResult.events)) {
-            eventsResult.events.forEach((evt) => {
-                if (evt.occurredAt) {
-                    const dateKey = String(evt.occurredAt).slice(0, 10)
-                    existingEventsByDate.set(dateKey, evt.event)
-                }
-            })
+        let existingEvents = eventsResult
+        if (!existingEvents || !Array.isArray(existingEvents.events)) {
+            existingEvents = await loadExistingEvents()
         }
+        if (!existingEvents || !Array.isArray(existingEvents.events)) {
+            setCreateError(i18n.t('Could not load existing DHIS2 events. Try again in a moment.'))
+            return
+        }
+
+        const todayDate = todayIsoDate()
+        const existingEventIdsByKey = buildExistingEventIdIndex(
+            existingEvents.events,
+            (evt) => (evt.occurredAt ? String(evt.occurredAt).slice(0, 10) : null)
+        )
 
         const datePattern = /^\d{4}-\d{2}-\d{2}$/
         const validRecords = parsedData.history.records.filter((record) => {
@@ -253,16 +237,19 @@ const Dhis2Actions = ({ parsedData }) => {
             return date && datePattern.test(date)
         })
 
-        const events = validRecords
-            .map((record) => {
-                const recordDate = record.date?.trim()
-                const existingEventId = existingEventsByDate.get(recordDate)
-                if (existingEventId) return null
-                return mapHistoryRecordToEvent(record, trackedEntity, enrollment, orgUnit)
-            })
-            .filter(Boolean)
+        const eventPayloads = validRecords.map((record) => ({
+            date: record.date.trim(),
+            ...mapHistoryRecordToEvent(record, trackedEntity, enrollment, orgUnit),
+        }))
 
-        if (events.length === 0) {
+        const { creates, updates } = partitionPlannedEventsForSync(
+            eventPayloads,
+            existingEventIdsByKey,
+            todayDate,
+            (item) => item.date
+        )
+
+        if (creates.length === 0 && updates.length === 0) {
             if (validRecords.length > 0) {
                 setCreateError(i18n.t('All history records already exist in DHIS2. No new events to create.'))
             } else {
@@ -273,14 +260,13 @@ const Dhis2Actions = ({ parsedData }) => {
 
         setCreateLoading(true)
         try {
-            const mutation = {
-                resource: 'tracker',
-                type: 'create',
-                params: { async: false },
-                data: { events },
-            }
-            const result = await engine.mutate(mutation)
+            const result = await syncTrackerEventPayloads(engine, {
+                eventsToCreate: creates,
+                eventsToUpdate: updates,
+            })
             setCreateResult(result)
+            lastAutoEventsKeyRef.current = ''
+            await loadExistingEvents()
         } catch (err) {
             // eslint-disable-next-line no-console
             console.error('DHIS2 create events failed', err)
@@ -317,9 +303,6 @@ const Dhis2Actions = ({ parsedData }) => {
                 <h2 style={{ margin: 0, fontSize: '16px' }}>{i18n.t('DHIS2 Actions')}</h2>
                 {deviceFound ? (
                     <ButtonStrip>
-                        <Button onClick={handleGetEvents} disabled={busy}>
-                            {eventsLoading ? i18n.t('Loading events...') : i18n.t('Show existing data')}
-                        </Button>
                         <Button primary onClick={handleCreateEvents} disabled={busy}>
                             {createLoading ? i18n.t('Creating/updating...') : i18n.t('Update data')}
                         </Button>
@@ -334,6 +317,11 @@ const Dhis2Actions = ({ parsedData }) => {
             ) : null}
 
             {lookupError ? <NoticeBox error>{lookupError}</NoticeBox> : null}
+            {eventsLoading ? (
+                <NoticeBox title={i18n.t('Loading existing DHIS2 events…')}>
+                    {i18n.t('Fetching events for logger serial {{serial}}.', { serial, nsSeparator: false })}
+                </NoticeBox>
+            ) : null}
             {eventsError ? <NoticeBox error>{eventsError}</NoticeBox> : null}
             {createError ? <NoticeBox error>{createError}</NoticeBox> : null}
 

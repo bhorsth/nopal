@@ -1,5 +1,3 @@
-import formatMinutesToHHMM from './timeFormat'
-
 /**
  * Build tracker event dataValues from a parsed history record using configured field mappings.
  * @param {object} record - Parsed history record
@@ -30,11 +28,9 @@ export function buildEventDataValues(record, mappings) {
         }
     }
 
-    const coldTime = coldAlarm?.accumulatedMinutes
-        ? formatMinutesToHHMM(coldAlarm.accumulatedMinutes)
-        : '00:00'
-    push('timeBelowThreshold', coldTime)
-    push('totalLowAlarmTime', coldTime)
+    const coldMinutes = coldAlarm?.accumulatedMinutes ?? 0
+    push('timeBelowThreshold', coldMinutes)
+    push('totalLowAlarmTime', coldMinutes)
 
     if (record.temperature?.min != null) {
         push('minTemp', record.temperature.min)
@@ -51,11 +47,9 @@ export function buildEventDataValues(record, mappings) {
         push('maxTemp', record.temperature.max)
     }
 
-    const hotTime = hotAlarm?.accumulatedMinutes
-        ? formatMinutesToHHMM(hotAlarm.accumulatedMinutes)
-        : '00:00'
-    push('timeAboveThreshold', hotTime)
-    push('totalHighAlarmTime', hotTime)
+    const hotMinutes = hotAlarm?.accumulatedMinutes ?? 0
+    push('timeAboveThreshold', hotMinutes)
+    push('totalHighAlarmTime', hotMinutes)
 
     push('faults', record.sensorTimeoutMinutes != null ? record.sensorTimeoutMinutes : '0')
     push('alarmCondition', alarmCondition)

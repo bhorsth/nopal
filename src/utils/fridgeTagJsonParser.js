@@ -1,3 +1,5 @@
+import { parseHmToMinutes } from './timeFormat'
+
 /**
  * Parse Fridge-tag JSON export (e.g. Q-tag app export) into the same shape as fridgeTagParser.toJson().
  * @param {Record<string, unknown>} raw
@@ -75,25 +77,4 @@ export function parseFridgeTagJson(raw) {
         certificate: raw.certificate || null,
         signatures: null,
     }
-}
-
-/**
- * @param {string|number|null|undefined} value
- * @returns {number|null}
- */
-function parseHmToMinutes(value) {
-    if (value == null || value === '') {
-        return null
-    }
-
-    if (typeof value === 'number') {
-        return value
-    }
-
-    const match = String(value).trim().match(/^(\d+):(\d{2})$/)
-    if (!match) {
-        return null
-    }
-
-    return Number(match[1]) * 60 + Number(match[2])
 }

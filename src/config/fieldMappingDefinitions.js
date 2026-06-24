@@ -34,13 +34,13 @@ export const FIELD_MAPPING_FIELDS = [
     },
     {
         key: 'timeBelowThreshold',
-        label: () => i18n.t('Total time below -0.5°C (hh:mm)'),
+        label: () => i18n.t('Total time below -0.5°C (minutes)'),
         kind: 'dataElement',
         defaultValue: 'ZkLhYyo0muJ',
     },
     {
         key: 'totalLowAlarmTime',
-        label: () => i18n.t('Total low alarm time (hh:mm)'),
+        label: () => i18n.t('Total low alarm time (minutes)'),
         kind: 'dataElement',
         defaultValue: 'DEMIzoie6FB',
     },
@@ -52,13 +52,13 @@ export const FIELD_MAPPING_FIELDS = [
     },
     {
         key: 'timeAboveThreshold',
-        label: () => i18n.t('Total time above 8.0°C (hh:mm)'),
+        label: () => i18n.t('Total time above 8.0°C (minutes)'),
         kind: 'dataElement',
         defaultValue: 'uKw4f9GjumZ',
     },
     {
         key: 'totalHighAlarmTime',
-        label: () => i18n.t('Total high alarm time (hh:mm)'),
+        label: () => i18n.t('Total high alarm time (minutes)'),
         kind: 'dataElement',
         defaultValue: 'twdH0WRfqwl',
     },

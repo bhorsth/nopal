@@ -1,0 +1,66 @@
+import { buildEventDataValues } from '../buildEventDataValues'
+
+const mappings = {
+    timeBelowThreshold: 'de-below',
+    totalLowAlarmTime: 'de-low',
+    timeAboveThreshold: 'de-above',
+    totalHighAlarmTime: 'de-high',
+    minTemp: 'de-min',
+    maxTemp: 'de-max',
+    avgStorageTemp: 'de-avg',
+    avgAmbientTemp: 'de-ambient',
+    status: 'de-status',
+    faults: 'de-faults',
+    alarmCondition: 'de-alarm',
+}
+
+describe('buildEventDataValues', () => {
+    it('posts alarm durations as total minutes', () => {
+        const record = {
+            date: '2024-01-15',
+            temperature: { min: -1.2, max: 9.5, avg: 4.1 },
+            alarms: [
+                { level: 0, accumulatedMinutes: 75 },
+                { level: 1, accumulatedMinutes: 150 },
+            ],
+            sensorTimeoutMinutes: 5,
+        }
+
+        const dataValues = buildEventDataValues(record, mappings)
+
+        expect(dataValues).toEqual(
+            expect.arrayContaining([
+                { dataElement: 'de-below', value: '75' },
+                { dataElement: 'de-low', value: '75' },
+                { dataElement: 'de-above', value: '150' },
+                { dataElement: 'de-high', value: '150' },
+                { dataElement: 'de-faults', value: '5' },
+                { dataElement: 'de-status', value: 'ALARM' },
+                { dataElement: 'de-alarm', value: 'BOTH' },
+            ])
+        )
+    })
+
+    it('posts zero minutes when no alarm time accumulated', () => {
+        const record = {
+            date: '2024-01-15',
+            temperature: { avg: 4.1 },
+            alarms: [],
+            sensorTimeoutMinutes: null,
+        }
+
+        const dataValues = buildEventDataValues(record, mappings)
+
+        expect(dataValues).toEqual(
+            expect.arrayContaining([
+                { dataElement: 'de-below', value: '0' },
+                { dataElement: 'de-low', value: '0' },
+                { dataElement: 'de-above', value: '0' },
+                { dataElement: 'de-high', value: '0' },
+                { dataElement: 'de-faults', value: '0' },
+                { dataElement: 'de-status', value: 'OK' },
+                { dataElement: 'de-alarm', value: 'OK' },
+            ])
+        )
+    })
+})

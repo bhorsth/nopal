@@ -20,7 +20,6 @@ const EmsSettingsPage = () => {
             dataStoreKey={DEVICE_DATA_STORE_KEYS.ems}
             config={config}
             fieldMappingFields={EMS_FIELD_MAPPING_FIELDS}
-            requiresProgramStage={false}
             groupFieldMappingsByStageOrAttribute
             fieldMappingGroups={EMS_FIELD_STAGE_OR_ATTRIBUTE_GROUPS}
             autoMapFieldMappings

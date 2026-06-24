@@ -13,8 +13,8 @@ describe('isoDuration', () => {
         const times = computeEmsOccurredAtTimes(records, referenceTime)
 
         expect(times).toHaveLength(3)
-        expect(new Date(times[0]).getTime()).toBe(referenceTime.getTime())
+        expect(new Date(times[0]).getTime()).toBe(referenceTime.getTime() - 30 * 60 * 1000)
         expect(new Date(times[1]).getTime()).toBe(referenceTime.getTime() - 15 * 60 * 1000)
-        expect(new Date(times[2]).getTime()).toBe(referenceTime.getTime() - 30 * 60 * 1000)
+        expect(new Date(times[2]).getTime()).toBe(referenceTime.getTime())
     })
 })
