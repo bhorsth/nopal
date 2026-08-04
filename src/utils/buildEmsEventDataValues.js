@@ -1,4 +1,5 @@
 import { EMS_FIELD_MAPPING_FIELDS } from '../config/emsFieldMappingDefinitions'
+import { resolveDataElementsForStageName } from './emsAutoMapFields'
 import { formatEmsValue, isEmsPresentValue } from './emsValue'
 
 const EMS_DATA_ELEMENT_FIELDS = EMS_FIELD_MAPPING_FIELDS.filter((field) => field.kind === 'dataElement')
@@ -73,7 +74,26 @@ export function groupEmsRecordDataValuesByStage(record, mappings) {
  * @returns {Record<string, string>}
  */
 export function buildStageNameToIdMap(stages) {
-    return Object.fromEntries((stages ?? []).map((stage) => [stage.displayName, stage.id]))
+    const map = {}
+    ;(stages ?? []).forEach((stage) => {
+        if (stage?.displayName && stage?.id) {
+            map[stage.displayName] = stage.id
+        }
+    })
+
+    // Alias configured EMS stage name to the closest program stage when names differ slightly.
+    const configuredEmsStage = 'Equipment Monitoring System (EMS) data'
+    if (!map[configuredEmsStage]) {
+        const { stageName } = resolveDataElementsForStageName(
+            Object.fromEntries((stages ?? []).map((s) => [s.displayName, [{ id: s.id }]])),
+            configuredEmsStage
+        )
+        if (stageName && map[stageName]) {
+            map[configuredEmsStage] = map[stageName]
+        }
+    }
+
+    return map
 }
 
 /**

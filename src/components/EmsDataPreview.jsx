@@ -11,7 +11,7 @@ import {
 } from '@dhis2/ui'
 import { EMS_FIELD_MAPPING_FIELDS } from '../config/emsFieldMappingDefinitions'
 import { aggregateEmsRecordsByDay } from '../utils/aggregateEmsRecordsDaily'
-import { formatEmsValue } from '../utils/emsValue'
+import { formatEmsPreviewValue, formatEmsValue, roundEmsToOneDecimal, EMS_PREVIEW_ONE_DECIMAL_KEYS } from '../utils/emsValue'
 import classes from '../App.module.css'
 
 const EMS_FIELD_LABELS = Object.fromEntries(
@@ -29,18 +29,39 @@ const formatDate = (dateStr) => {
     return dateStr
 }
 
+const roundPreviewFields = (fields) => {
+    /** @type {Record<string, unknown>} */
+    const rounded = { ...fields }
+    EMS_PREVIEW_ONE_DECIMAL_KEYS.forEach((key) => {
+        if (!(key in rounded)) return
+        const next = roundEmsToOneDecimal(rounded[key])
+        if (next != null) {
+            rounded[key] = next
+        }
+    })
+    return rounded
+}
+
 const EmsDataPreview = ({ parsedData, isOpen }) => {
     const records = parsedData?.records ?? []
     const metadata = parsedData?.metadata ?? {}
     const serial = parsedData?.config?.serial
 
-    const dailyRecords = useMemo(() => aggregateEmsRecordsByDay(records), [records])
+    const dailyRecords = useMemo(() => {
+        const aggregated = aggregateEmsRecordsByDay(records)
+        return [...aggregated]
+            .sort((a, b) => b.date.localeCompare(a.date))
+            .map((dailyRecord) => ({
+                ...dailyRecord,
+                fields: roundPreviewFields(dailyRecord.fields),
+            }))
+    }, [records])
 
     const previewColumns = useMemo(() => {
         const keys = new Set()
         dailyRecords.forEach((dailyRecord) => {
             Object.entries(dailyRecord.fields).forEach(([key, value]) => {
-                if (formatEmsValue(value) != null && EMS_FIELD_LABELS[key]) {
+                if (formatEmsPreviewValue(key, value) != null && EMS_FIELD_LABELS[key]) {
                     keys.add(key)
                 }
             })
@@ -122,7 +143,7 @@ const EmsDataPreview = ({ parsedData, isOpen }) => {
                                             <TableCell dense>{formatDate(dailyRecord.date)}</TableCell>
                                             {previewColumns.map((key) => (
                                                 <TableCell dense key={key}>
-                                                    {formatEmsValue(dailyRecord.fields[key]) ?? ''}
+                                                    {formatEmsPreviewValue(key, dailyRecord.fields[key]) ?? ''}
                                                 </TableCell>
                                             ))}
                                         </TableRow>

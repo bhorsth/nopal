@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-24T07:41:15.627Z\n"
-"PO-Revision-Date: 2026-06-24T07:41:15.629Z\n"
+"POT-Creation-Date: 2026-08-04T13:46:29.525Z\n"
+"PO-Revision-Date: 2026-08-04T13:46:29.526Z\n"
 
 msgid "Logger serial"
 msgstr "Logger serial"
@@ -173,11 +173,11 @@ msgstr "Date"
 msgid "Action"
 msgstr "Action"
 
+msgid "DHIS2 events preview"
+msgstr "DHIS2 events preview"
+
 msgid "No events found"
 msgstr "No events found"
-
-msgid "Events found"
-msgstr "Events found"
 
 msgid "showing 60 most recent"
 msgstr "showing 60 most recent"
@@ -536,6 +536,9 @@ msgstr ""
 "No program stage named \"{{stage}}\" exists on the selected program. Data "
 "element fields in this section cannot be mapped until the stage is added."
 
+msgid "Using program stage"
+msgstr "Using program stage"
+
 msgid "Data Import"
 msgstr "Data Import"
 
@@ -646,12 +649,6 @@ msgstr "RTC Wakeup"
 
 msgid "Absolute time in UTC"
 msgstr "Absolute time in UTC"
-
-msgid "Location / GIS Coordinates / Latitude"
-msgstr "Location / GIS Coordinates / Latitude"
-
-msgid "Location / GIS Coordinates / Longitude"
-msgstr "Location / GIS Coordinates / Longitude"
 
 msgid "Location accuracy"
 msgstr "Location accuracy"

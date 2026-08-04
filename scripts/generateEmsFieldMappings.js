@@ -63,9 +63,12 @@ const headers = headerRow.map((h) => h.trim())
 const colIdx = (name) => headers.findIndex((h) => h === name || h.startsWith(name))
 
 const OTHER_GROUP = 'Other'
+/** Geographical / OU identity fields — not configurable in EMS Settings. */
+const EXCLUDED_OBJECT_IDS = new Set(['RNAM', 'DNAM', 'FNAM', 'CID', 'FID', 'LAT', 'LNG'])
 
 const fields = allRows
     .filter((r) => r[0] && /^\d+$/.test(r[0].trim()))
+    .filter((cols) => !EXCLUDED_OBJECT_IDS.has(cols[colIdx('Object ID')].trim()))
     .map((cols) => {
         const stageOrAttribute = (cols[colIdx('DHIS2 program stage or attribute')] || '').trim()
         return {

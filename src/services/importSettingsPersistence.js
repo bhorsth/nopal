@@ -16,7 +16,7 @@ import {
 
 /** @typedef {'fridgeTag' | 'ems'} ImportDevice */
 
-const EMS_REMOVED_FIELD_KEYS = ['RNAM', 'DNAM', 'FNAM', 'CID', 'FID']
+const EMS_REMOVED_FIELD_KEYS = ['RNAM', 'DNAM', 'FNAM', 'CID', 'FID', 'LAT', 'LNG']
 
 const DEVICE_DEFAULT_FIELD_MAPPINGS = {
     fridgeTag: DEFAULT_FIELD_MAPPINGS,

@@ -3,7 +3,10 @@ import React, { useEffect, useMemo, useRef } from 'react'
 import { NoticeBox, SingleSelectField, SingleSelectOption } from '@dhis2/ui'
 import { useProgramFieldOptions } from '../../hooks/useProgramFieldOptions'
 import { useProgramMetadata } from '../../hooks/useProgramMetadata'
-import { buildEmsAutoMappings } from '../../utils/emsAutoMapFields'
+import {
+    buildEmsAutoMappings,
+    resolveDataElementsForStageName,
+} from '../../utils/emsAutoMapFields'
 import classes from '../../App.module.css'
 import fieldMappingClasses from './FieldMappingFields.module.css'
 
@@ -87,7 +90,6 @@ const FieldMappingFields = ({
         attributes,
         dataElements,
         dataElementsByStageName,
-        stages,
         loading,
         error,
         programMetadataReady,
@@ -97,7 +99,6 @@ const FieldMappingFields = ({
               attributes: emsMetadata.attributes,
               dataElements: [],
               dataElementsByStageName: emsMetadata.dataElementsByStageName,
-              stages: emsMetadata.stages,
               loading: emsMetadata.loading,
               error: emsMetadata.error,
               programMetadataReady: emsMetadata.programMetadataReady,
@@ -106,7 +107,6 @@ const FieldMappingFields = ({
         : {
               ...legacyOptions,
               dataElementsByStageName: null,
-              stages: [],
           }
 
     const autoMappedProgramRef = useRef(null)
@@ -114,19 +114,23 @@ const FieldMappingFields = ({
     useEffect(() => {
         if (!autoMapOnProgramLoad || !groupByStageOrAttribute) return
         if (!programId || !programMetadataReady) return
-        if (autoMappedProgramRef.current === programId) return
 
-        autoMappedProgramRef.current = programId
         const autoMappings = buildEmsAutoMappings(fieldMappingFields, {
             attributes,
             dataElementsByStageName,
         })
 
+        let applied = 0
         Object.entries(autoMappings).forEach(([key, value]) => {
             if (!fieldMappings[key]) {
                 setFieldMapping(key, value)
+                applied += 1
             }
         })
+
+        if (applied > 0 || autoMappedProgramRef.current === programId) {
+            autoMappedProgramRef.current = programId
+        }
     }, [
         autoMapOnProgramLoad,
         groupByStageOrAttribute,
@@ -145,6 +149,21 @@ const FieldMappingFields = ({
         }
     }, [programId])
 
+    const dataElementsForStage = useMemo(() => {
+        if (!groupByStageOrAttribute || !dataElementsByStageName) {
+            return {}
+        }
+        const cache = {}
+        fieldMappingFields.forEach(({ kind, stageOrAttribute }) => {
+            if (kind !== 'dataElement' || !stageOrAttribute || cache[stageOrAttribute]) return
+            cache[stageOrAttribute] = resolveDataElementsForStageName(
+                dataElementsByStageName,
+                stageOrAttribute
+            )
+        })
+        return cache
+    }, [groupByStageOrAttribute, dataElementsByStageName, fieldMappingFields])
+
     useEffect(() => {
         if (groupByStageOrAttribute) {
             fieldMappingFields.forEach(({ key, kind, stageOrAttribute }) => {
@@ -154,7 +173,11 @@ const FieldMappingFields = ({
                 const options =
                     kind === 'attribute'
                         ? attributes
-                        : dataElementsByStageName[stageOrAttribute] || []
+                        : dataElementsForStage[stageOrAttribute]?.dataElements || []
+
+                // Don't wipe mappings while stage options failed to resolve (empty list).
+                if (kind === 'dataElement' && options.length === 0) return
+
                 const current = fieldMappings[key]
                 if (current && !options.some((opt) => opt.id === current)) {
                     setFieldMapping(key, '')
@@ -169,6 +192,8 @@ const FieldMappingFields = ({
             if (!metadataReady) return
 
             const options = kind === 'attribute' ? attributes : dataElements
+            if (kind === 'dataElement' && options.length === 0) return
+
             const current = fieldMappings[key]
             if (current && !options.some((opt) => opt.id === current)) {
                 setFieldMapping(key, '')
@@ -181,7 +206,7 @@ const FieldMappingFields = ({
         stageMetadataReady,
         attributes,
         dataElements,
-        dataElementsByStageName,
+        dataElementsForStage,
         fieldMappings,
         setFieldMapping,
     ])
@@ -208,11 +233,6 @@ const FieldMappingFields = ({
         }))
     }, [fieldMappingFields, groupByCategory, groupByStageOrAttribute, fieldMappingGroups])
 
-    const stageNamesOnProgram = useMemo(
-        () => new Set(stages.map((stage) => stage.displayName)),
-        [stages]
-    )
-
     const renderField = (field) => {
         const { key, label, kind, helpText, stageOrAttribute } = field
 
@@ -229,14 +249,17 @@ const FieldMappingFields = ({
 
         const labelText = typeof label === 'function' ? label() : label
         const help = typeof helpText === 'function' ? helpText() : helpText
+        const resolvedStage = groupByStageOrAttribute
+            ? dataElementsForStage[stageOrAttribute]
+            : null
         const fieldDataElements = groupByStageOrAttribute
-            ? dataElementsByStageName[stageOrAttribute] || []
+            ? resolvedStage?.dataElements || []
             : dataElements
         const fieldStageReady =
             kind === 'attribute'
                 ? programMetadataReady
                 : groupByStageOrAttribute
-                  ? programMetadataReady && stageNamesOnProgram.has(stageOrAttribute)
+                  ? programMetadataReady && fieldDataElements.length > 0
                   : stageMetadataReady
 
         return (
@@ -281,8 +304,11 @@ const FieldMappingFields = ({
         groupedFields.map(({ group, fields }) => {
             const isStageGroup =
                 groupByStageOrAttribute && group && group !== 'TEI attribute' && group !== 'Other'
+            const resolved = isStageGroup ? dataElementsForStage[group] : null
             const stageMissing =
-                isStageGroup && programMetadataReady && !stageNamesOnProgram.has(group)
+                isStageGroup &&
+                programMetadataReady &&
+                (!resolved || resolved.dataElements.length === 0)
 
             return (
                 <section key={group || 'all'} className={fieldMappingClasses.categorySection}>
@@ -300,6 +326,21 @@ const FieldMappingFields = ({
                             {i18n.t(
                                 'No program stage named "{{stage}}" exists on the selected program. Data element fields in this section cannot be mapped until the stage is added.',
                                 { stage: group, nsSeparator: false }
+                            )}
+                        </NoticeBox>
+                    ) : null}
+                    {isStageGroup &&
+                    resolved?.stageName &&
+                    resolved.stageName !== group &&
+                    resolved.dataElements.length > 0 ? (
+                        <NoticeBox title={i18n.t('Using program stage')}>
+                            {i18n.t(
+                                'Mapped to program stage "{{stage}}" ({{count}} data elements).',
+                                {
+                                    stage: resolved.stageName,
+                                    count: resolved.dataElements.length,
+                                    nsSeparator: false,
+                                }
                             )}
                         </NoticeBox>
                     ) : null}

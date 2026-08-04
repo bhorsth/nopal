@@ -58,29 +58,18 @@ export async function fetchTrackerEventsBySerial(
  * @param {{ eventsToCreate?: object[], eventsToUpdate?: object[] }} payload
  */
 export async function syncTrackerEventPayloads(engine, { eventsToCreate = [], eventsToUpdate = [] }) {
-    const results = []
-
-    if (eventsToCreate.length > 0) {
-        results.push(
-            await engine.mutate({
-                resource: 'tracker',
-                type: 'create',
-                params: { async: false },
-                data: { events: eventsToCreate },
-            })
-        )
+    const events = [...eventsToCreate, ...eventsToUpdate]
+    if (events.length === 0) {
+        return null
     }
 
-    if (eventsToUpdate.length > 0) {
-        results.push(
-            await engine.mutate({
-                resource: 'tracker',
-                type: 'update',
-                params: { async: false },
-                data: { events: eventsToUpdate },
-            })
-        )
-    }
+    // Tracker import only supports POST; updates include the existing event UID in the payload.
+    const result = await engine.mutate({
+        resource: 'tracker',
+        type: 'create',
+        params: { async: false },
+        data: { events },
+    })
 
-    return mergeTrackerImportResults(results)
+    return mergeTrackerImportResults([result])
 }

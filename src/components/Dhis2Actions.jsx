@@ -461,20 +461,29 @@ const Dhis2Actions = ({ parsedData }) => {
                 ) : null}
 
                 {eventsResult ? (
-                    <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <div>
-                            {i18n.t('Serial')}: <strong>{eventsResult.serial}</strong>
-                        </div>
+                    <details style={{ marginTop: '12px' }}>
+                        <summary style={{ cursor: 'pointer' }}>
+                            <strong>{i18n.t('DHIS2 events preview')}</strong>
+                            {' — '}
+                            {eventsResult.events.length === 0
+                                ? i18n.t('No events found')
+                                : i18n.t('{{count}} events', {
+                                      count: eventsResult.events.length,
+                                      nsSeparator: false,
+                                  })}
+                            {eventsResult.events.length === 60
+                                ? ` (${i18n.t('showing 60 most recent')})`
+                                : ''}
+                        </summary>
 
-                        {eventsResult.events.length === 0 ? (
-                            <NoticeBox warning>{i18n.t('No events found')}</NoticeBox>
-                        ) : (
-                            <>
-                                <div>
-                                    {i18n.t('Events found')}: <strong>{eventsResult.events.length}</strong>{' '}
-                                    {eventsResult.events.length === 60 ? `(${i18n.t('showing 60 most recent')})` : ''}
-                                </div>
+                        <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <div>
+                                {i18n.t('Serial')}: <strong>{eventsResult.serial}</strong>
+                            </div>
 
+                            {eventsResult.events.length === 0 ? (
+                                <NoticeBox warning>{i18n.t('No events found')}</NoticeBox>
+                            ) : (
                                 <div className={classes.tableWrap}>
                                     <Table>
                                         <TableHead>
@@ -507,9 +516,9 @@ const Dhis2Actions = ({ parsedData }) => {
                                         </TableBody>
                                     </Table>
                                 </div>
-                            </>
-                        )}
-                    </div>
+                            )}
+                        </div>
+                    </details>
                 ) : null}
 
                 {createResult ? (

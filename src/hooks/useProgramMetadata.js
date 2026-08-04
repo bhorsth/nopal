@@ -8,7 +8,7 @@ const metadataQuery = {
         params: {
             fields: [
                 'programTrackedEntityAttributes[trackedEntityAttribute[id,name,displayName,shortName,code]]',
-                'programStages[id,displayName,programStageDataElements[dataElement[id,displayName,code]]]',
+                'programStages[id,displayName,programStageDataElements[dataElement[id,name,displayName,code]]]',
             ].join(','),
         },
     },
@@ -56,7 +56,8 @@ const parseProgramStages = (program) => {
                 .filter(Boolean)
                 .map((de) => ({
                     id: de.id,
-                    displayName: de.displayName || de.id,
+                    displayName: de.displayName || de.name || de.id,
+                    name: de.name || de.displayName || '',
                     code: de.code || '',
                 }))
                 .sort((a, b) => a.displayName.localeCompare(b.displayName))

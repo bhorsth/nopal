@@ -33,46 +33,49 @@ describe('buildEmsEventDataValues', () => {
         expect(dataValues).toHaveLength(3)
     })
 
-    it('groups data values by program stage from field definitions', () => {
+    it('groups data values under the single EMS program stage', () => {
         const record = { TVC: 5.7, TAMB: 31.9, ALRM: '0x00000000' }
         const mappings = { TVC: 'de-tvc', TAMB: 'de-tamb', ALRM: 'de-alrm' }
+        const stageName = 'Equipment Monitoring System (EMS) data'
 
         const byStage = groupEmsRecordDataValuesByStage(record, mappings)
 
-        expect(byStage['Compartment data']).toEqual([{ dataElement: 'de-tvc', value: '5.7' }])
-        expect(byStage['Appliance ambience']).toEqual([{ dataElement: 'de-tamb', value: '31.9' }])
-        expect(byStage['Logger data']).toEqual([{ dataElement: 'de-alrm', value: '0x00000000' }])
+        expect(Object.keys(byStage)).toEqual([stageName])
+        expect(byStage[stageName]).toEqual(
+            expect.arrayContaining([
+                { dataElement: 'de-tvc', value: '5.7' },
+                { dataElement: 'de-tamb', value: '31.9' },
+                { dataElement: 'de-alrm', value: '0x00000000' },
+            ])
+        )
+        expect(byStage[stageName]).toHaveLength(3)
     })
 
-    it('builds one event per day and program stage', () => {
+    it('builds one event per day for the EMS program stage', () => {
         const dailyRecords = [
             { date: '2026-06-10', fields: { TVC: 5, TAMB: 20 } },
         ]
         const mappings = { TVC: 'de-tvc', TAMB: 'de-tamb' }
+        const stageName = 'Equipment Monitoring System (EMS) data'
         const stageNameToId = {
-            'Compartment data': 'stage-compartment',
-            'Appliance ambience': 'stage-ambience',
+            [stageName]: 'stage-ems',
         }
 
         const events = buildEmsDailyEventsByStage(dailyRecords, mappings, stageNameToId)
 
-        expect(events).toHaveLength(2)
-        expect(events).toEqual(
-            expect.arrayContaining([
-                expect.objectContaining({
-                    date: '2026-06-10',
-                    stageName: 'Compartment data',
-                    programStageId: 'stage-compartment',
-                    dataValues: [{ dataElement: 'de-tvc', value: '5' }],
-                }),
-                expect.objectContaining({
-                    date: '2026-06-10',
-                    stageName: 'Appliance ambience',
-                    programStageId: 'stage-ambience',
-                    dataValues: [{ dataElement: 'de-tamb', value: '20' }],
-                }),
-            ])
+        expect(events).toHaveLength(1)
+        expect(events[0]).toEqual(
+            expect.objectContaining({
+                date: '2026-06-10',
+                stageName,
+                programStageId: 'stage-ems',
+                dataValues: expect.arrayContaining([
+                    { dataElement: 'de-tvc', value: '5' },
+                    { dataElement: 'de-tamb', value: '20' },
+                ]),
+            })
         )
+        expect(events[0].dataValues).toHaveLength(2)
     })
 
     it('builds TEI attributes from EMS header metadata', () => {
