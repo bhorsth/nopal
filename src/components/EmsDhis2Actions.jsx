@@ -29,8 +29,8 @@ import {
 import { fetchTrackerEventsBySerial, syncTrackerEventPayloads } from '../services/trackerEvents'
 import {
     buildExistingEventIdIndex,
+    latestPlannedIsoDate,
     partitionPlannedEventsForSync,
-    todayIsoDate,
 } from '../utils/trackerEventSync'
 import DeviceRegistrationPanel from './DeviceRegistrationPanel'
 import classes from '../App.module.css'
@@ -206,7 +206,6 @@ const EmsDhis2Actions = ({ parsedData }) => {
             return
         }
 
-        const todayDate = todayIsoDate()
         const existingEventIdsByKey = buildExistingEventIdIndex(
             existingEvents.events,
             (evt) =>
@@ -263,7 +262,7 @@ const EmsDhis2Actions = ({ parsedData }) => {
         const { creates, updates } = partitionPlannedEventsForSync(
             eventPayloads,
             existingEventIdsByKey,
-            todayDate,
+            latestPlannedIsoDate(eventPayloads),
             (item) => `${item.date}:${item.programStage}`
         )
 

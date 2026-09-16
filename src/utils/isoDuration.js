@@ -8,19 +8,25 @@ export function parseIsoDurationToSeconds(duration) {
         return 0
     }
 
-    const match = duration.match(
+    const trimmed = duration.trim()
+    const match = trimmed.match(
         /^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/i
     )
-    if (!match) {
-        return 0
+    if (match) {
+        const days = Number(match[1] || 0)
+        const hours = Number(match[2] || 0)
+        const minutes = Number(match[3] || 0)
+        const seconds = Number(match[4] || 0)
+        return days * 86400 + hours * 3600 + minutes * 60 + seconds
     }
 
-    const days = Number(match[1] || 0)
-    const hours = Number(match[2] || 0)
-    const minutes = Number(match[3] || 0)
-    const seconds = Number(match[4] || 0)
+    // PQS shorthand: PT1 == PT24H (1 day), PT2 == PT48H, ...
+    const pqsDays = trimmed.match(/^PT(\d+)$/i)
+    if (pqsDays) {
+        return Number(pqsDays[1]) * 86400
+    }
 
-    return days * 86400 + hours * 3600 + minutes * 60 + seconds
+    return 0
 }
 
 /**
@@ -35,6 +41,13 @@ export function parseEmsAbsoluteTime(abst) {
     }
 
     const trimmed = abst.trim()
+    const compactDate = trimmed.match(/^(\d{4})(\d{2})(\d{2})$/)
+    if (compactDate) {
+        const [, year, month, day] = compactDate
+        const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)))
+        return Number.isNaN(date.getTime()) ? null : date.toISOString()
+    }
+
     const compact = trimmed.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z?$/i)
     if (compact) {
         const [, year, month, day, hour, minute, second] = compact

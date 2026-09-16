@@ -12,6 +12,7 @@ import {
 import { EMS_FIELD_MAPPING_FIELDS } from '../config/emsFieldMappingDefinitions'
 import { aggregateEmsRecordsByDay } from '../utils/aggregateEmsRecordsDaily'
 import { formatEmsPreviewValue, formatEmsValue, roundEmsToOneDecimal, EMS_PREVIEW_ONE_DECIMAL_KEYS } from '../utils/emsValue'
+import { parseEmsAbsoluteTime } from '../utils/isoDuration'
 import classes from '../App.module.css'
 
 const EMS_FIELD_LABELS = Object.fromEntries(
@@ -82,6 +83,9 @@ const EmsDataPreview = ({ parsedData, isOpen }) => {
     }, [metadata])
 
     const previewRecords = dailyRecords.slice(0, PREVIEW_RECORD_LIMIT)
+    const newestDate = dailyRecords[0]?.date
+    const oldestDate = dailyRecords[dailyRecords.length - 1]?.date
+    const usesAbst = records.some((record) => Boolean(parseEmsAbsoluteTime(record.ABST)))
 
     return (
         <div>
@@ -101,6 +105,20 @@ const EmsDataPreview = ({ parsedData, isOpen }) => {
                         <div>
                             <strong>{i18n.t('Daily records')}:</strong> {dailyRecords.length}
                         </div>
+                        {oldestDate && newestDate ? (
+                            <div>
+                                <strong>{i18n.t('Event dates')}:</strong>{' '}
+                                {oldestDate === newestDate
+                                    ? formatDate(oldestDate)
+                                    : `${formatDate(oldestDate)} – ${formatDate(newestDate)}`}
+                                {' '}
+                                <span style={{ color: 'var(--colors-grey700)' }}>
+                                    {usesAbst
+                                        ? i18n.t('(from absolute time UTC)')
+                                        : i18n.t('(from production date + relative time)')}
+                                </span>
+                            </div>
+                        ) : null}
                     </div>
 
                     {metadataEntries.length > 0 ? (

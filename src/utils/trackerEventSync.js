@@ -7,6 +7,26 @@ export function todayIsoDate(referenceDate = new Date()) {
 }
 
 /**
+ * Latest calendar date among planned sync items (YYYY-MM-DD).
+ * For EMS this is the current/incomplete day in the file, not wall-clock today.
+ * @param {Array<{ date?: string }>} items
+ * @returns {string}
+ */
+export function latestPlannedIsoDate(items) {
+    if (!Array.isArray(items) || items.length === 0) {
+        return ''
+    }
+
+    return items.reduce((latest, item) => {
+        const date = item?.date ? String(item.date).slice(0, 10) : ''
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+            return latest
+        }
+        return !latest || date > latest ? date : latest
+    }, '')
+}
+
+/**
  * @param {Array<{ occurredAt?: string, programStage?: string, event?: string }>} events
  * @param {(event: object) => string | null | undefined} getKey
  * @returns {Map<string, string>}
@@ -28,16 +48,17 @@ export function buildExistingEventIdIndex(events, getKey) {
 }
 
 /**
- * Split planned daily events into creates, updates (today only), and skipped past duplicates.
+ * Split planned daily events into creates, updates (current import day only),
+ * and skipped past duplicates.
  * @param {Array<{ date: string }>} plannedItems
  * @param {Map<string, string>} existingEventIdsByKey
- * @param {string} todayDate
+ * @param {string} updatableDate - Date that may still receive more readings
  * @param {(item: object) => string} getKey
  */
 export function partitionPlannedEventsForSync(
     plannedItems,
     existingEventIdsByKey,
-    todayDate,
+    updatableDate,
     getKey
 ) {
     const creates = []
@@ -49,7 +70,7 @@ export function partitionPlannedEventsForSync(
         const existingEventId = existingEventIdsByKey.get(key)
 
         if (existingEventId) {
-            if (item.date === todayDate) {
+            if (item.date === updatableDate) {
                 updates.push({ ...item, event: existingEventId })
             } else {
                 skippedPastDuplicates += 1
