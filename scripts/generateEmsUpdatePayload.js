@@ -144,14 +144,56 @@ function parseIsoDurationToSeconds(duration) {
     return days * 86400 + hours * 3600 + minutes * 60 + seconds
 }
 
-function computeEmsOccurredAtTimes(records, referenceTime = new Date()) {
-    const relSeconds = records.map((record) => parseIsoDurationToSeconds(record.RELT))
-    const minSeconds = Math.min(...relSeconds)
-    const refMs = referenceTime.getTime()
-    return records.map((_, index) => {
-        const seconds = relSeconds[index] ?? 0
-        const offsetMs = (seconds - minSeconds) * 1000
-        return new Date(refMs - offsetMs).toISOString()
+function parseEmsAbsoluteTime(abst) {
+    if (!abst || typeof abst !== 'string') return null
+    const trimmed = abst.trim()
+    const compact = trimmed.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z?$/i)
+    if (compact) {
+        const [, year, month, day, hour, minute, second] = compact
+        const date = new Date(
+            Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second))
+        )
+        return Number.isNaN(date.getTime()) ? null : date.toISOString()
+    }
+    const iso = trimmed.match(
+        /^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?)?Z?$/i
+    )
+    if (iso) {
+        const [, year, month, day, hour, minute, second] = iso
+        const date = new Date(
+            Date.UTC(
+                Number(year),
+                Number(month) - 1,
+                Number(day),
+                Number(hour || 0),
+                Number(minute || 0),
+                Number(second || 0)
+            )
+        )
+        return Number.isNaN(date.getTime()) ? null : date.toISOString()
+    }
+    return null
+}
+
+function parseEmsProductionDate(adop) {
+    if (adop instanceof Date && !Number.isNaN(adop.getTime())) {
+        return Date.UTC(adop.getUTCFullYear(), adop.getUTCMonth(), adop.getUTCDate())
+    }
+    const parsed = parseEmsAbsoluteTime(typeof adop === 'string' ? adop : String(adop ?? ''))
+    if (!parsed) return null
+    const date = new Date(parsed)
+    return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+}
+
+function computeEmsOccurredAtTimes(records, adop) {
+    const startMs = parseEmsProductionDate(adop)
+    return records.map((record) => {
+        if (record.ABST) {
+            const parsed = parseEmsAbsoluteTime(record.ABST)
+            if (parsed) return parsed
+        }
+        if (startMs == null) return null
+        return new Date(startMs + parseIsoDurationToSeconds(record.RELT) * 1000).toISOString()
     })
 }
 
@@ -215,8 +257,8 @@ function aggregateEmsFieldsForDay(dayRecords) {
     return aggregated
 }
 
-function aggregateEmsRecordsByDay(records, referenceTime = new Date()) {
-    const occurredAtTimes = computeEmsOccurredAtTimes(records, referenceTime)
+function aggregateEmsRecordsByDay(records, adop) {
+    const occurredAtTimes = computeEmsOccurredAtTimes(records, adop)
     const recordsByDay = new Map()
     records.forEach((record, index) => {
         const date = occurredAtTimes[index]?.slice(0, 10)
@@ -321,12 +363,12 @@ async function lookupTrackedEntity(serial, serialAttributeId) {
     return data?.trackedEntities?.[0] || null
 }
 
-function buildPayload({ parsed, fieldMappings, fieldDefinitions, tei, referenceTime, stages }) {
+function buildPayload({ parsed, fieldMappings, fieldDefinitions, tei, generatedAt, stages }) {
     const trackedEntity = tei?.trackedEntity || '<TRACKED_ENTITY_UID>'
     const enrollment = tei?.enrollments?.find((e) => e.program === programId)?.enrollment || '<ENROLLMENT_UID>'
     const orgUnit = getOrgUnitId(tei) || fallbackOrgUnitId || '<ORG_UNIT_UID>'
     const stageNameToId = Object.fromEntries((stages ?? []).map((stage) => [stage.displayName, stage.id]))
-    const dailyRecords = aggregateEmsRecordsByDay(parsed.records, referenceTime)
+    const dailyRecords = aggregateEmsRecordsByDay(parsed.records, parsed.metadata?.ADOP)
     const events = []
 
     dailyRecords.forEach((dailyRecord) => {
@@ -355,7 +397,7 @@ function buildPayload({ parsed, fieldMappings, fieldDefinitions, tei, referenceT
         _meta: {
             description: 'Tracker import payload equivalent to EMS Update data (daily aggregated)',
             sourceFile: path.basename(inputPath),
-            generatedAt: referenceTime.toISOString(),
+            generatedAt,
             programId,
             programStages: stages?.map((stage) => ({ id: stage.id, displayName: stage.displayName })) ?? [],
             loggerSerial: parsed.config.serial,
@@ -485,13 +527,12 @@ async function main() {
         throw new Error('Could not resolve program stages from program metadata')
     }
 
-    const referenceTime = new Date()
     const payload = buildPayload({
         parsed,
         fieldMappings,
         fieldDefinitions,
         tei,
-        referenceTime,
+        generatedAt: new Date().toISOString(),
         stages,
     })
     payload._meta.idScheme = idScheme

@@ -54,17 +54,18 @@ export function aggregateEmsFieldsForDay(dayRecords) {
 }
 
 /**
- * Group EMS interval records by calendar day using RELT relative to upload time.
+ * Group EMS interval records by calendar day.
+ * Uses ABST when present, otherwise RELT counted from ADOP at 00:00 UTC.
  * @param {Array<Record<string, unknown>>} records
- * @param {Date} [referenceTime] - Upload time; newest RELT aligns to this moment
+ * @param {{ adop?: string|Date }} [options]
  * @returns {Array<{ date: string, fields: Record<string, unknown>, readingCount: number }>}
  */
-export function aggregateEmsRecordsByDay(records, referenceTime = new Date()) {
+export function aggregateEmsRecordsByDay(records, options = {}) {
     if (!Array.isArray(records) || records.length === 0) {
         return []
     }
 
-    const occurredAtTimes = computeEmsOccurredAtTimes(records, referenceTime)
+    const occurredAtTimes = computeEmsOccurredAtTimes(records, options)
     /** @type {Map<string, Array<Record<string, unknown>>>} */
     const recordsByDay = new Map()
 

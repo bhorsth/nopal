@@ -206,8 +206,7 @@ const EmsDhis2Actions = ({ parsedData }) => {
             return
         }
 
-        const referenceTime = new Date()
-        const todayDate = todayIsoDate(referenceTime)
+        const todayDate = todayIsoDate()
         const existingEventIdsByKey = buildExistingEventIdIndex(
             existingEvents.events,
             (evt) =>
@@ -216,7 +215,18 @@ const EmsDhis2Actions = ({ parsedData }) => {
                     : null
         )
 
-        const dailyRecords = aggregateEmsRecordsByDay(records, referenceTime)
+        const dailyRecords = aggregateEmsRecordsByDay(records, {
+            adop: parsedData?.metadata?.ADOP,
+        })
+        if (records.length > 0 && dailyRecords.length === 0) {
+            setSyncError(
+                i18n.t(
+                    'Could not assign event dates. The file needs Absolute time (ABST) or Appliance date of production (ADOP).'
+                )
+            )
+            return
+        }
+
         const plannedEvents = buildEmsDailyEventsByStage(dailyRecords, fieldMappings, stageNameToId)
         const unresolvedStages = new Set()
         const eventPayloads = []

@@ -47,15 +47,17 @@ const EmsDataPreview = ({ parsedData, isOpen }) => {
     const metadata = parsedData?.metadata ?? {}
     const serial = parsedData?.config?.serial
 
+    const adop = metadata.ADOP
+
     const dailyRecords = useMemo(() => {
-        const aggregated = aggregateEmsRecordsByDay(records)
+        const aggregated = aggregateEmsRecordsByDay(records, { adop })
         return [...aggregated]
             .sort((a, b) => b.date.localeCompare(a.date))
             .map((dailyRecord) => ({
                 ...dailyRecord,
                 fields: roundPreviewFields(dailyRecord.fields),
             }))
-    }, [records])
+    }, [records, adop])
 
     const previewColumns = useMemo(() => {
         const keys = new Set()
@@ -123,7 +125,13 @@ const EmsDataPreview = ({ parsedData, isOpen }) => {
                     ) : null}
 
                     {previewColumns.length === 0 ? (
-                        <div>{i18n.t('No measurement records available in this file.')}</div>
+                        <div>
+                            {records.length > 0
+                                ? i18n.t(
+                                      'Could not assign event dates. The file needs Absolute time (ABST) or Appliance date of production (ADOP).'
+                                  )
+                                : i18n.t('No measurement records available in this file.')}
+                        </div>
                     ) : (
                         <div className={classes.tableWrap}>
                             <Table>

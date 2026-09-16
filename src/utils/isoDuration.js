@@ -24,35 +24,9 @@ export function parseIsoDurationToSeconds(duration) {
 }
 
 /**
- * Compute occurredAt timestamps for EMS records from RELT values.
- * Uses the minimum RELT as the most current reading aligned to referenceTime (upload time).
- * @param {Array<{ RELT?: string }>} records
- * @param {Date} [referenceTime]
- * @returns {string[]}
- */
-export function computeEmsOccurredAtTimes(records, referenceTime = new Date()) {
-    if (!Array.isArray(records) || records.length === 0) {
-        return []
-    }
-
-    const relSeconds = records.map((record) => parseIsoDurationToSeconds(record.RELT))
-    const minSeconds = Math.min(...relSeconds)
-    const refMs = referenceTime.getTime()
-
-    return records.map((record, index) => {
-        if (record.ABST) {
-            const parsed = parseEmsAbsoluteTime(record.ABST)
-            if (parsed) return parsed
-        }
-
-        const seconds = relSeconds[index] ?? 0
-        const offsetMs = (seconds - minSeconds) * 1000
-        return new Date(refMs - offsetMs).toISOString()
-    })
-}
-
-/**
- * @param {string} abst - YYYYMMDDThhmmssZ format
+ * Parse EMS absolute time (ABST) to an ISO timestamp.
+ * Accepts YYYYMMDDThhmmssZ and ISO-8601 date/datetime strings.
+ * @param {string} abst
  * @returns {string|null}
  */
 export function parseEmsAbsoluteTime(abst) {
@@ -60,22 +34,91 @@ export function parseEmsAbsoluteTime(abst) {
         return null
     }
 
-    const match = abst.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z?$/i)
-    if (!match) {
+    const trimmed = abst.trim()
+    const compact = trimmed.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z?$/i)
+    if (compact) {
+        const [, year, month, day, hour, minute, second] = compact
+        const date = new Date(
+            Date.UTC(
+                Number(year),
+                Number(month) - 1,
+                Number(day),
+                Number(hour),
+                Number(minute),
+                Number(second)
+            )
+        )
+        return Number.isNaN(date.getTime()) ? null : date.toISOString()
+    }
+
+    const iso = trimmed.match(
+        /^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?)?Z?$/i
+    )
+    if (iso) {
+        const [, year, month, day, hour, minute, second] = iso
+        const date = new Date(
+            Date.UTC(
+                Number(year),
+                Number(month) - 1,
+                Number(day),
+                Number(hour || 0),
+                Number(minute || 0),
+                Number(second || 0)
+            )
+        )
+        return Number.isNaN(date.getTime()) ? null : date.toISOString()
+    }
+
+    return null
+}
+
+/**
+ * Parse appliance date of production (ADOP) to UTC midnight milliseconds.
+ * @param {string|Date} adop
+ * @returns {number|null}
+ */
+export function parseEmsProductionDate(adop) {
+    if (adop instanceof Date && !Number.isNaN(adop.getTime())) {
+        return Date.UTC(adop.getUTCFullYear(), adop.getUTCMonth(), adop.getUTCDate())
+    }
+
+    const parsed = parseEmsAbsoluteTime(typeof adop === 'string' ? adop : String(adop ?? ''))
+    if (!parsed) {
         return null
     }
 
-    const [, year, month, day, hour, minute, second] = match
-    const date = new Date(
-        Date.UTC(
-            Number(year),
-            Number(month) - 1,
-            Number(day),
-            Number(hour),
-            Number(minute),
-            Number(second)
-        )
-    )
+    const date = new Date(parsed)
+    return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+}
 
-    return Number.isNaN(date.getTime()) ? null : date.toISOString()
+/**
+ * Compute occurredAt timestamps for EMS records.
+ * Uses ABST when present. Otherwise RELT is counted from ADOP at 00:00 UTC
+ * (PT0S belongs to the production date; the next 24 hours to ADOP+1, and so on).
+ * @param {Array<{ RELT?: string, ABST?: string }>} records
+ * @param {{ adop?: string|Date }} [options]
+ * @returns {Array<string|null>}
+ */
+export function computeEmsOccurredAtTimes(records, options = {}) {
+    if (!Array.isArray(records) || records.length === 0) {
+        return []
+    }
+
+    const startMs = parseEmsProductionDate(options?.adop)
+
+    return records.map((record) => {
+        if (record.ABST) {
+            const parsed = parseEmsAbsoluteTime(record.ABST)
+            if (parsed) {
+                return parsed
+            }
+        }
+
+        if (startMs == null) {
+            return null
+        }
+
+        const seconds = parseIsoDurationToSeconds(record.RELT)
+        return new Date(startMs + seconds * 1000).toISOString()
+    })
 }
