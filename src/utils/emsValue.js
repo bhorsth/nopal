@@ -35,6 +35,32 @@ export function parseEmsNumeric(value) {
 }
 
 /**
+ * Round posted aggregation numbers: integers stay integers; other values 1 decimal.
+ * @param {unknown} value
+ * @returns {number|null}
+ */
+export function roundEmsAggregatedNumber(value) {
+    const numeric = parseEmsNumeric(value)
+    if (Number.isNaN(numeric)) {
+        return null
+    }
+    const rounded = Math.round(numeric * 10) / 10
+    return Object.is(rounded, -0) ? 0 : rounded
+}
+
+/**
+ * @param {unknown} value
+ * @returns {string|null}
+ */
+export function formatEmsAggregatedNumber(value) {
+    const rounded = roundEmsAggregatedNumber(value)
+    if (rounded == null) {
+        return null
+    }
+    return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
+}
+
+/**
  * @param {unknown} value
  * @returns {string|null}
  */
@@ -43,34 +69,21 @@ export function formatEmsValue(value) {
         return null
     }
 
+    const aggregated = formatEmsAggregatedNumber(value)
+    if (aggregated != null) {
+        return aggregated
+    }
+
     return String(value)
 }
 
-/** EMS Object IDs shown to at most 1 decimal place in the data preview. */
-export const EMS_PREVIEW_ONE_DECIMAL_KEYS = new Set([
-    'ACCD', // AC current drawn by the appliance
-    'ACSV', // AC supply voltage to the appliance
-    'BLOG', // Logger battery remaining
-    'CMPR', // Compressor runtime
-    'TAMB', // Ambient temperature
-    'TVC', // Vaccine Compartment Temperature
-])
-
-/**
- * Round a value to one decimal place when it is numeric.
- * @param {unknown} value
- * @returns {number|null}
- */
+/** @deprecated Use roundEmsAggregatedNumber; kept for callers that expect 1-decimal rounding. */
 export function roundEmsToOneDecimal(value) {
-    const numeric = parseEmsNumeric(value)
-    if (Number.isNaN(numeric)) {
-        return null
-    }
-    return Math.round(numeric * 10) / 10
+    return roundEmsAggregatedNumber(value)
 }
 
 /**
- * Format an EMS value for UI preview. Selected numeric fields are capped at 1 decimal.
+ * Format an EMS value for UI preview. Numeric aggregation outputs use integer-or-1-decimal rounding.
  * @param {string} fieldKey
  * @param {unknown} value
  * @returns {string|null}
@@ -80,12 +93,9 @@ export function formatEmsPreviewValue(fieldKey, value) {
         return null
     }
 
-    const key = String(fieldKey || '').trim().toUpperCase()
-    if (EMS_PREVIEW_ONE_DECIMAL_KEYS.has(key)) {
-        const rounded = roundEmsToOneDecimal(value)
-        if (rounded != null) {
-            return rounded.toFixed(1)
-        }
+    const aggregated = formatEmsAggregatedNumber(value)
+    if (aggregated != null) {
+        return aggregated
     }
 
     return String(value)

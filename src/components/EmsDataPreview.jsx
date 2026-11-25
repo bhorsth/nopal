@@ -11,13 +11,15 @@ import {
 } from '@dhis2/ui'
 import { EMS_FIELD_MAPPING_FIELDS } from '../config/emsFieldMappingDefinitions'
 import { aggregateEmsRecordsByDay } from '../utils/aggregateEmsRecordsDaily'
-import { formatEmsPreviewValue, formatEmsValue, roundEmsToOneDecimal, EMS_PREVIEW_ONE_DECIMAL_KEYS } from '../utils/emsValue'
+import { formatEmsPreviewValue, formatEmsValue } from '../utils/emsValue'
 import { parseEmsAbsoluteTime } from '../utils/isoDuration'
 import classes from '../App.module.css'
 
 const EMS_FIELD_LABELS = Object.fromEntries(
     EMS_FIELD_MAPPING_FIELDS.map((field) => [field.key, field.label])
 )
+
+const EMS_FIELD_KEY_ORDER = EMS_FIELD_MAPPING_FIELDS.map((field) => field.key)
 
 const PREVIEW_RECORD_LIMIT = 60
 
@@ -30,19 +32,6 @@ const formatDate = (dateStr) => {
     return dateStr
 }
 
-const roundPreviewFields = (fields) => {
-    /** @type {Record<string, unknown>} */
-    const rounded = { ...fields }
-    EMS_PREVIEW_ONE_DECIMAL_KEYS.forEach((key) => {
-        if (!(key in rounded)) return
-        const next = roundEmsToOneDecimal(rounded[key])
-        if (next != null) {
-            rounded[key] = next
-        }
-    })
-    return rounded
-}
-
 const EmsDataPreview = ({ parsedData, isOpen }) => {
     const records = parsedData?.records ?? []
     const metadata = parsedData?.metadata ?? {}
@@ -50,15 +39,13 @@ const EmsDataPreview = ({ parsedData, isOpen }) => {
 
     const adop = metadata.ADOP
 
-    const dailyRecords = useMemo(() => {
-        const aggregated = aggregateEmsRecordsByDay(records, { adop })
-        return [...aggregated]
-            .sort((a, b) => b.date.localeCompare(a.date))
-            .map((dailyRecord) => ({
-                ...dailyRecord,
-                fields: roundPreviewFields(dailyRecord.fields),
-            }))
-    }, [records, adop])
+    const dailyRecords = useMemo(
+        () =>
+            [...aggregateEmsRecordsByDay(records, { adop })].sort((a, b) =>
+                b.date.localeCompare(a.date)
+            ),
+        [records, adop]
+    )
 
     const previewColumns = useMemo(() => {
         const keys = new Set()
@@ -69,7 +56,7 @@ const EmsDataPreview = ({ parsedData, isOpen }) => {
                 }
             })
         })
-        return [...keys].sort()
+        return EMS_FIELD_KEY_ORDER.filter((key) => keys.has(key))
     }, [dailyRecords])
 
     const metadataEntries = useMemo(() => {

@@ -75,11 +75,11 @@ describe('buildEmsAutoMappings', () => {
             dhis2Code: 'EMS-LSER',
         },
         {
-            key: 'TVC',
+            key: 'TVC_AVG',
             kind: 'dataElement',
             stageOrAttribute: 'Equipment Monitoring System (EMS) data',
             dhis2Name: 'Vaccine Compartment Temperature (°C) - AVG',
-            dhis2Code: 'EMS - TVC - AVG',
+            dhis2Code: 'EMS_TVC_AVG',
         },
     ]
 
@@ -91,13 +91,13 @@ describe('buildEmsAutoMappings', () => {
                     {
                         id: 'de1',
                         displayName: 'Vaccine Compartment Temperature (°C) - AVG',
-                        code: 'EMS - TVC - AVG',
+                        code: 'EMS_TVC_AVG',
                     },
                 ],
             },
         })
 
-        expect(mappings).toEqual({ LSER: 'attr1', TVC: 'de1' })
+        expect(mappings).toEqual({ LSER: 'attr1', TVC_AVG: 'de1' })
     })
 
     it('auto-maps data elements when stage name differs slightly', () => {
@@ -108,12 +108,12 @@ describe('buildEmsAutoMappings', () => {
                     {
                         id: 'de1',
                         displayName: 'Vaccine Compartment Temperature (°C) - AVG',
-                        code: 'EMS - TVC - AVG',
+                        code: 'EMS_TVC_AVG',
                     },
                 ],
             },
         })
 
-        expect(mappings).toEqual({ LSER: 'attr1', TVC: 'de1' })
+        expect(mappings).toEqual({ LSER: 'attr1', TVC_AVG: 'de1' })
     })
 })

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-04T13:46:29.525Z\n"
-"PO-Revision-Date: 2026-08-04T13:46:29.526Z\n"
+"POT-Creation-Date: 2026-11-25T10:12:53.073Z\n"
+"PO-Revision-Date: 2026-11-25T10:12:53.073Z\n"
 
 msgid "Logger serial"
 msgstr "Logger serial"
@@ -215,11 +215,27 @@ msgstr "Interval readings"
 msgid "Daily records"
 msgstr "Daily records"
 
+msgid "Event dates"
+msgstr "Event dates"
+
+msgid "(from absolute time UTC)"
+msgstr "(from absolute time UTC)"
+
+msgid "(from production date + relative time)"
+msgstr "(from production date + relative time)"
+
 msgid "Device metadata"
 msgstr "Device metadata"
 
 msgid "Value"
 msgstr "Value"
+
+msgid ""
+"Could not assign event dates. The file needs Absolute time (ABST) or "
+"Appliance date of production (ADOP)."
+msgstr ""
+"Could not assign event dates. The file needs Absolute time (ABST) or "
+"Appliance date of production (ADOP)."
 
 msgid "No measurement records available in this file."
 msgstr "No measurement records available in this file."
@@ -554,6 +570,231 @@ msgstr "EMS"
 msgid "Toggle navigation"
 msgstr "Toggle navigation"
 
+msgid "AC supply voltage to the appliance (V) (MIN)"
+msgstr "AC supply voltage to the appliance (V) (MIN)"
+
+msgid "AC supply voltage to the appliance (V) (AVG)"
+msgstr "AC supply voltage to the appliance (V) (AVG)"
+
+msgid "AC supply voltage to the appliance (V) (MAX)"
+msgstr "AC supply voltage to the appliance (V) (MAX)"
+
+msgid "DC supply voltage to the appliance (V) (MIN)"
+msgstr "DC supply voltage to the appliance (V) (MIN)"
+
+msgid "DC supply voltage to the appliance (V) (AVG)"
+msgstr "DC supply voltage to the appliance (V) (AVG)"
+
+msgid "DC supply voltage to the appliance (V) (MAX)"
+msgstr "DC supply voltage to the appliance (V) (MAX)"
+
+msgid "AC current drawn by the appliance (A) (MIN)"
+msgstr "AC current drawn by the appliance (A) (MIN)"
+
+msgid "AC current drawn by the appliance (A) (AVG)"
+msgstr "AC current drawn by the appliance (A) (AVG)"
+
+msgid "AC current drawn by the appliance (A) (MAX)"
+msgstr "AC current drawn by the appliance (A) (MAX)"
+
+msgid "DC current drawn by the appliance (A) (MIN)"
+msgstr "DC current drawn by the appliance (A) (MIN)"
+
+msgid "DC current drawn by the appliance (A) (AVG)"
+msgstr "DC current drawn by the appliance (A) (AVG)"
+
+msgid "DC current drawn by the appliance (A) (MAX)"
+msgstr "DC current drawn by the appliance (A) (MAX)"
+
+msgid "Ambient relative humidity (%) (MIN)"
+msgstr "Ambient relative humidity (%) (MIN)"
+
+msgid "Ambient relative humidity (%) (AVG)"
+msgstr "Ambient relative humidity (%) (AVG)"
+
+msgid "Ambient relative humidity (%) (MAX)"
+msgstr "Ambient relative humidity (%) (MAX)"
+
+msgid "Ambient temperature (°C) (MIN)"
+msgstr "Ambient temperature (°C) (MIN)"
+
+msgid "Ambient temperature (°C) (AVG)"
+msgstr "Ambient temperature (°C) (AVG)"
+
+msgid "Ambient temperature (°C) (MAX)"
+msgstr "Ambient temperature (°C) (MAX)"
+
+msgid "Compartment relative humidity (%) (MIN)"
+msgstr "Compartment relative humidity (%) (MIN)"
+
+msgid "Compartment relative humidity (%) (AVG)"
+msgstr "Compartment relative humidity (%) (AVG)"
+
+msgid "Compartment relative humidity (%) (MAX)"
+msgstr "Compartment relative humidity (%) (MAX)"
+
+msgid "Vaccine Compartment Temperature (°C) (MIN)"
+msgstr "Vaccine Compartment Temperature (°C) (MIN)"
+
+msgid "Vaccine Compartment Temperature (°C) (AVG)"
+msgstr "Vaccine Compartment Temperature (°C) (AVG)"
+
+msgid "Vaccine Compartment Temperature (°C) (MAX)"
+msgstr "Vaccine Compartment Temperature (°C) (MAX)"
+
+msgid "Vaccine compartment time below 0°C (hrs)"
+msgstr "Vaccine compartment time below 0°C (hrs)"
+
+msgid "Vaccine compartment time 0–2°C (hrs)"
+msgstr "Vaccine compartment time 0–2°C (hrs)"
+
+msgid "Vaccine compartment time 2–8°C (hrs)"
+msgstr "Vaccine compartment time 2–8°C (hrs)"
+
+msgid "Vaccine compartment time above 8°C (hrs)"
+msgstr "Vaccine compartment time above 8°C (hrs)"
+
+msgid "Freezer Compartment Temperature (°C) (MIN)"
+msgstr "Freezer Compartment Temperature (°C) (MIN)"
+
+msgid "Freezer Compartment Temperature (°C) (AVG)"
+msgstr "Freezer Compartment Temperature (°C) (AVG)"
+
+msgid "Freezer Compartment Temperature (°C) (MAX)"
+msgstr "Freezer Compartment Temperature (°C) (MAX)"
+
+msgid "Condenser temperature (°C) (MIN)"
+msgstr "Condenser temperature (°C) (MIN)"
+
+msgid "Condenser temperature (°C) (AVG)"
+msgstr "Condenser temperature (°C) (AVG)"
+
+msgid "Condenser temperature (°C) (MAX)"
+msgstr "Condenser temperature (°C) (MAX)"
+
+msgid "Secondary Condenser temperature (°C) (MIN)"
+msgstr "Secondary Condenser temperature (°C) (MIN)"
+
+msgid "Secondary Condenser temperature (°C) (AVG)"
+msgstr "Secondary Condenser temperature (°C) (AVG)"
+
+msgid "Secondary Condenser temperature (°C) (MAX)"
+msgstr "Secondary Condenser temperature (°C) (MAX)"
+
+msgid "Compressor speed (rpm) (MIN)"
+msgstr "Compressor speed (rpm) (MIN)"
+
+msgid "Compressor speed (rpm) (AVG)"
+msgstr "Compressor speed (rpm) (AVG)"
+
+msgid "Compressor speed (rpm) (MAX)"
+msgstr "Compressor speed (rpm) (MAX)"
+
+msgid "Secondary Compressor speed (rpm) (MIN)"
+msgstr "Secondary Compressor speed (rpm) (MIN)"
+
+msgid "Secondary Compressor speed (rpm) (AVG)"
+msgstr "Secondary Compressor speed (rpm) (AVG)"
+
+msgid "Secondary Compressor speed (rpm) (MAX)"
+msgstr "Secondary Compressor speed (rpm) (MAX)"
+
+msgid "Compressor Electronic Unit temperature (°C) (MIN)"
+msgstr "Compressor Electronic Unit temperature (°C) (MIN)"
+
+msgid "Compressor Electronic Unit temperature (°C) (AVG)"
+msgstr "Compressor Electronic Unit temperature (°C) (AVG)"
+
+msgid "Compressor Electronic Unit temperature (°C) (MAX)"
+msgstr "Compressor Electronic Unit temperature (°C) (MAX)"
+
+msgid "Secondary Compressor Electronic Unit temperature (°C) (MIN)"
+msgstr "Secondary Compressor Electronic Unit temperature (°C) (MIN)"
+
+msgid "Secondary Compressor Electronic Unit temperature (°C) (AVG)"
+msgstr "Secondary Compressor Electronic Unit temperature (°C) (AVG)"
+
+msgid "Secondary Compressor Electronic Unit temperature (°C) (MAX)"
+msgstr "Secondary Compressor Electronic Unit temperature (°C) (MAX)"
+
+msgid "Fan speed (%) (MIN)"
+msgstr "Fan speed (%) (MIN)"
+
+msgid "Fan speed (%) (AVG)"
+msgstr "Fan speed (%) (AVG)"
+
+msgid "Fan speed (%) (MAX)"
+msgstr "Fan speed (%) (MAX)"
+
+msgid "Logger battery remaining (AVG)"
+msgstr "Logger battery remaining (AVG)"
+
+msgid "EMD battery remaining (AVG)"
+msgstr "EMD battery remaining (AVG)"
+
+msgid "Holdover, autonomy, or independence time (AVG)"
+msgstr "Holdover, autonomy, or independence time (AVG)"
+
+msgid "Location accuracy"
+msgstr "Location accuracy"
+
+msgid "AC supply voltage availability (s)"
+msgstr "AC supply voltage availability (s)"
+
+msgid "Compressor runtime (s)"
+msgstr "Compressor runtime (s)"
+
+msgid "Secondary compressor runtime (s)"
+msgstr "Secondary compressor runtime (s)"
+
+msgid "Door/lid opening (vaccine compartment) (s)"
+msgstr "Door/lid opening (vaccine compartment) (s)"
+
+msgid "Instantaneous door/lid opening (vaccine compartment) (s)"
+msgstr "Instantaneous door/lid opening (vaccine compartment) (s)"
+
+msgid "Door/lid opening (freezer/other compartment) (s)"
+msgstr "Door/lid opening (freezer/other compartment) (s)"
+
+msgid "Instantaneous door/lid opening (freezer compartment) (s)"
+msgstr "Instantaneous door/lid opening (freezer compartment) (s)"
+
+msgid "Number of door/lid openings (vaccine compartment)"
+msgstr "Number of door/lid openings (vaccine compartment)"
+
+msgid "Number of door/lid openings (freezer/other compartment)"
+msgstr "Number of door/lid openings (freezer/other compartment)"
+
+msgid "Main ON/OFF switch (ON hours)"
+msgstr "Main ON/OFF switch (ON hours)"
+
+msgid "Alarm condition (daily)"
+msgstr "Alarm condition (daily)"
+
+msgid "Alarm HEAT count"
+msgstr "Alarm HEAT count"
+
+msgid "Alarm FRZE count"
+msgstr "Alarm FRZE count"
+
+msgid "Alarm DOOR count"
+msgstr "Alarm DOOR count"
+
+msgid "Alarm POWR count"
+msgstr "Alarm POWR count"
+
+msgid "Alarm DCNT count"
+msgstr "Alarm DCNT count"
+
+msgid "Logger error codes (daily)"
+msgstr "Logger error codes (daily)"
+
+msgid "EMD error codes (daily)"
+msgstr "EMD error codes (daily)"
+
+msgid "File integrity check"
+msgstr "File integrity check"
+
 msgid "Appliance manufacturer"
 msgstr "Appliance manufacturer"
 
@@ -641,117 +882,6 @@ msgstr "Secondary Compressor Electronic Unit Software version"
 msgid "Secondary Compressor Electronic Unit production date"
 msgstr "Secondary Compressor Electronic Unit production date"
 
-msgid "Relative Time"
-msgstr "Relative Time"
-
-msgid "RTC Wakeup"
-msgstr "RTC Wakeup"
-
-msgid "Absolute time in UTC"
-msgstr "Absolute time in UTC"
-
-msgid "Location accuracy"
-msgstr "Location accuracy"
-
-msgid "File integrity check"
-msgstr "File integrity check"
-
-msgid "AC supply voltage to the appliance"
-msgstr "AC supply voltage to the appliance"
-
-msgid "AC supply voltage availability"
-msgstr "AC supply voltage availability"
-
-msgid "DC supply voltage to the appliance"
-msgstr "DC supply voltage to the appliance"
-
-msgid "Ambient relative humidity"
-msgstr "Ambient relative humidity"
-
-msgid "Ambient temperature"
-msgstr "Ambient temperature"
-
-msgid "AC current drawn by the appliance"
-msgstr "AC current drawn by the appliance"
-
-msgid "DC current drawn by the appliance"
-msgstr "DC current drawn by the appliance"
-
-msgid "Compartment relative humidity"
-msgstr "Compartment relative humidity"
-
-msgid "Condenser temperature"
-msgstr "Condenser temperature"
-
-msgid "Secondary Condenser temperature"
-msgstr "Secondary Condenser temperature"
-
-msgid "Compressor speed"
-msgstr "Compressor speed"
-
-msgid "Compressor runtime"
-msgstr "Compressor runtime"
-
-msgid "Compressor Electronic Unit temperature"
-msgstr "Compressor Electronic Unit temperature"
-
-msgid "Secondary Compressor speed"
-msgstr "Secondary Compressor speed"
-
-msgid "Secondary Compressor runtime"
-msgstr "Secondary Compressor runtime"
-
-msgid "Secondary Compressor Electronic Unit temperature"
-msgstr "Secondary Compressor Electronic Unit temperature"
-
-msgid "Fan speed"
-msgstr "Fan speed"
-
-msgid "Logger battery remaining"
-msgstr "Logger battery remaining"
-
-msgid "Vaccine Compartment Temperature"
-msgstr "Vaccine Compartment Temperature"
-
-msgid "Freezer Compartment Temperature"
-msgstr "Freezer Compartment Temperature"
-
-msgid "EMD battery remaining"
-msgstr "EMD battery remaining"
-
-msgid "Holdover, autonomy, or independence time"
-msgstr "Holdover, autonomy, or independence time"
-
-msgid "Logger Error codes"
-msgstr "Logger Error codes"
-
-msgid "EMD Error codes"
-msgstr "EMD Error codes"
-
-msgid "Alarm condition"
-msgstr "Alarm condition"
-
-msgid "Door/lid opening (vaccine compartment)"
-msgstr "Door/lid opening (vaccine compartment)"
-
-msgid "Instantaneous door/lid opening (vaccine compartment)"
-msgstr "Instantaneous door/lid opening (vaccine compartment)"
-
-msgid "Number of door/lid openings (vaccine compartment)"
-msgstr "Number of door/lid openings (vaccine compartment)"
-
-msgid "Door/lid opening (freezer/other compartment)"
-msgstr "Door/lid opening (freezer/other compartment)"
-
-msgid "Instantaneous door/lid opening (freezer compartment)"
-msgstr "Instantaneous door/lid opening (freezer compartment)"
-
-msgid "Number of door/lid openings (freezer/other compartment)"
-msgstr "Number of door/lid openings (freezer/other compartment)"
-
-msgid "Main ON/OFF switch"
-msgstr "Main ON/OFF switch"
-
 msgid "Serial attribute"
 msgstr "Serial attribute"
 
@@ -781,6 +911,9 @@ msgstr "Average ambient temp (°C)"
 
 msgid "Faults"
 msgstr "Faults"
+
+msgid "Alarm condition"
+msgstr "Alarm condition"
 
 msgid "Lower alarm status"
 msgstr "Lower alarm status"

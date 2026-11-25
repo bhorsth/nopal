@@ -6,36 +6,41 @@ import {
 } from '../buildEmsEventDataValues'
 
 describe('buildEmsEventDataValues', () => {
-    it('includes only mapped data elements with present record values', () => {
+    it('includes only mapped aggregated outputs with present values and rounds numbers', () => {
         const record = {
             RELT: 'PT15M',
-            TVC: 5.7,
-            TAMB: 31.9,
-            TFRZ: null,
-            ALRM: '0x00000000',
+            TVC_AVG: 5.74,
+            TAMB_AVG: 31.9,
+            TFRZ_AVG: null,
+            ALRM_DLY: 'HEAT FRZE',
+            ACCD_AVG: 2450.5,
         }
         const mappings = {
             RELT: 'de-relt',
-            TVC: 'de-tvc',
-            TAMB: 'de-tamb',
-            TFRZ: 'de-tfrz',
+            TVC_AVG: 'de-tvc-avg',
+            TAMB_AVG: 'de-tamb-avg',
+            TFRZ_AVG: 'de-tfrz-avg',
+            ALRM_DLY: 'de-alrm-dly',
+            ACCD_AVG: 'de-accd-avg',
         }
 
         const dataValues = buildEmsEventDataValues(record, mappings)
 
         expect(dataValues).toEqual(
             expect.arrayContaining([
-                { dataElement: 'de-relt', value: 'PT15M' },
-                { dataElement: 'de-tvc', value: '5.7' },
-                { dataElement: 'de-tamb', value: '31.9' },
+                { dataElement: 'de-tvc-avg', value: '5.7' },
+                { dataElement: 'de-tamb-avg', value: '31.9' },
+                { dataElement: 'de-alrm-dly', value: 'HEAT FRZE' },
+                { dataElement: 'de-accd-avg', value: '2450.5' },
             ])
         )
-        expect(dataValues).toHaveLength(3)
+        expect(dataValues.find((row) => row.dataElement === 'de-relt')).toBeUndefined()
+        expect(dataValues).toHaveLength(4)
     })
 
     it('groups data values under the single EMS program stage', () => {
-        const record = { TVC: 5.7, TAMB: 31.9, ALRM: '0x00000000' }
-        const mappings = { TVC: 'de-tvc', TAMB: 'de-tamb', ALRM: 'de-alrm' }
+        const record = { TVC_AVG: 5.7, TAMB_AVG: 31.9, ALRM_DLY: 'HEAT' }
+        const mappings = { TVC_AVG: 'de-tvc', TAMB_AVG: 'de-tamb', ALRM_DLY: 'de-alrm' }
         const stageName = 'Equipment Monitoring System (EMS) data'
 
         const byStage = groupEmsRecordDataValuesByStage(record, mappings)
@@ -45,7 +50,7 @@ describe('buildEmsEventDataValues', () => {
             expect.arrayContaining([
                 { dataElement: 'de-tvc', value: '5.7' },
                 { dataElement: 'de-tamb', value: '31.9' },
-                { dataElement: 'de-alrm', value: '0x00000000' },
+                { dataElement: 'de-alrm', value: 'HEAT' },
             ])
         )
         expect(byStage[stageName]).toHaveLength(3)
@@ -53,9 +58,9 @@ describe('buildEmsEventDataValues', () => {
 
     it('builds one event per day for the EMS program stage', () => {
         const dailyRecords = [
-            { date: '2026-06-10', fields: { TVC: 5, TAMB: 20 } },
+            { date: '2026-06-10', fields: { TVC_AVG: 5, TAMB_AVG: 20 } },
         ]
-        const mappings = { TVC: 'de-tvc', TAMB: 'de-tamb' }
+        const mappings = { TVC_AVG: 'de-tvc', TAMB_AVG: 'de-tamb' }
         const stageName = 'Equipment Monitoring System (EMS) data'
         const stageNameToId = {
             [stageName]: 'stage-ems',

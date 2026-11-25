@@ -8,6 +8,7 @@
 
 const fs = require('fs')
 const path = require('path')
+const { pathToFileURL } = require('url')
 require('dotenv/config')
 
 const defaultInput = path.join(
@@ -74,7 +75,16 @@ function parseCSV(text) {
     return rows
 }
 
-function loadEmsFieldDefinitions() {
+async function loadDailyAggregationModules() {
+    const [aggregation, spec, emsValue] = await Promise.all([
+        import(pathToFileURL(path.join(__dirname, '../src/utils/aggregateEmsRecordsDaily.js')).href),
+        import(pathToFileURL(path.join(__dirname, '../src/config/emsDailyAggregation.js')).href),
+        import(pathToFileURL(path.join(__dirname, '../src/utils/emsValue.js')).href),
+    ])
+    return { aggregation, spec, emsValue }
+}
+
+function loadEmsFieldDefinitions(aggregationOutputs) {
     const mapKind = (dhis2Type) => {
         const t = (dhis2Type || '').trim()
         if (t === 'Tracked entity attribute' || t === '(optional)') return 'attribute'
@@ -89,7 +99,7 @@ function loadEmsFieldDefinitions() {
     const colIdx = (name) => headers.findIndex((h) => h === name || h.startsWith(name))
     const OTHER_GROUP = 'Other'
 
-    return allRows
+    const attributes = allRows
         .filter((r) => r[0] && /^\d+$/.test(r[0].trim()))
         .map((cols) => ({
             key: cols[colIdx('Object ID')].trim(),
@@ -98,6 +108,17 @@ function loadEmsFieldDefinitions() {
             dhis2Name: (cols[colIdx('DHIS2 name')] || '').trim(),
             dhis2Code: (cols[colIdx('DHIS2 Code')] || '').trim(),
         }))
+        .filter((field) => field.kind === 'attribute')
+
+    const dataElements = aggregationOutputs.map((output) => ({
+        key: output.outputKey,
+        kind: 'dataElement',
+        stageOrAttribute: output.stageOrAttribute || 'Equipment Monitoring System (EMS) data',
+        dhis2Name: output.dhis2Name,
+        dhis2Code: output.dhis2Code,
+    }))
+
+    return [...attributes, ...dataElements]
 }
 
 const HEADER_KEYS = [
@@ -116,7 +137,7 @@ function isEmsPresentValue(value) {
     return true
 }
 
-function formatEmsValue(value) {
+function formatEmsValueFallback(value) {
     if (!isEmsPresentValue(value)) return null
     return String(value)
 }
@@ -243,56 +264,13 @@ function buildEmsAutoMappings(fieldDefinitions, { attributes, dataElementsByStag
     return mappings
 }
 
-function isNumericAggregateValue(value) {
-    if (typeof value === 'number' && !Number.isNaN(value)) return true
-    if (typeof value === 'string' && value.trim() !== '') {
-        return !Number.isNaN(Number(value))
-    }
-    return false
-}
-
-function aggregateEmsFieldsForDay(dayRecords) {
-    const fieldKeys = new Set()
-    dayRecords.forEach((record) => Object.keys(record).forEach((key) => fieldKeys.add(key)))
-    const aggregated = {}
-    fieldKeys.forEach((key) => {
-        const values = dayRecords.map((record) => record[key]).filter(isEmsPresentValue)
-        if (values.length === 0) return
-        if (values.every(isNumericAggregateValue)) {
-            const numbers = values.map((value) => Number(value))
-            aggregated[key] = numbers.reduce((total, value) => total + value, 0) / numbers.length
-            return
-        }
-        aggregated[key] = values[values.length - 1]
-    })
-    return aggregated
-}
-
-function aggregateEmsRecordsByDay(records, adop) {
-    const occurredAtTimes = computeEmsOccurredAtTimes(records, adop)
-    const recordsByDay = new Map()
-    records.forEach((record, index) => {
-        const date = occurredAtTimes[index]?.slice(0, 10)
-        if (!date) return
-        if (!recordsByDay.has(date)) recordsByDay.set(date, [])
-        recordsByDay.get(date).push(record)
-    })
-    return [...recordsByDay.entries()]
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([date, dayRecords]) => ({
-            date,
-            fields: aggregateEmsFieldsForDay(dayRecords),
-            readingCount: dayRecords.length,
-        }))
-}
-
-function groupEmsRecordDataValuesByStage(record, mappings, fieldDefinitions) {
+function groupEmsRecordDataValuesByStage(record, mappings, fieldDefinitions, formatValue) {
     const byStage = {}
     fieldDefinitions.forEach((field) => {
         if (field.kind !== 'dataElement') return
         const dataElement = mappings[field.key]
         if (!dataElement) return
-        const value = formatEmsValue(record[field.key])
+        const value = formatValue(record[field.key])
         if (value == null) return
         const stageName = field.stageOrAttribute || 'Other'
         if (!byStage[stageName]) byStage[stageName] = []
@@ -374,19 +352,29 @@ async function lookupTrackedEntity(serial, serialAttributeId) {
     return data?.trackedEntities?.[0] || null
 }
 
-function buildPayload({ parsed, fieldMappings, fieldDefinitions, tei, generatedAt, stages }) {
+function buildPayload({
+    parsed,
+    fieldMappings,
+    fieldDefinitions,
+    tei,
+    generatedAt,
+    stages,
+    aggregateEmsRecordsByDay,
+    formatEmsValue,
+}) {
     const trackedEntity = tei?.trackedEntity || '<TRACKED_ENTITY_UID>'
     const enrollment = tei?.enrollments?.find((e) => e.program === programId)?.enrollment || '<ENROLLMENT_UID>'
     const orgUnit = getOrgUnitId(tei) || fallbackOrgUnitId || '<ORG_UNIT_UID>'
     const stageNameToId = Object.fromEntries((stages ?? []).map((stage) => [stage.displayName, stage.id]))
-    const dailyRecords = aggregateEmsRecordsByDay(parsed.records, parsed.metadata?.ADOP)
+    const dailyRecords = aggregateEmsRecordsByDay(parsed.records, { adop: parsed.metadata?.ADOP })
     const events = []
 
     dailyRecords.forEach((dailyRecord) => {
         const byStage = groupEmsRecordDataValuesByStage(
             dailyRecord.fields,
             fieldMappings,
-            fieldDefinitions
+            fieldDefinitions,
+            formatEmsValue
         )
         Object.entries(byStage).forEach(([stageName, dataValues]) => {
             const programStage = stageNameToId[stageName]
@@ -527,7 +515,8 @@ async function main() {
         assertEnv()
     }
 
-    const fieldDefinitions = loadEmsFieldDefinitions()
+    const { aggregation, spec, emsValue } = await loadDailyAggregationModules()
+    const fieldDefinitions = loadEmsFieldDefinitions(spec.EMS_DAILY_AGGREGATION_OUTPUTS)
     const parsed = parseEmsJson(JSON.parse(fs.readFileSync(inputPath, 'utf8')))
     const serial = parsed.config.serial
     if (!serial) throw new Error('No logger serial (LSER) found in EMS file')
@@ -545,6 +534,8 @@ async function main() {
         tei,
         generatedAt: new Date().toISOString(),
         stages,
+        aggregateEmsRecordsByDay: aggregation.aggregateEmsRecordsByDay,
+        formatEmsValue: emsValue.formatEmsValue || formatEmsValueFallback,
     })
     payload._meta.idScheme = idScheme
     if (idScheme === 'placeholder') {
