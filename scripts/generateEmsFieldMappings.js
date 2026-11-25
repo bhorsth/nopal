@@ -1,5 +1,10 @@
 /**
- * Regenerate src/config/emsFieldMappingDefinitions.js from data/EMS_general/dhis2_mapping_advanced.csv
+ * Regenerate TEI attribute rows in src/config/emsFieldMappingDefinitions.js
+ * from data/EMS_general/dhis2_mapping_advanced.csv.
+ *
+ * Daily data-element mappings (TVC_MIN, EMS_TVC_AVG, …) are defined in
+ * src/config/emsDailyAggregation.js and merged at runtime — do not emit
+ * RELT/RTCW/ABST or hours-conversion DEs from this CSV.
  * Usage: node scripts/generateEmsFieldMappings.js
  */
 const fs = require('fs')
